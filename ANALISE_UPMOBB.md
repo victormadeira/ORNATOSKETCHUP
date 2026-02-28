@@ -1354,6 +1354,93 @@ Plugin SketchUp → Exporta JSON → Upload plataforma online →
 
 ---
 
+## 20. Tampos (Tamponamento)
+
+### 20.1 Funcionamento
+
+- Seleciona-se um ou mais módulos na cena
+- O plugin **envolve automaticamente** os módulos com o tampo
+- Não há configuração complexa de geometria — o tampo se adapta ao conjunto selecionado
+- Aplicável a balcões, mesas, bancadas
+
+### 20.2 Nota para Plugin Ornato
+
+- Implementar como: selecionar módulos → gerar tampo paramétrico que envolve o conjunto
+- Calcular: largura total do conjunto + balanços laterais configuráveis
+- Peça gerada: CM_TAM (tampo)
+
+---
+
+## 21. Pés e Rodapés
+
+### 21.1 Funcionamento
+
+- São **caixas pré-prontas** (módulos específicos para base)
+- Inseridos como qualquer outro módulo do catálogo
+- Documentação completa a ser feita em sessão futura com Victor
+
+---
+
+## 22. Peças Avulsas
+
+### 22.1 Conceito
+
+- Peças que podem ser inseridas **independentemente** na cena
+- **Não precisam estar conectadas** a um módulo (diferente dos Agregados)
+- Exemplos de tipos: chapas, réguas, frentes de gaveta, painéis avulsos, etc.
+
+### 22.2 Diferença vs Agregados
+
+| | Peças Avulsas | Agregados |
+|--|--|--|
+| Conexão | Independente (livre na cena) | Vinculado a um módulo pai |
+| Inserção | Direta na cena | Requer módulo selecionado |
+| Uso típico | Chapas, frentes, réguas soltas | Gavetas, prateleiras, portas |
+
+### 22.3 Nota para Plugin Ornato
+
+- Implementar via `motor_pecas_avulsas.rb` (já existe no projeto)
+- Peças sem pai (parent_id = nil) no JSON exportado
+
+---
+
+## 23. Templates de Ambiente — OPORTUNIDADE DE DIFERENCIAÇÃO
+
+### 23.1 Status no UpMobb
+
+> **Templates de ambiente NÃO existem no UpMobb.**
+> O plugin não possui modelos prontos de cozinha, quarto, banheiro, etc.
+
+### 23.2 Oportunidade para Plugin Ornato
+
+Este é um **ponto de diferenciação competitiva** do Plugin Ornato:
+- Criar **ambientes completos prontos**: cozinha, dormitório, banheiro, lavanderia, escritório
+- O usuário seleciona um template → toda a cozinha é inserida na cena com um clique
+- Módulos parametrizados → ajustam-se ao tamanho do ambiente
+- Economiza horas de projeto para projetos recorrentes
+
+### 23.3 Implementação Sugerida
+
+```ruby
+# motor_templates.rb (já existe no projeto)
+# Fluxo:
+# 1. Usuário escolhe ambiente (cozinha, dormitório, etc.)
+# 2. Escolhe template específico (cozinha em L, cozinha em U, etc.)
+# 3. Define dimensões do ambiente (largura, altura, profundidade)
+# 4. Plugin insere todos os módulos posicionados automaticamente
+# 5. Usuário ajusta individualmente se necessário
+```
+
+### 23.4 Templates Sugeridos por Ambiente
+
+- **Cozinha**: Linear, Em L, Em U, Paralela, Com ilha
+- **Dormitório**: Closet linear, Closet em L, Guarda-roupa embutido
+- **Banheiro**: Gabinete + espelheira, Coluna
+- **Lavanderia**: Armário + bancada
+- **Escritório**: Estante + mesa
+
+---
+
 *Documento gerado em 28/02/2026 durante investigacao do UpMobb via Chrome Remote Desktop*
 *Atualizado com visita guiada do Victor em 28/02/2026*
 *Atualizado com pesquisa de tipos de dobradica (reta/curva/supercurva) em 28/02/2026*
@@ -1361,4 +1448,5 @@ Plugin SketchUp → Exporta JSON → Upload plataforma online →
 *Atualizado com sistema de alinhamento, lateral passante e prateleiras em 28/02/2026*
 *Atualizado com posicao de prateleiras (recuo frente, altura pela base) e escopo online em 28/02/2026*
 *Atualizado com mapeamento completo dos 11 grupos de Trocas gerais em 28/02/2026*
+*Atualizado com tampos, pes/rodapes, pecas avulsas e oportunidade de templates em 28/02/2026*
 *Para uso na replicacao das funcionalidades no Plugin Ornato*
