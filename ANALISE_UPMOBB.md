@@ -637,7 +637,530 @@ No motor de portas do Ornato (`motor_portas.rb`), o tipo de dobradica afeta:
 
 ---
 
+## 12. SISTEMA DE GAVETAS — Detalhes Completos
+
+### 12.1 Tipos de Gavetas (Agregados > Internos > Gavetas)
+
+**Conjuntos pre-definidos por quantidade:**
+- **Conjunto 1 und** — 1 gaveta (thumbnail: 1 gaveta)
+- **Conjunto 2 und** — 2 gavetas empilhadas
+- **Conjunto 3 und** — 3 gavetas empilhadas
+- **Conjunto 4 und** — 4 gavetas empilhadas
+- **Conjunto 5 und** — 5 gavetas empilhadas
+
+**Gavetas Cofre (especiais):**
+- **Gaveta Cofre Inferior (Basculante)** — cofre tipo flip-up
+- **Gaveta Cofre (Frente Falsa)** — com frente decorativa
+- **Gaveta Cofre (Gaveta Lateral)** — abertura lateral
+- **Gaveta Cofre Inferior (Frente Falsa)** — combinacao
+- **Gaveta Cofre Lateral** — abertura pela lateral
+
+**Outros:**
+- **Gaveta Multipla** — configuravel (quantidade variavel)
+
+### 12.2 Fluxo de Insercao
+
+Identico ao de Portas:
+1. Clica no tipo de gaveta no catalogo
+2. Aparece **mira azul** no viewport
+3. Hover sobre modulo → modulo destaca em azul + "Caminhos possiveis: 0/3"
+4. Clica no modulo alvo
+5. Aperta **Enter** → gaveta inserida!
+
+### 12.3 Configurador da Gaveta (apos insercao)
+
+**Titulo**: "Conjunto de gavetas" / "Conjunto de gavetas 1 und"
+**Secao Opcoes:**
+- **Altura maxima corpo gaveta**: 0.00 (com botao reset vermelho)
+- **Interno**: nao (dropdown)
+- **Posicionar corpo em relacao a frente**: mesma posicao (dropdown)
+- **Reducao contra frente**: 0.00
+- **Transpasse inferior**: 12.00
+- **Transpasse esquerdo**: 12.00
+- **Transpasse direito**: 12.00
+- **Transpasse superior**: 12.00
+- Botao **Aplicar**
+- Tabs: `mm` | `Componente`
+
+### 12.4 Trocas Contextuais para Gaveta
+
+Quando uma gaveta esta selecionada, o painel **Trocas** mostra automaticamente 7 grupos especificos:
+
+1. **Corpo de Gaveta** — trocar o corpo/caixa da gaveta
+2. **Corredicao Telescopica** — variantes de telescopica:
+   - Corredicoa Generica (linha guia somente)
+   - Corredicoa Telescopica Green Light
+   - Corredicoa Telescopica Green Normal
+   - Corredicoa Telescopica Light HD
+   - E mais...
+3. **Fixacao Frentes** — estilo de fixacao da frente
+4. **Fixacao Gaveta** — fixacao da gaveta na caixa
+5. **Frente de Gaveta** — estilo da frente/face
+6. **Fundos Gaveta** — tipo de fundo da gaveta
+7. **Sistema Corredicoa** — troca o SISTEMA inteiro (4 opcoes):
+   - Conjunto Gaveta Metalica Alta Hettich (tipo Legrabox)
+   - Conjunto Gaveta Metalica Baixa Hettich
+   - Corredicoa Invisivel (oculta/undermount — tipo TANDEM/Blum)
+   - Corredicoa Telescopica (volta ao padrao)
+
+### 12.5 Codigos de Pecas de Gaveta no JSON
+
+- `CM_LEG` — Lateral Esquerda Gaveta (upmdraw: FT2x1)
+- `CM_LDG` — Lateral Direita Gaveta (upmdraw: FT2x1)
+- `CM_FUN_GAV_VER` — Fundo Vertical Gaveta (upmdepth: 6.5mm)
+- `CM_CHGAV` — Chapa MDF Gaveta
+- `CM_CFG` — Contra Frente Gaveta
+- `CM_FRE_GAV_LIS` — Frente Gaveta Lisa
+- `CM_TRG` — Traseira Gaveta
+
+---
+
+## 13. SISTEMA DE TROCAS — Arquitetura Contextual
+
+### 13.1 Principio Fundamental
+
+O sistema de **Trocas** e COMPLETAMENTE CONTEXTUAL:
+- Quando um **modulo** esta selecionado → mostra trocas gerais (fixacao, estilo, fundo)
+- Quando uma **gaveta** esta selecionada → mostra 7 grupos especificos de gaveta
+- Quando uma **porta** esta selecionada → mostra opcoes de porta
+
+### 13.2 Trocas para Modulo Geral (sem agregado selecionado)
+
+- Fixacao com Reguas
+- Fixacao Lateral
+- Fixacao Regua Deitada
+- Fundos (trocar tipo de fundo)
+- Regua Dianteira
+
+### 13.3 Trocas para Gaveta (gaveta selecionada)
+
+Ver secao 12.4 acima.
+
+### 13.4 Trocas para Porta (porta selecionada)
+
+Provavelmente inclui:
+- Tipo de dobradica
+- Tipo de puxador
+- Estilo da porta
+- Tipo de vidro (se porta com vidro)
+
+---
+
+## 14. ARQUITETURA DE EXPORTACAO
+
+### 14.1 Modelo Geral
+
+```
+Plugin SketchUp (UpMobb)
+    |
+    | exporta JSON rico
+    v
+Plataforma Online UpMobb
+    |
+    |-- Plano de corte (otimizacao)
+    |-- Arquivos CNC (G-code)
+    |-- Etiquetas de peca
+    |-- Orcamento
+    |-- Listagem de compras
+    v
+Producao na fabrica
+```
+
+**IMPLICACAO PARA ORNATO**: O plugin exporta JSON → ERP processa tudo. Esta e a arquitetura correta!
+
+### 14.2 Configuracoes de Exportacao (antes de gerar JSON)
+
+**Detalhes do projeto** (dialog pre-exportacao):
+- Meu codigo
+- Projetista
+- Cliente
+- Descricao do projeto
+- Adicionais (text area)
+
+**Configuracoes de Usinagem** (engrenagem em Arquivos de Usinagem):
+
+*Lados de exportacao:*
+- Exportar lado A (toggle ON/OFF)
+- Exportar Lado B (toggle ON/OFF)
+- Exportar Topos (toggle ON/OFF)
+- Furos de topo no lado B (toggle ON/OFF)
+- Adicionar prefixo em codigo de usinagem (toggle ON/OFF)
+- Tamanho fixo do codigo (toggle ON/OFF)
+
+*Tipos de trabalhos:*
+- Exportar Furos (toggle ON/OFF)
+- Exportar Rebaixos/rasgo de serra (toggle ON/OFF)
+- Exportar Usinagens (toggle ON/OFF)
+
+### 14.3 Secoes de Exportacao (Accordion)
+
+1. **Exportar para outros sistemas**: UpMobb, SIS Marcenaria
+2. **Exportar listagens**: Itens a comprar, Vidros e espelhos, Perfis e lineares, Componentes a conferir
+3. **Informacoes de producao**: Listagem de pecas (⚙️), Imagem de peca, Etiqueta completa, Etiqueta peca composta, Etiqueta porta de aluminio, Arquivos de usinagem (⚙️)
+4. **Outros**: funcionalidades adicionais
+
+---
+
+## 15. ESTRUTURA DO JSON EXPORTADO — Analise Completa
+
+**Arquivo analisado**: Sem nome.json (117.542 caracteres, 24 pecas)
+
+### 15.1 Tres Secoes de Topo
+
+```json
+{
+  "model_entities": { ... },   // dados das pecas (28 codigos unicos)
+  "details_project": { ... },  // metadados do projeto
+  "machining": { ... }         // dados CNC por peca (21 entradas)
+}
+```
+
+**details_project campos:**
+- `client` — nome do cliente
+- `project` — nome do projeto
+- `my_code` — codigo interno
+- `seller` — vendedor/projetista
+- `type_material_panel` — tipo de material (MDF)
+
+### 15.2 Codigos de Pecas (upmcode) — 28 tipos unicos
+
+**Modulos:**
+- `CM_BAL` — Balcao (modulo pai)
+
+**Pecas de caixaria:**
+- `CM_LAT_DIR` — Lateral Direita
+- `CM_LAT_ESQ` — Lateral Esquerda
+- `CM_REG` — Regua Deitada
+- `CM_BAS` — Base (tampo inferior)
+- `CM_FUN_VER` — Fundo Vertical
+- `CM_FUN_HOR` — Fundo Horizontal
+- `CM_DIV` — Divisoria
+- `CM_PRA` — Prateleira MDF
+- `CM_TRG` — Traseira
+
+**Pecas de gaveta:**
+- `CM_LEG` — Lateral Esquerda Gaveta
+- `CM_LDG` — Lateral Direita Gaveta
+- `CM_FUN_GAV_VER` — Fundo Vertical Gaveta (6.5mm)
+- `CM_CHGAV` — Chapa MDF Gaveta
+- `CM_CFG` — Contra Frente Gaveta
+- `CM_FRE_GAV_LIS` — Frente Gaveta Lisa
+
+**Pecas de porta:**
+- `CM_POR_LIS` — Porta Lisa
+- `CM_CHPOR_VER_DIR` — Chapa Porta Vertical Direita
+- `CM_CHPOR_VER_ESQ` — Chapa Porta Vertical Esquerda
+
+**Usinagens:**
+- `CM_USI_RAS` — Usinagem Rasgo de Serra / Rebaixo para Fundo
+
+**Ferragens/Hardware:**
+- `CM_KIT_MIN15TW_16_PLAST_BRANCO` — Minifix plastico branco
+- `CM_KIT_MIN15TW_19` — Minifix 19
+- `CM_KIT_CAV_8X28` — Cavilha 8x28
+- `CM_KIT_PAR_4X25` — Parafuso 4x25
+- `CM_KIT_COR_HAFELE_H45_S_SC_500` — Corredicoa Hafele H45 500mm
+- `CM_KIT_HAFELE_DOB_ALT_110_SC_CF4_NIQ` — Dobradica Hafele 110° Alt
+- `CM_KIT_HAFELE_DOB_RET_110_SC_CF4_NIQ` — Dobradica Hafele 110° Ret (reta)
+
+**Fita de borda:**
+- `CMBOR19X045BRANCO_TX` — Fita branco tx 19x0.45mm
+
+### 15.3 Campos de uma Peca (model_entities > piece)
+
+```json
+{
+  "upmprocesscodea": "325739A",    // codigo de producao lado A
+  "upmprocesscodeb": "325739B",    // codigo de producao lado B
+  "upmpersistentid": 325739,       // ID persistente do SketchUp
+  "upmnamefile": "Sem nome",       // nome do arquivo do projeto
+  "upmpiece": true,                // marcador: e uma peca
+  "upmmasterdescription": "Balcao", // modulo pai
+  "upmmasterid": 1,                // ID do modulo pai
+  "upmcode": "CM_LAT_DIR",        // tipo da peca
+  "upmdescription": "Lateral Direita",
+  "upmdepth": "550",               // profundidade mm
+  "upmheight": "694.5",            // altura mm
+  "upmwidth": "15.5",              // largura mm (espessura)
+  "upmlength": "1169",             // comprimento mm (para reguas)
+  "upmdraw": "FTE1x2",             // codigo de desenho/orientacao
+  "upmedgeside1": "CMBOR19X045BRANCO_TX", // fita lado 1
+  "upmedgeside2": "CMBOR19X045BRANCO_TX", // fita lado 2
+  "upmedgeside3": "CMBOR19X045BRANCO_TX", // fita lado 3
+  "upmedgeside4": "",              // sem fita lado 4
+  "upmedgesides": "2C1L",          // resumo: 2 comprimentos 1 largura
+  "upmedgesidetype": "2C+1L",      // tipo: 2C+1L
+  "upmfinish": "BRANCO_TX",        // acabamento
+  "upmtextaggregates": "",         // texto de agregados
+  "entities": { ... }              // sub-entidades (painel + fitas + ferragens)
+}
+```
+
+### 15.4 Sub-entidades de uma Peca (entities)
+
+**Painel MDF** (upmfeedstockpanel: true):
+```json
+{
+  "upmfeedstockpanel": true,
+  "upmallowtransferjob": 1,
+  "upmcutlist": 1,
+  "upmcutlength": "694.5",         // comprimento de corte mm
+  "upmcutwidth": "550",            // largura de corte mm
+  "upmcutthickness": "15.5",       // espessura de corte mm
+  "upmcutliquidlength": "694.5",   // comprimento liquido (pos-usinagem)
+  "upmcutliquidwidth": "550",      // largura liquida
+  "upmdescription": "Chapa de MDF",
+  "upmextralength": "0",           // ajuste de comprimento (-1 para encaixe em rasgo)
+  "upmextrawidth": "0",            // ajuste de largura
+  "upmfinish": "BRANCO_TX",
+  "upmjobaxis": "xyz",
+  "upmmaterialcode": "MDF_15.5_BRANCO_TX",  // codigo do material
+  "upmmaterialtype": "MDF",
+  "upmquantity": "0.381975",       // area em m2
+  "entities": {}
+}
+```
+
+**Fita de Borda** (upmedge: 1):
+```json
+{
+  "upmcode": "CMBOR19X045BRANCO_TX",
+  "upmdescription": "Fita de borda branco tx 19x045",
+  "upmedge": 1,
+  "upmdisable": "0",
+  "upmfinish": "BRANCO_TX",
+  "upmquantity": "0.7545",         // metros lineares
+  "upmtextaggregates": "Comprimento_Frontal", // posicao na peca
+  "upmwidth": "754.5",             // comprimento real da fita mm
+  "entities": {}
+}
+```
+
+**Posicoes de Fita de Borda** (upmtextaggregates):
+- `Comprimento_Frontal` — lado frontal do comprimento
+- `Comprimento_Traseiro` — lado traseiro do comprimento
+- `Largura_esquerda` — lado esquerdo da largura
+- `Largura_direita` — lado direito da largura
+
+**Hardware** (minifix, cavilha, etc.):
+```json
+{
+  "upmcode": "CM_KIT_MIN15TW_16_PLAST_BRANCO",
+  "upmdescription": "Minifix",
+  "upmfinish": "PLAST_BRANCO",
+  "upmtestbounds": "1",
+  "entities": {}
+}
+```
+
+**Usinagem** (CM_USI_RAS):
+```json
+{
+  "upmcode": "CM_USI_RAS",
+  "upmcornerradius": "0",
+  "upmdepth": "8",                 // profundidade do rasgo mm
+  "upmdescription": "Rasgo de serra",  // ou "Rebaixo para fundo"
+  "upmdisable": "0",
+  "upmjobcategory": "Transfer_vertical_saw_cut",
+  "upmlength": "709.5",            // comprimento do rasgo mm
+  "upmquantity": "0.7095",
+  "upmtestbounds": "2",
+  "upmtool": "r_f",                // ferramenta: rasgo fundo
+  "upmwidth": "7",                 // largura do rasgo mm
+  "entities": {}
+}
+```
+
+### 15.5 Codigos upmdraw — 14 tipos
+
+Codificam a orientacao/posicao da peca no modulo:
+```
+FTE1x2   = Frontal Topo Esquerda (lateral direita)
+FTD1x2   = Frontal Topo Direita (lateral esquerda)
+FT1x3    = Frontal Topo (regua)
+FT2x1    = Frontal Topo (lateral gaveta)
+E2x1     = Esquerda (fundo vertical)
+F2x1     = Frontal (prateleira)
+FD1x2    = Frontal Direita
+FE1x2    = Frontal Esquerda
+F1x2     = Frontal
+F1x3     = Frontal largo
+FED1x3   = Frontal Esquerda Direita
+FTED1x3  = Frontal Topo Esquerda Direita (base/tampo - 4 lados)
+FTED2x1  = Frontal Topo Esquerda Direita (variante)
+2x1      = generico
+```
+
+### 15.6 Codigos upmedgesides — 8 tipos
+
+```
+(vazio)  = sem fita de borda
+1C       = 1 lado comprimento
+1C1L     = 1 comprimento + 1 largura
+1C2L     = 1 comprimento + 2 larguras
+1L       = 1 lado largura
+2C       = 2 lados comprimento
+2C1L     = 2 comprimentos + 1 largura
+2C2L     = 2 comprimentos + 2 larguras (= 4Lados = todos os lados)
+```
+
+### 15.7 Codigos de Material
+
+```
+MDF_15.5_BRANCO_TX   = MDF 15.5mm acabamento Branco Texturizado
+MDF_6.5_BRANCO_TX    = MDF 6.5mm acabamento Branco Texturizado (fundos/gavetas)
+```
+
+**Formato do codigo**: `{TIPO}_{ESPESSURA}_{ACABAMENTO}`
+
+### 15.8 Secao "machining" — Dados CNC por Peca
+
+Esta secao contem os dados completos para geracao de G-code, indexada por `upmpersistentid`:
+
+```json
+{
+  "machining": {
+    "<persistentid>": {
+      "code": "325739A",
+      "name_peace": "Lateral Direita",
+      "length": 694.5,
+      "width": 550,
+      "thickness": 15.5,
+      "borders": [                   // fitas das 4 bordas
+        "CMBOR19X045BRANCO_TX",
+        "CMBOR19X045BRANCO_TX",
+        "CMBOR19X045BRANCO_TX",
+        ""
+      ],
+      "workers": {                   // operacoes CNC
+        "<id>": {
+          "category": "transfer_hole",              // furo
+          "tool": "f_8mm_cavilha",                  // ferramenta
+          "face": "top",                            // face da peca
+          "x": ..., "y": ..., "depth": ...
+        },
+        "<id>": {
+          "category": "Transfer_vertical_saw_cut",  // rasgo
+          "tool": "r_f",
+          "face": "left",
+          ...
+        }
+      }
+    }
+  }
+}
+```
+
+### 15.9 Ferramentas CNC (machining > workers > tool) — 9 tipos
+
+```
+f_15mm_tambor_min     = Furo 15mm para tambor do minifix
+f_35mm_dob            = Furo 35mm para cup da dobradica
+f_3mm                 = Furo 3mm generico
+f_5mm_twister243      = Furo 5mm Twister 243
+f_8mm_cavilha         = Furo 8mm para cavilha
+f_8mm_eixo_tambor_min = Furo 8mm para eixo do minifix
+p_3mm                 = Pocket 3mm
+p_8mm_cavilha         = Pocket 8mm para cavilha
+r_f                   = Rasgo de fundo (saw cut)
+```
+
+### 15.10 Categorias de Operacao CNC (machining > workers > category)
+
+```
+transfer_hole             = Furacao (todos os tipos de furo)
+Transfer_vertical_saw_cut = Rasgo de serra / rebaixo
+```
+
+### 15.11 Estatisticas do Arquivo de Exemplo
+
+- **Total de pecas**: 24 (upmpiece: true)
+- **Tamanho do arquivo**: ~117.542 caracteres
+- **Modulos no projeto**: 2 (model_entities tem 2 entradas)
+- **Entradas CNC**: 21 (machining dict)
+- **Materiais usados**: 2 (MDF 15.5mm e MDF 6.5mm)
+- **Fita de borda**: 1 tipo (CMBOR19X045BRANCO_TX — branca 19x0.45mm)
+
+---
+
+## 16. IMPLICACOES PARA O PLUGIN ORNATO
+
+### 16.1 JSON de Saida do Ornato
+
+O plugin Ornato deve gerar um JSON com a mesma estrutura para compatibilidade com o ERP:
+
+```json
+{
+  "model_entities": {
+    "<modulo_idx>": {
+      "upmcode": "CM_BAL",          // codigo do tipo de modulo
+      "upmdescription": "Balcao",   // descricao legivel
+      "upmwidth": "900",             // largura configurada
+      "upmheight": "710",            // altura configurada
+      "upmdepth": "550",             // profundidade configurada
+      "upmfinish": "BRANCO_TX",      // acabamento selecionado
+      "upmmasterid": 1,              // ID sequencial
+      "entities": {
+        "<peca_idx>": {             // cada peca do modulo
+          "upmpiece": true,
+          "upmcode": "CM_LAT_DIR",
+          "upmpersistentid": <id_sketchup>,
+          "upmprocesscodea": "<id>A",
+          "upmprocesscodeb": "<id>B",
+          "upmcutlength": <dim>,
+          "upmcutwidth": <dim>,
+          "upmcutthickness": <esp>,
+          "upmedgeside1/2/3/4": <codigo_fita>,
+          "upmedgesides": "2C1L",
+          "upmmaterialcode": "MDF_15.5_BRANCO_TX",
+          "entities": {
+            "0": { "upmfeedstockpanel": true, ... },  // painel de corte
+            "1..n": { "upmedge": 1, ... },             // fitas de borda
+            "n+1..": { "upmcode": "CM_KIT_...", ... }  // ferragens
+          }
+        }
+      }
+    }
+  },
+  "details_project": {
+    "client": ..., "project": ..., "my_code": ...,
+    "seller": ..., "type_material_panel": "MDF"
+  },
+  "machining": {
+    "<persistentid>": {
+      "code": ..., "name_peace": ...,
+      "length": ..., "width": ..., "thickness": ...,
+      "borders": [...],
+      "workers": { ... }
+    }
+  }
+}
+```
+
+### 16.2 Campos Criticos para motor_usinagem.rb
+
+- Gerar `upmprocesscodea/b` unicos por peca
+- Calcular `upmextralength/upmextrawidth` (-1mm para pecas que encaixam em rasgo)
+- Gerar entrada `CM_USI_RAS` como sub-entidade de laterais com fundo em rasgo
+- Calcular `upmquantity` corretamente: area m2 para paineis, metros lineares para fitas
+
+### 16.3 Campos Criticos para motor_fita_borda.rb
+
+- Mapear `upmedgeside1/2/3/4` com codigo da fita correta
+- Calcular `upmedgesides` / `upmedgesidetype` (1C, 2C1L, 4Lados, etc.)
+- Calcular `upmtextaggregates` para posicao da fita (Comprimento_Frontal, etc.)
+- Calcular `upmquantity` em metros lineares (+10mm de folga tipico)
+
+### 16.4 Notas de Victor sobre o Sistema
+
+- "O arquivo vai com as usinagens, tamanhos, laminacoes e etc. O G-code e feito online"
+- "Ele so exporta um JSON, o resto e importado online numa plataforma deles e la e feita toda essa configuracao"
+- Plugin e apenas o front-end de modelagem — toda inteligencia de producao fica na nuvem
+
+---
+
 *Documento gerado em 28/02/2026 durante investigacao do UpMobb via Chrome Remote Desktop*
 *Atualizado com visita guiada do Victor em 28/02/2026*
 *Atualizado com pesquisa de tipos de dobradica (reta/curva/supercurva) em 28/02/2026*
+*Atualizado com analise completa do JSON exportado e sistema de gavetas em 28/02/2026*
 *Para uso na replicacao das funcionalidades no Plugin Ornato*
