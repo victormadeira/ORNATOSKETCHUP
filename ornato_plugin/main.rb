@@ -43,18 +43,26 @@ module Ornato
   require File.join(PLUGIN_DIR, 'toolbar')
   require File.join(PLUGIN_DIR, 'menu')
   require File.join(PLUGIN_DIR, 'observers')
+  require File.join(PLUGIN_DIR, 'context_menu')
 
   # Inicialização ao carregar
   def self.init
     @painel = nil
+    @propriedades = nil
     setup_observers
+    ContextMenu.setup
     puts "[Ornato] Plugin v#{PLUGIN_VERSION} carregado com sucesso."
-    puts "[Ornato] #{Engines::MotorTemplates::CATALOGO.size} templates disponíveis"
+    puts "[Ornato] #{Engines::MotorTemplates::CATALOGO.size} templates disponiveis"
     puts "[Ornato] #{Models::BibliotecaMateriais.materiais_padrao.size} materiais na biblioteca"
+    puts "[Ornato] Menu de contexto (right-click) ativo"
   end
 
   def self.painel
     @painel ||= UI::Painel.new
+  end
+
+  def self.propriedades
+    @propriedades ||= UI::Propriedades.new
   end
 
   def self.mostrar_painel
