@@ -1234,15 +1234,55 @@ end
 - Quando selecionada, aparece opção para definir **quantas regulagens** (quantidade de furos de regulagem)
 - Permite reposicionar a prateleira após montada
 
-### 18.4 Pergunta Pendente — Posição Inicial
+### 18.4 Posição da Prateleira
 
-> **Q (reformulada)**: Quando você insere 1 prateleira no modo não-paramétrico, como você define onde ela fica? Você digita a distância do fundo (bottom) em mm? Ou pode arrastar com o mouse para posicionar? Ou ela aparece no meio do vão por padrão?
+**Profundidade (eixo Z — frente/fundo):**
+- Por padrão, a prateleira fica **encostada no fundo** (profundidade total do módulo)
+- Existe opção de **recuo de frente**: desloca a prateleira para frente, liberando espaço
+  para portas embutidas (ex: porta de correr interna, porta rebatível interna)
+- Parâmetro: `recuo_frente` em mm
+
+**Altura (eixo Y — posição vertical):**
+- A altura é sempre definida em relação à **base do móvel** (distância do piso do módulo)
+- Após inserir, aparecem os campos de configuração preenchidos **conforme a quantidade de prateleiras**
+  informada (1 campo de altura por prateleira)
+
+**Fluxo completo de inserção:**
+1. Agregados → Internos → Prateleira
+2. Insere uma prateleira no módulo
+3. Define a quantidade (1..N)
+4. Escolhe modo: **Paramétrico** (divide vão igualmente) ou **Manual** (campo por campo)
+5. No modo manual: preenche a altura de cada prateleira (distância da base em mm)
+6. Configura tipo: **Fixa** ou **Regulável** (com quantidade de furos de regulagem)
+7. Configura recuo de frente se necessário (para portas embutidas)
 
 ---
 
-## 19. Sistema de Etiquetas e Listagem de Peças
+## 19. Etiquetas, Listagem de Peças, Orçamento e Expedição
 
-> *(A ser documentado)*
+### 19.1 Escopo — Plataforma Online (fora do plugin)
+
+Estas funcionalidades são **100% online** (plataforma UpMobb web), fora do plugin SketchUp:
+- Etiquetas de peças (código de barras, dados de corte)
+- Listagem / BOM (Bill of Materials)
+- Orçamento / precificação
+- Plano de corte (otimização)
+- Expedição / romaneio
+
+### 19.2 Fluxo
+
+```
+Plugin SketchUp → Exporta JSON → Upload plataforma online →
+→ Orçamento / Plano de Corte / Etiquetas / G-code / Expedição
+```
+
+### 19.3 Nota para Plugin Ornato
+
+- Foco atual: **replicar a parte de modelagem** do plugin SketchUp
+- A integração com ERP Ornato (orçamento, plano de corte, etiquetas, expedição)
+  será documentada em **sessão separada**, após a modelagem estar completa
+
+> *(Detalhamento da plataforma online a ser documentado em sessão futura com Victor)*
 
 ---
 
@@ -1251,4 +1291,5 @@ end
 *Atualizado com pesquisa de tipos de dobradica (reta/curva/supercurva) em 28/02/2026*
 *Atualizado com analise completa do JSON exportado e sistema de gavetas em 28/02/2026*
 *Atualizado com sistema de alinhamento, lateral passante e prateleiras em 28/02/2026*
+*Atualizado com posicao de prateleiras (recuo frente, altura pela base) e escopo online em 28/02/2026*
 *Para uso na replicacao das funcionalidades no Plugin Ornato*
