@@ -142,12 +142,80 @@ O UpMobb funciona como um **painel lateral (HtmlDialog)** dentro do SketchUp, co
 - **Info**: "Modulos para realizar trocas"
 - **Conceito**: Seleciona modulo > troca ferragem de fixacao, estilo do movel, tipo de fundo, etc.
 
-#### Grupos de Trocas:
-- Fixacao com Reguas
-- Fixacao Lateral
-- Fixacao Regua Deitada
-- Fundos (trocar tipo de fundo)
-- Regua Dianteira
+#### Grupos de Trocas (11 grupos — mapeamento completo):
+
+**1. Caixas** — Troca o modelo estrutural da carcaça (18+ modelos):
+- Cada modelo representa uma configuração diferente: com/sem fundo, com/sem divisória,
+  com lateral passante ou base passante, abertura frontal variada
+- Modelos numerados: modelo 01 ao 18+ (nomenclatura simples sem descritivo)
+- Seleção visual por thumbnail 3D
+
+**2. Divisorias Especiais** — 2 tipos:
+- Com recorte perfil Cava Alternativa 2322
+- Divisoria normal
+
+**3. Dobradiças** — 9+ tipos (marcas: Blum, Hettich, Hardt, HD):
+- Blum blumotion top
+- Blum Clip Stand
+- Blum sem mola (fecho toque)
+- Dobradiça 35mm calço 3D com amortecedor HETTICH
+- Dobradiça 35mm calço 4F HARDT
+- Dobradiça 35mm calço fixo 4F com amortecedor HARDT
+- Dobradiça 35mm com amortecedor calço 3D HARDT
+- Dobradiça 35mm Push Open 2F HARDT
+- Dobradiça com amortecedor canto cego 90° HD
+- Dobradiça Generica
+
+**4. Fixação Divisoria** — Kits de ferragem para fixar divisórias:
+- Chapa Fixação fundos
+- Kit Cavilha Para Face
+- Kit Cavilhas
+- Kit com 1 Minifix pino Twister e 1 Cavilha
+- Kit Minifix com Cavilha pino Rapid
+- Kit Minifix com Cavilha pino Twister
+- Kit Minifix Haste Dupla com Cavilha
+- Kit Minifix pino Rapid
+- Kit Minifix pino Twister
+- Kit Parafuso
+- Kit Parafuso com Cavilha
+- Kit Parafuso Para Face
+
+**5. Fixação Lateral** — mesmo catálogo de kits da Fixação Divisoria
+
+**6. Fixação Prateleira** — mesmos kits + item exclusivo:
+- **Conector Oculto Bigfer** (suporte de prateleira oculto, exclusivo desta categoria)
+
+**7. Fixação Régua Deitada** — mesmo catálogo de kits
+
+**8. Fundos** — 4 tipos de painel traseiro:
+- Fundo Horizontal
+- Fundo Horizontal com rasgo
+- Fundo Vertical (padrão)
+- Fundo Vertical com rasgo
+
+**9. Portas de Giro** — 29 tipos (maior catálogo):
+- *Perfis Alumínio (AL) — Renzex/Alternativa*:
+  AL Perfil 1007-1107 Renzex, AL Perfil 1130-1131 Renzex, AL Perfil 903-905 Renzex,
+  AL Perfil 918-919 Renzex, AL Perfil Arezzo Alternativa, AL Perfil Cava Fita,
+  AL Perfil Integrato Contatto, Perfil 4023-4025 Alternativa, Perfil Cava 4030T Alternativa
+- *MDF — Cava*:
+  Cava MDF, Cava MDF 45°, Cava MDF Simples, Cava Quadrada
+- *MDF — Chanfrada / Especial*:
+  Chanfrada Palhinha, Chanfrada Rebaixo Central, Chanfrada Tela Metalica, Espelho Colado
+- *MDF — Perfis (versão MDF dos perfis alumínio)*:
+  Perfil 1007-1107, Perfil 1130-1131 Renzex, Perfil 903-905 Renzex, Perfil 918-919 Renzex,
+  Perfil Arezzo Alternativa, Perfil Cava Fita, Perfil Integrato Contatto
+- *MDF — Provençal*:
+  Provençal, Provençal Chanfro, Provençal Moldura 6mm, Provençal Moldura 6mm Reguas,
+  Provençal Moldura 6mm Reguas 45°
+- *Sem Puxador* (porta MDF lisa sem recorte de puxador)
+
+**10. Portas Duplas** — mesmos tipos de Portas de Giro em versão dupla (2 folhas)
+  (mesmos perfis AL Renzex/Alternativa e MDF)
+
+**11. Régua Dianteira** — 2 tipos:
+- Régua Dianteira Veio Horizontal
+- Régua Dianteira Veio Vertical
 
 ### 2.6 Cores (Paleta)
 - **Funcao**: Aplicar acabamentos/cores aos moveis
@@ -1292,4 +1360,5 @@ Plugin SketchUp → Exporta JSON → Upload plataforma online →
 *Atualizado com analise completa do JSON exportado e sistema de gavetas em 28/02/2026*
 *Atualizado com sistema de alinhamento, lateral passante e prateleiras em 28/02/2026*
 *Atualizado com posicao de prateleiras (recuo frente, altura pela base) e escopo online em 28/02/2026*
+*Atualizado com mapeamento completo dos 11 grupos de Trocas gerais em 28/02/2026*
 *Para uso na replicacao das funcionalidades no Plugin Ornato*
