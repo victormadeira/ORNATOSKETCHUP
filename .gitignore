@@ -1,0 +1,28 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# SketchUp temp files
+*.skb
+*.skp~
+~$*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Claude Code
+.claude/
+
+# Packages (gerados)
+*.rbz
+
+# Thumbnails
+Thumbs.db
