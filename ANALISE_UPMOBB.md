@@ -444,7 +444,122 @@ Da esquerda para direita:
 
 ---
 
-## 9. NOTAS DO USUARIO (Victor)
+## 9. VISITA GUIADA — DETALHES DO CONFIGURADOR (Sessao com Victor)
+
+### 9.1 Configurador do Modulo (Engrenagem na Toolbar)
+Ao selecionar um modulo com a mira verde, abre uma **janela "Configurador"** com:
+
+**Barra lateral esquerda** (abas do configurador):
+1. Puzzle — Componente/agregado
+2. Dimensoes — medidas editaveis (PRINCIPAL)
+3. Grid/posicoes — distribuicao
+4. Olho — visibilidade
+5. Corrente cortada — desvincular
+6. Gota — acabamento/cor
+7. Lista/check — propriedades
+8. Tesoura — cortar/modificar
+9. Seta — voltar/desfazer
+
+**Barra superior** (acoes):
+- Puzzle vermelho (remover) / Puzzle verde (adicionar)
+- Copiar/duplicar
+- Grafico/analytics
+- Rotacao / Aplicar
+
+**Para Balcao — campos editaveis:**
+- Elevacao: -15.50
+- Comprimento: 900.00
+- Profundidade: 570.00
+- Altura: 710.00
+- Afastamento Traseiro em relacao ao fundo: 22.50
+- Espessura: 15mm (dropdown)
+- Tipo de montagem: Base passante (dropdown)
+- Botao "Aplicar"
+- Cada campo tem icone vermelho para resetar ao padrao
+
+**IMPORTANTE**: O Configurador e CONTEXTUAL — mostra campos diferentes para cada tipo de modulo:
+- Balcao: elevacao, comprimento, altura, afastamento traseiro
+- Paineis: dimensoes basicas
+- Paineis ripados: dimensoes + tamanho de ripas + espacamento de ripas
+- Porta dupla: folga entre portas, transpasses, posicao puxador
+- Cada tipo mostra apenas parametros relevantes
+
+### 9.2 Mira Ciano — Selecao de Peca Individual
+Ao usar a mira ciano/verde, seleciona uma **peca especifica** dentro do modulo.
+O Configurador muda para modo "Peca" (indicado no rodape) mostrando:
+
+**Exemplo — Regua Deitada selecionada:**
+- Nome: Regua Deitada
+- Tipo: Regua
+- Descricao: Regua Deitada 15.5 mm
+- Material: MDF
+- Acabamento: Branco Tx, Laminacao 2C
+- Dimensoes: Comprimento 869mm, Largura 70mm
+
+**Opcoes editaveis da peca:**
+- Adicionar ao comprimento (+/-): ajuste fino
+- Adicionar a altura (+/-): ajuste fino
+- Mover em X (+/-): reposicionar
+- Mover em Y (+/-): reposicionar
+- Botao "Aplicar"
+
+### 9.3 Mira Vermelha — Exclusao de Peca
+- Peca selecionada fica **VERMELHA** no viewport
+- Label aparece (ex: "Conjunto fixacao")
+- Confirma e a peca e excluida do modulo
+- Util para: remover fundo, remover regua, trocar porta errada
+
+### 9.4 Fluxo de Insercao de Agregados (Portas)
+Navegacao: Agregados > Internos > Portas
+
+**Tipos de porta disponveis:**
+- Chanfrada Palhinha (MDF Provencal com palhinha/rattan)
+- Chanfrada Rebaixo Central (MDF Provencal com rebaixo)
+- Chanfrada Tela Metalica (MDF Provencal com tela)
+- Espelho Colado (MDF com espelho)
+- Renzex (MDF com perfil Renzex — 2 variacoes)
+- E mais...
+
+**Tipos de porta dupla:**
+- Cava MDF 45 graus
+- Cava MDF Simples
+- Cava Quadrada
+- Chanfrada Palhinha
+- Chanfrada Rebaixo
+- Chanfrada Tela Metalica
+- E mais...
+
+**Fluxo de insercao:**
+1. Escolhe tipo de porta no catalogo
+2. Aparece mira azul no viewport
+3. Clica no modulo alvo
+4. Aperta Enter → porta inserida!
+5. "Caminhos possiveis: 0/3" mostra vaos disponiveis
+
+**Configurador da Porta Dupla inserida:**
+- Nome: Conjunto Porta Dupla
+- Tipo: Porta de giro cava MDF 45
+- Material: Branco Tx
+- Comprimento CavaMDF (0 = total)
+- Posicao do puxador: Cima (dropdown)
+- Espessura: 15mm
+- Folga entre portas: 3.50
+- Transpasse inferior: 12.00
+- Transpasse superior: 12.00
+- Tipo de dobradica (abaixo)
+
+**Validacao automatica:**
+- Se porta simples e grande demais para o vao → aparece alerta ⚠️
+- Sistema avisa que deveria ser porta dupla
+
+### 9.5 Niveis de Selecao
+O rodape do Configurador indica o nivel:
+- **"Componente"** → modulo inteiro selecionado
+- **"Peca"** → peca individual selecionada
+
+---
+
+## 10. NOTAS DO USUARIO (Victor)
 
 - "Biblioteca sao modulos prontos que o usuario salvou, uma especie de atalho"
 - "Ao clicar num modulo, voce pode inserir agregados neles, selecionando portas etc"
@@ -455,8 +570,74 @@ Da esquerda para direita:
 - "Mira verde = selecionar componente, mira ciano = selecionar um componente, mira vermelha = excluir peca"
 - "La abre um menu de configuracoes do modulo muito interessante"
 - "Exportar funciona para exportar JSON para orcamento em outras plataformas ou exportar para fazer o plano de corte"
+- "Nessa funcao voce consegue configurar toda a caixaria"
+- "Tudo que for conveniente para aquele tipo de modulo e mostrado"
+- "Paineis ripados tem dimensoes, tamanho de ripas, espacamento de ripas"
+- "Seta ciano seleciona peca especifica para edicao — adicionar comprimento, altura, mover"
+- "Seta vermelha seleciona e fica vermelha a peca, dai pode excluir unicamente a peca"
+- "Seleciona porta, aperta Enter e ja era — modulo recebe a porta"
+- "Aviso aparece quando porta e grande demais — deveria ter colocado porta dupla"
+- "Existem muitas coisas nos agregados — portas de correr, tamponamento, etc."
+- "Sistema e capaz de modelar tudo, capaz de editar tudo"
+
+---
+
+## 11. TIPOS DE DOBRADICA — Reta, Curva e Supercurva
+
+O UpMobb permite configurar o tipo de dobradica no Configurador da porta (campo "Tipo de dobradica").
+Existem 3 tipos principais, cada um para uma situacao de montagem diferente:
+
+### 11.1 Dobradica Reta (Straight / Full Overlay)
+- **Aplicacao**: Porta **sobreposta** — a porta cobre totalmente a lateral da caixa
+- **Calco (cranking)**: 0mm — braco reto, sem curvatura
+- **Abertura**: Limitada a ~95-100 graus
+- **Quando usar**: Modulos com **uma unica porta** por lateral, onde a porta sobrepoe completamente a espessura da lateral
+- **Resultado visual**: Quando fechada, a porta fica na frente da lateral, cobrindo-a totalmente
+- **E a mais comum** em moveis residenciais simples
+
+### 11.2 Dobradica Curva (Curved / Half Overlay / Semi-sobreposta)
+- **Aplicacao**: Porta **semi-sobreposta** — a porta cobre parcialmente a lateral
+- **Calco (cranking)**: ~9.5mm — braco com curvatura media
+- **Abertura**: Maior que 100 graus
+- **Quando usar**: Modulos com **duas portas adjacentes** que compartilham a mesma lateral central (ex: armario com 2 vaos lado a lado)
+- **Resultado visual**: Cada porta cobre metade da espessura da lateral compartilhada
+- **Essencial** para sequencias de portas em linha (cozinhas com modulos lado a lado)
+
+### 11.3 Dobradica Supercurva (Super-curved / Inset / Embutida)
+- **Aplicacao**: Porta **embutida** (porta de encaixe) — a porta fica rente/alinhada com a lateral
+- **Calco (cranking)**: ~16mm — braco com curvatura maxima
+- **Abertura**: Maior que 100 graus
+- **Quando usar**: Quando a porta deve ficar **no mesmo plano** que as laterais do modulo (acabamento flush/embutido)
+- **Resultado visual**: Quando fechada, a porta fica alinhada com a face da lateral — visual premium e clean
+- **Mais sofisticada** — usada em moveis de alto padrao
+
+### 11.4 Tabela Comparativa
+
+| Caracteristica | Reta | Curva | Supercurva |
+|---|---|---|---|
+| Tipo de porta | Sobreposta | Semi-sobreposta | Embutida |
+| Calco do braco | 0mm (reto) | ~9.5mm (medio) | ~16mm (maximo) |
+| Sobreposicao | Total (~18mm) | Parcial (~9mm) | Nenhuma (0mm) |
+| Angulo abertura | ~95-100° | ~100-110° | ~100-110° |
+| Uso tipico | 1 porta por lateral | 2 portas na mesma lateral | Porta flush/embutida |
+| Visual | Porta sobre lateral | Porta meia-lateral | Porta rente a lateral |
+| Complexidade | Simples | Media | Alta |
+| Preco | $ | $$ | $$$ |
+
+### 11.5 Impacto no Calculo de Pecas (Ornato Plugin)
+
+No motor de portas do Ornato (`motor_portas.rb`), o tipo de dobradica afeta:
+1. **Largura da porta**: descontar sobreposicao conforme tipo
+   - Reta: largura_vao + (2 × sobreposicao) — porta maior que o vao
+   - Curva: largura_vao + sobreposicao — porta cobre metade da lateral
+   - Supercurva: largura_vao - folga — porta menor que o vao (cabe dentro)
+2. **Posicionamento**: offset da porta em relacao a lateral
+3. **Furacao na lateral**: posicao dos furos de cup (35mm) varia conforme tipo
+4. **Quantidade de dobradicas**: mesma regra (por altura), mas posicao X muda
 
 ---
 
 *Documento gerado em 28/02/2026 durante investigacao do UpMobb via Chrome Remote Desktop*
+*Atualizado com visita guiada do Victor em 28/02/2026*
+*Atualizado com pesquisa de tipos de dobradica (reta/curva/supercurva) em 28/02/2026*
 *Para uso na replicacao das funcionalidades no Plugin Ornato*
