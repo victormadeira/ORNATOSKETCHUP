@@ -9,18 +9,14 @@
 
 ## PARTE 1 — FALHAS E LIMITAÇÕES DO UPMOBB
 
-### 1.1 Dependência Total da Nuvem
+### 1.1 Processamento Apenas na Nuvem
 
-**Problema crítico**: O UpMobb é apenas um modelador 3D. TODO processamento
-inteligente (plano de corte, G-code, etiquetas, orçamento) depende de upload
-para a plataforma online deles.
+**Observação**: O UpMobb processa tudo (plano de corte, G-code, etiquetas,
+orçamento) na plataforma online. Rodar online é uma abordagem válida,
+mas significa que toda inteligência de produção está fora do plugin.
 
-**Impacto**:
-- Sem internet = sem produção
-- Dados do cliente ficam nos servidores deles
-- Custo mensal/anual atrelado à plataforma
-- Impossível funcionar offline em fábricas sem internet estável
-- Vendor lock-in (preso ao ecossistema UpMobb)
+**Nota**: O Ornato pode adotar modelo híbrido — online para funcionalidades
+avançadas, mas com capacidade de processamento local como diferencial.
 
 ### 1.2 Ausência de Templates de Ambiente
 
@@ -409,6 +405,348 @@ REGRAS_FITA = {
 - Mostra preço total (opcional)
 - Permite "abrir portas e gavetas" interativamente
 - Exporta vistas (frontal, perspectiva, planta) em PDF
+
+### 3.11 📋 Detalhamento Rápido de Módulos (NOVO — ESSENCIAL PARA MARCENEIRO)
+
+**O que faz**: Seleciona um módulo → gera automaticamente a **ficha técnica completa**
+com tudo que o marceneiro precisa para fabricar aquele módulo.
+
+**O problema hoje**: O marceneiro modela em 3D, mas depois precisa gastar horas
+criando desenhos técnicos 2D para a oficina. Muitos simplesmente não fazem
+e cortam "de cabeça", gerando erros.
+
+**Solução — Ficha Técnica Automática por módulo:**
+
+```
+╔══════════════════════════════════════════════════════════════╗
+║  FICHA TÉCNICA — Balcão Pia Cozinha (Módulo 03)            ║
+║  Projeto: Cozinha Sra. Maria | Data: 28/02/2026            ║
+╠══════════════════════════════════════════════════════════════╣
+║                                                              ║
+║  ┌─────────────┐  ┌──────────┐  ┌──────────┐               ║
+║  │  VISTA      │  │ VISTA    │  │ VISTA    │               ║
+║  │  FRONTAL    │  │ LATERAL  │  │ SUPERIOR │               ║
+║  │  (com cotas)│  │ (corte)  │  │ (planta) │               ║
+║  └─────────────┘  └──────────┘  └──────────┘               ║
+║                                                              ║
+║  DIMENSÕES GERAIS: 800 x 870 x 550mm                       ║
+║  Material: MDF Branco TX 15mm | Tampo: Granito 20mm        ║
+║                                                              ║
+║  ┌──────────────────────────────────────────────────────┐   ║
+║  │ LISTA DE PEÇAS                                       │   ║
+║  ├──────────────────┬──────────┬───────┬───────┬────────┤   ║
+║  │ Peça             │ Dimensão │ Qtd   │ Mat.  │ Fita   │   ║
+║  ├──────────────────┼──────────┼───────┼───────┼────────┤   ║
+║  │ Lateral ESQ      │ 720x550  │ 1     │ BR TX │ 1C     │   ║
+║  │ Lateral DIR      │ 720x550  │ 1     │ BR TX │ 1C     │   ║
+║  │ Base             │ 770x550  │ 1     │ BR TX │ 1C     │   ║
+║  │ Travessa Sup     │ 770x80   │ 1     │ BR TX │ 1C     │   ║
+║  │ Fundo            │ 770x720  │ 1     │ BR TX │ —      │   ║
+║  │ Porta Lisa       │ 717x397  │ 2     │ BR TX │ 4L     │   ║
+║  └──────────────────┴──────────┴───────┴───────┴────────┘   ║
+║                                                              ║
+║  ┌──────────────────────────────────────────────────────┐   ║
+║  │ FERRAGENS                                            │   ║
+║  ├──────────────────┬───────┬───────────────────────────┤   ║
+║  │ Dobradiça Blum   │ 4 un  │ Reta c/ amortecedor      │   ║
+║  │ Minifix 15mm     │ 8 un  │ Fixação lateral/base      │   ║
+║  │ Cavilha 8mm      │ 8 un  │ Alinhamento               │   ║
+║  │ Puxador Alça     │ 2 un  │ 160mm alumínio            │   ║
+║  │ Pé regulável     │ 4 un  │ Altura 100-150mm          │   ║
+║  └──────────────────┴───────┴───────────────────────────┘   ║
+║                                                              ║
+║  ┌──────────────────────────────────────────────────────┐   ║
+║  │ MAPA DE FURAÇÃO (Lateral ESQ — face interna)         │   ║
+║  │                                                       │   ║
+║  │  ●(37,32) ●(37,64)     Minifix Ø15 prof.12.5mm      │   ║
+║  │  ○(37,48)               Cavilha Ø8 prof.12mm         │   ║
+║  │                                                       │   ║
+║  │  ●(37,688) ●(37,720)   Minifix topo                  │   ║
+║  │  ○(37,704)              Cavilha topo                  │   ║
+║  │                                                       │   ║
+║  │  ◆(22,100)              Dobradiça Ø35 prof.12mm      │   ║
+║  │  ◆(22,620)              Dobradiça Ø35 prof.12mm      │   ║
+║  └──────────────────────────────────────────────────────┘   ║
+║                                                              ║
+║  [QR Code → Link para vista 3D interativa]                  ║
+╚══════════════════════════════════════════════════════════════╝
+```
+
+**Geração**: 1 clique → seleciona módulo → "Gerar Ficha Técnica"
+**Formato**: PDF exportável ou visualização no painel
+**Inclui**: Vistas 2D cotadas, lista de peças, ferragens, mapa de furação
+
+### 3.12 🏷️ Sistema de Etiquetas Inteligentes (NOVO — ESSENCIAL PARA MARCENEIRO)
+
+**O que faz**: Cada peça cortada recebe uma etiqueta que diz EXATAMENTE
+o que ela é e onde vai.
+
+**O problema hoje**: Marceneiro corta 50 peças, empilha, e depois não sabe
+qual é qual. "Essa lateral é do módulo da pia ou do forno?" → Mede de novo,
+perde tempo, erra.
+
+**Modelo de etiqueta por peça:**
+
+```
+┌─────────────────────────────────────────────┐
+│ ■■■■■ CÓDIGO DE BARRAS ■■■■■               │
+│                                              │
+│ LATERAL ESQUERDA                             │
+│ Módulo: Balcão Pia (M03)                     │
+│ Ambiente: Cozinha                            │
+│                                              │
+│ Dimensões: 720 x 550 x 15mm                 │
+│ Material:  MDF Branco TX 15mm                │
+│                                              │
+│ FITA DE BORDA:                               │
+│ ┌────────────────┐                           │
+│ │    ▲ TOPO      │ ← sem fita               │
+│ │ E  │         D │                           │
+│ │ S  │         I │                           │
+│ │ Q  │         R │ ← sem fita               │
+│ │    │           │                           │
+│ │    ▼ BASE     │ ← sem fita               │
+│ └────────────────┘                           │
+│    ▲ FRENTE ← FITA BRANCA 22mm              │
+│                                              │
+│ FURAÇÃO: Face interna                        │
+│ • 2x Minifix Ø15 (base)                     │
+│ • 1x Cavilha Ø8 (base)                      │
+│ • 2x Minifix Ø15 (topo)                     │
+│ • 2x Dobradiça Ø35 (frente)                 │
+│                                              │
+│ Projeto: Cozinha Sra. Maria                  │
+│ Peça 03/24 | 28/02/2026                      │
+│ [QR CODE]                                    │
+└─────────────────────────────────────────────┘
+```
+
+**Informações na etiqueta:**
+1. **Nome da peça** em destaque (LATERAL ESQUERDA, não "CM_LAT_ESQ")
+2. **Módulo pai** com nome descritivo (Balcão Pia, não "M03")
+3. **Ambiente** (Cozinha, Dormitório, etc.)
+4. **Dimensões** líquidas (já descontado rasgo se houver)
+5. **Material** com acabamento
+6. **Diagrama de fita de borda** visual (mostra quais lados têm fita)
+7. **Resumo de furação** (quantos furos, que tipo)
+8. **Numeração sequencial** (peça 03/24 = terceira de 24 peças totais)
+9. **QR Code** que linka para vista 3D do módulo ou ficha técnica
+
+**Agrupamentos inteligentes de impressão:**
+- Por módulo (todas as peças do Balcão Pia juntas)
+- Por material (todas as peças MDF Branco juntas — otimiza corte)
+- Por espessura (todas 15mm juntas, depois 18mm)
+- Por ambiente (todas da cozinha, depois dormitório)
+
+### 3.13 💥 Vista Explodida Automática (NOVO)
+
+**O que faz**: Gera automaticamente uma vista explodida do módulo mostrando
+como as peças se encaixam, com setas indicando a montagem.
+
+```
+Vista normal:                Vista explodida:
+┌──────────┐                    ╭─── tampo
+│          │                ┌───┴──────┐
+│  MÓDULO  │       ←──     │          │
+│          │              ┌─┤          ├─┐
+└──────────┘              │ │  ← base │ │
+                          │ └─────────┘ │ ← laterais
+                          └─────┬───────┘
+                                │
+                           ┌────┴────┐  ← fundo
+                           └─────────┘
+```
+
+- Geração automática a partir da geometria do módulo
+- Setas numeradas indicando ordem de montagem
+- Pode ser exportada como imagem/PDF
+- Útil para treinar montadores ou terceirizar montagem
+
+### 3.14 📊 Agrupamento de Peças Iguais (NOVO)
+
+**O que faz**: Identifica automaticamente peças com dimensões e material idênticos
+em todo o projeto e agrupa para corte conjunto.
+
+```
+┌──────────────────────────────────────────────────────────┐
+│  PEÇAS IGUAIS — AGRUPAR PARA CORTE                       │
+│                                                           │
+│  Grupo 1: 720 x 550 x 15mm MDF Branco TX                │
+│  → 8 laterais (de 4 módulos diferentes)                  │
+│  → Corte todas de uma vez na esquadrejadeira             │
+│                                                           │
+│  Grupo 2: 770 x 550 x 15mm MDF Branco TX                │
+│  → 4 bases (de 4 módulos)                                │
+│                                                           │
+│  Grupo 3: 717 x 397 x 18mm MDF Branco TX                │
+│  → 8 portas (todas iguais!)                              │
+│                                                           │
+│  Grupo 4: 770 x 80 x 15mm MDF Branco TX                 │
+│  → 4 travessas superiores                                │
+│                                                           │
+│  TOTAL: 24 peças em 4 grupos (em vez de 24 medidas)      │
+│  ECONOMIA DE TEMPO: ~45 minutos no corte                 │
+└──────────────────────────────────────────────────────────┘
+```
+
+**Benefício**: Em vez de medir e cortar 24 peças individualmente,
+o marceneiro configura a esquadrejadeira 4 vezes e corta em lote.
+
+### 3.15 🔧 Roteiro de Produção (NOVO)
+
+**O que faz**: Gera a sequência completa de produção, passo a passo.
+
+```
+ROTEIRO DE PRODUÇÃO — Cozinha Sra. Maria
+═══════════════════════════════════════
+
+ETAPA 1: CORTE (esquadrejadeira)
+  □ Configurar para MDF 15mm Branco TX
+    □ Cortar 8x laterais 720x550
+    □ Cortar 4x bases 770x550
+    □ Cortar 4x travessas 770x80
+    □ Cortar 4x fundos 770x720 (MDF 3mm)
+  □ Trocar para MDF 18mm Branco TX
+    □ Cortar 8x portas 717x397
+
+ETAPA 2: FITA DE BORDA
+  □ Fita Branca 22mm (bordas frontais)
+    □ 8x laterais (1 lado = frente)
+    □ 4x bases (1 lado = frente)
+    □ 4x travessas (1 lado = frente)
+  □ Fita Branca 44mm (portas = 4 lados)
+    □ 8x portas (todos os lados)
+
+ETAPA 3: FURAÇÃO
+  □ Broca Ø35mm (dobradiças)
+    □ 8x laterais — face interna, 2 furos cada
+  □ Broca Ø15mm (minifix)
+    □ 8x laterais — 4 furos cada (base + topo)
+    □ 4x bases — 4 furos cada (laterais)
+  □ Broca Ø8mm (cavilha)
+    □ 8x laterais — 2 furos cada
+    □ 4x bases — 2 furos cada
+
+ETAPA 4: MONTAGEM
+  □ Módulo 01 (Balcão Pia)
+    □ Montar caixa (laterais + base + travessa)
+    □ Fixar fundo
+    □ Instalar dobradiças nas laterais
+    □ Fixar portas nas dobradiças
+    □ Instalar puxadores
+  □ Módulo 02 (Balcão Gavetas)
+    □ ...
+
+ETAPA 5: ACABAMENTO
+  □ Retocar bordas expostas
+  □ Limpar módulos
+  □ Embalar para transporte
+
+ETAPA 6: INSTALAÇÃO
+  □ Nivelar base com pés reguláveis
+  □ Fixar módulos entre si
+  □ Fixar aéreos na parede
+  □ Instalar tampo
+  □ Ajustar portas e gavetas
+  □ Passar silicone (tampo/parede)
+```
+
+### 3.16 ⚡ Features para o PROJETISTA (velocidade + apresentação)
+
+**O projetista precisa de**: VELOCIDADE na criação, BELEZA na apresentação,
+FLEXIBILIDADE nas alterações.
+
+#### 3.16.1 Módulos Pré-Dimensionados por Função
+
+Em vez de inserir "balcão genérico" e configurar tudo, o projetista escolhe
+direto o módulo pela FUNÇÃO:
+
+```
+COZINHA:
+├── Módulo Pia          → 800mm (padrão cuba simples) / 1200mm (cuba dupla)
+├── Módulo Cooktop      → 600mm (4 bocas) / 900mm (5 bocas)
+├── Módulo Forno        → 600mm (c/ nicho 60) / 900mm (c/ nicho 90)
+├── Módulo Micro-ondas  → 600mm (c/ nicho)
+├── Módulo Lava-louça   → 600mm (c/ abertura frontal)
+├── Módulo Gavetas      → 400/500/600mm (3 ou 4 gavetas)
+├── Módulo Portas       → 300/400/500/600mm (1 ou 2 portas)
+├── Módulo Canto L      → 900x900mm / 1000x1000mm
+├── Módulo Canto Oblíquo→ com lazy susan
+├── Módulo Lixeira      → 300/400mm
+├── Módulo Tempero      → 150/200mm (pull-out)
+└── Aéreo Coifa         → 600/900mm (esconde coifa)
+
+DORMITÓRIO:
+├── Módulo Cabideiro    → 800mm (altura padrão cabide)
+├── Módulo Prateleiras  → 600mm (5 prateleiras)
+├── Módulo Gaveteiro    → 500mm (4 gavetas roupa)
+├── Módulo Sapateira    → 600mm (prateleiras inclinadas)
+├── Módulo Maleiro      → sobre os módulos (altura variável)
+└── Módulo Espelho      → porta com espelho interno
+```
+
+**Benefício**: Insere módulo → já vem com agregados corretos
+(pia já vem com fundo horizontal, forno já vem com nicho e ventilação).
+
+#### 3.16.2 Duplicar e Espelhar
+
+- **Duplicar módulo**: Ctrl+D → cópia idêntica pronta para posicionar
+- **Espelhar módulo**: Ctrl+M → espelho (lateral esquerda vira direita)
+- **Duplicar ambiente inteiro**: Para fazer variação do projeto
+
+#### 3.16.3 Múltiplas Opções de Orçamento (3 níveis)
+
+O projetista cria UM projeto e gera 3 orçamentos com materiais diferentes:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  OPÇÕES DE ORÇAMENTO — Cozinha Sra. Maria               │
+│                                                          │
+│  OPÇÃO 1 — ECONÔMICO                     R$ 8.500       │
+│  MDF Branco 15mm, portas lisas, puxador alça simples    │
+│  Dobradiça standard, corrediça telescópica               │
+│                                                          │
+│  OPÇÃO 2 — PADRÃO                        R$ 12.800      │
+│  MDF Branco TX 18mm, portas freijó, puxador perfil AL   │
+│  Dobradiça Blum c/ amortecedor, corrediça oculta        │
+│                                                          │
+│  OPÇÃO 3 — PREMIUM                       R$ 18.500      │
+│  MDF Carvalho 18mm, portas provençal, puxador cava      │
+│  Dobradiça Blum blumotion, Tandembox Blum               │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Benefício**: Cliente escolhe na hora. Projetista não precisa
+refazer o projeto 3 vezes — só troca a "camada de acabamento".
+
+#### 3.16.4 Cotagem Automática no 3D
+
+- Ao selecionar módulo: exibe cotas principais automaticamente
+- Cota geral (largura, altura, profundidade)
+- Cotas internas (vãos, divisórias)
+- Toggle ON/OFF por camada
+- Exportável como vista 2D cotada
+
+#### 3.16.5 Histórico de Projetos / Clonar e Adaptar
+
+```
+PROJETOS RECENTES:
+├── Cozinha em L — Sr. João (dez/2025) → [Clonar] [Abrir]
+├── Closet Casal — Sra. Ana (jan/2026) → [Clonar] [Abrir]
+├── Banheiro Suite — Sr. Pedro (fev/2026) → [Clonar] [Abrir]
+```
+
+- Clonar projeto anterior como base
+- Adaptar dimensões ao novo ambiente
+- Reaproveitar configurações de acabamento
+- Economiza 50%+ do tempo em projetos similares
+
+#### 3.16.6 Render Rápido para Redes Sociais / Portfólio
+
+- Modo "foto" com iluminação pré-configurada
+- Backgrounds prontos (parede branca, tijolo, concreto)
+- Exporta em alta resolução para Instagram/Portfolio
+- Marca d'água da marcenaria (logo do cliente)
 
 ---
 
