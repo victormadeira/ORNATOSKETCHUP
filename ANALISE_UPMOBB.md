@@ -1159,8 +1159,96 @@ O plugin Ornato deve gerar um JSON com a mesma estrutura para compatibilidade co
 
 ---
 
+## 17. Sistema de Alinhamento / Encaixe entre Módulos
+
+### 17.1 Snap Automático
+
+- Ao aproximar um módulo de outro, o SketchUp faz **auto-snap** automaticamente
+- O usuário só precisa **confirmar** o posicionamento (não é drag manual livre)
+- Aproveita o sistema nativo de inferências do SketchUp (pontos, arestas, faces)
+- Não há lógica proprietária de snap — é o próprio motor do SketchUp
+
+### 17.2 Laterais Separadas por Módulo
+
+- Cada módulo possui suas **próprias laterais independentes**
+- Módulos adjacentes **NÃO compartilham** peças entre si
+- Quando dois módulos ficam lado a lado: ficam duas laterais coladas (uma de cada módulo)
+- Isso simplifica a lógica de geração de peças — cada módulo é autossuficiente
+
+### 17.3 Lateral Passante vs Base Passante
+
+**Lateral Passante** (padrão mais comum):
+- A lateral se estende pela **altura total** do módulo
+- A base fica **entre as laterais** (encaixada internamente)
+- Largura da base = largura total − (2 × espessura da lateral)
+- Exemplo: módulo 600mm, lateral 15mm → base = 600 − 30 = 570mm
+
+**Base Passante** (variação):
+- A base se estende pela **largura total** do módulo
+- A lateral fica **entre a base e o tampo**
+- Altura da lateral = altura total − espessura da base − espessura do tampo
+
+### 17.4 Implicações para motor_caixa.rb
+
+```ruby
+# Lógica de calculo de dimensoes conforme tipo passante
+if lateral_passante
+  base_largura = modulo_largura - (2 * espessura)
+  lateral_altura = modulo_altura
+else # base_passante
+  base_largura = modulo_largura
+  lateral_altura = modulo_altura - espessura - espessura_tampo
+end
+```
+
+---
+
+## 18. Sistema de Prateleiras
+
+### 18.1 Inserção
+
+- Acesso: **Agregados → Internos → Prateleira** (ou similar)
+- Insere-se **uma prateleira** e depois configura a quantidade desejada
+- Sem limite fixo de quantidade documentado
+
+### 18.2 Modos de Posicionamento
+
+#### Paramétrico (automático)
+- O plugin **divide o vão igualmente** entre as prateleiras
+- Exemplo: vão de 600mm, 2 prateleiras → cada uma a 200mm do vão
+- Ideal para projetos rápidos e espaçamento uniforme
+
+#### Não-Paramétrico (manual)
+- Abre campos individuais para cada prateleira
+- O usuário preenche a **altura de cada uma** manualmente
+- Permite espaçamentos irregulares conforme necessidade
+
+### 18.3 Fixação vs Regulável
+
+**Prateleira Fixa**:
+- Posicionada em uma altura definitiva
+- Encaixada via rasgo ou fixação direta
+
+**Prateleira Regulável**:
+- Utiliza **furos de regulagem** (pinos) nas laterais
+- Quando selecionada, aparece opção para definir **quantas regulagens** (quantidade de furos de regulagem)
+- Permite reposicionar a prateleira após montada
+
+### 18.4 Pergunta Pendente — Posição Inicial
+
+> **Q (reformulada)**: Quando você insere 1 prateleira no modo não-paramétrico, como você define onde ela fica? Você digita a distância do fundo (bottom) em mm? Ou pode arrastar com o mouse para posicionar? Ou ela aparece no meio do vão por padrão?
+
+---
+
+## 19. Sistema de Etiquetas e Listagem de Peças
+
+> *(A ser documentado)*
+
+---
+
 *Documento gerado em 28/02/2026 durante investigacao do UpMobb via Chrome Remote Desktop*
 *Atualizado com visita guiada do Victor em 28/02/2026*
 *Atualizado com pesquisa de tipos de dobradica (reta/curva/supercurva) em 28/02/2026*
 *Atualizado com analise completa do JSON exportado e sistema de gavetas em 28/02/2026*
+*Atualizado com sistema de alinhamento, lateral passante e prateleiras em 28/02/2026*
 *Para uso na replicacao das funcionalidades no Plugin Ornato*
