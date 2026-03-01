@@ -26,9 +26,11 @@ module Ornato
           mi.pecas.clear
           mi.ferragens.clear
 
-          # ─── Calcula dimensões das peças ───
-          esp = mi.espessura_corpo
-          esp_f = mi.espessura_fundo
+          # ─── Calcula dimensões das peças (usa espessura REAL) ───
+          # MDF 15mm → real 15.5mm, 18mm → 18.5mm, 25mm → 25.5mm
+          esp = mi.espessura_corpo_real   # espessura REAL do corpo
+          esp_f = mi.espessura_fundo_real # espessura REAL do fundo
+          esp_nominal = mi.espessura_corpo  # nominal para referência de material
           l = mi.largura
           a = mi.altura
           p = mi.profundidade

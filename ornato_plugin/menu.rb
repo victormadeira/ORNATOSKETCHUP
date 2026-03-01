@@ -102,6 +102,216 @@ module Ornato
 
       menu.add_separator
 
+      # ─── Producao (Marceneiro) ───
+      sub_prod = menu.add_submenu('Producao')
+
+      sub_prod.add_item('Ficha Tecnica do Modulo') {
+        sel = Sketchup.active_model.selection
+        if sel.length == 1 && Utils.modulo_ornato?(sel.first)
+          mi = Models::ModuloInfo.carregar_do_grupo(sel.first)
+          if mi
+            ficha = Engines::MotorFichaTecnica.gerar_ficha(mi)
+            html = Engines::MotorFichaTecnica.gerar_html_ficha(ficha, formato: :completa)
+            mostrar_html('Ficha Tecnica', html, 800, 1000)
+          end
+        else
+          ::UI.messagebox('Selecione um modulo Ornato primeiro.', MB_OK)
+        end
+      }
+
+      sub_prod.add_item('Ficha Tecnica do Projeto') {
+        modulos = verificar_modulos
+        if modulos
+          mis = modulos.map { |g| Models::ModuloInfo.carregar_do_grupo(g) }.compact
+          resultado = Engines::MotorFichaTecnica.gerar_ficha_projeto(mis)
+          html = ''
+          resultado[:fichas].each { |f| html += Engines::MotorFichaTecnica.gerar_html_ficha(f, formato: :completa) }
+          mostrar_html('Fichas Tecnicas - Projeto', html, 800, 1000)
+        end
+      }
+
+      sub_prod.add_separator
+
+      sub_prod.add_item('Etiquetas do Modulo') {
+        sel = Sketchup.active_model.selection
+        if sel.length == 1 && Utils.modulo_ornato?(sel.first)
+          mi = Models::ModuloInfo.carregar_do_grupo(sel.first)
+          if mi
+            etiquetas = Engines::MotorEtiquetas.gerar_etiquetas(mi)
+            html = Engines::MotorEtiquetas.gerar_html_etiquetas(etiquetas, formato: :folha)
+            mostrar_html('Etiquetas', html, 800, 1000)
+          end
+        else
+          ::UI.messagebox('Selecione um modulo Ornato primeiro.', MB_OK)
+        end
+      }
+
+      sub_prod.add_item('Etiquetas do Projeto') {
+        modulos = verificar_modulos
+        if modulos
+          etiquetas = Engines::MotorEtiquetas.gerar_etiquetas_projeto(modulos)
+          html = Engines::MotorEtiquetas.gerar_html_etiquetas(etiquetas, formato: :folha)
+          mostrar_html('Etiquetas - Projeto', html, 800, 1000)
+        end
+      }
+
+      sub_prod.add_separator
+
+      sub_prod.add_item('Roteiro de Producao') {
+        modulos = verificar_modulos
+        if modulos
+          etiquetas = Engines::MotorEtiquetas.gerar_etiquetas_projeto(modulos)
+          roteiro = Engines::MotorEtiquetas.gerar_roteiro_producao(etiquetas)
+          texto = formatar_roteiro(roteiro)
+          ::UI.messagebox(texto, MB_MULTILINE)
+        end
+      }
+
+      sub_prod.add_item('Agrupar Pecas Iguais') {
+        modulos = verificar_modulos
+        if modulos
+          etiquetas = Engines::MotorEtiquetas.gerar_etiquetas_projeto(modulos)
+          agrupadas = Engines::MotorEtiquetas.agrupar_pecas_iguais(etiquetas)
+          texto = formatar_agrupamento(agrupadas)
+          ::UI.messagebox(texto, MB_MULTILINE)
+        end
+      }
+
+      sub_prod.add_item('Lista de Compras') {
+        modulos = verificar_modulos
+        if modulos
+          mis = modulos.map { |g| Models::ModuloInfo.carregar_do_grupo(g) }.compact
+          resultado = Engines::MotorFichaTecnica.gerar_ficha_projeto(mis)
+          resumo = Engines::MotorFichaTecnica.resumo_projeto(resultado[:fichas])
+          texto = formatar_lista_compras(resumo)
+          ::UI.messagebox(texto, MB_MULTILINE)
+        end
+      }
+
+      menu.add_separator
+
+      # ─── Inteligencia ───
+      sub_intel = menu.add_submenu('Inteligencia')
+
+      sub_intel.add_item('Sugerir Configuracao (Modulo)') {
+        sel = Sketchup.active_model.selection
+        if sel.length == 1 && Utils.modulo_ornato?(sel.first)
+          mi = Models::ModuloInfo.carregar_do_grupo(sel.first)
+          if mi
+            sugestao = Engines::MotorInteligencia.sugerir_configuracao(mi)
+            texto = Engines::MotorInteligencia.relatorio_texto(sugestao)
+            ::UI.messagebox(texto, MB_MULTILINE)
+          end
+        else
+          ::UI.messagebox('Selecione um modulo Ornato primeiro.', MB_OK)
+        end
+      }
+
+      sub_intel.add_item('Comparar Niveis (Eco/Padrao/Premium)') {
+        sel = Sketchup.active_model.selection
+        if sel.length == 1 && Utils.modulo_ornato?(sel.first)
+          mi = Models::ModuloInfo.carregar_do_grupo(sel.first)
+          if mi
+            comparacao = Engines::MotorInteligencia.comparar_niveis(mi)
+            texto = formatar_comparacao_niveis(comparacao)
+            ::UI.messagebox(texto, MB_MULTILINE)
+          end
+        else
+          ::UI.messagebox('Selecione um modulo Ornato primeiro.', MB_OK)
+        end
+      }
+
+      sub_intel.add_item('Validar Modulo') {
+        sel = Sketchup.active_model.selection
+        if sel.length == 1 && Utils.modulo_ornato?(sel.first)
+          mi = Models::ModuloInfo.carregar_do_grupo(sel.first)
+          if mi
+            resultado = Engines::MotorValidacao.validar_modulo(mi)
+            texto = Engines::MotorValidacao.relatorio(mi)
+            ::UI.messagebox(texto, MB_MULTILINE)
+          end
+        else
+          ::UI.messagebox('Selecione um modulo Ornato primeiro.', MB_OK)
+        end
+      }
+
+      sub_intel.add_item('Validar Projeto Completo') {
+        modulos = verificar_modulos
+        if modulos
+          erros_total = 0
+          avisos_total = 0
+          texto = "═══ VALIDACAO DO PROJETO ═══\n\n"
+          modulos.each do |grupo|
+            mi = Models::ModuloInfo.carregar_do_grupo(grupo)
+            next unless mi
+            resultado = Engines::MotorValidacao.validar_modulo(mi)
+            status = resultado[:valido] ? '✓' : '✗'
+            texto += "#{status} #{mi.nome}: #{resultado[:erros].length} erros, #{resultado[:avisos].length} avisos\n"
+            erros_total += resultado[:erros].length
+            avisos_total += resultado[:avisos].length
+          end
+          texto += "\n═══ TOTAL: #{erros_total} erros, #{avisos_total} avisos ═══"
+          ::UI.messagebox(texto, MB_MULTILINE)
+        end
+      }
+
+      menu.add_separator
+
+      # ─── Cotagem (3D Dimensioning) ───
+      sub_cotas = menu.add_submenu('Cotagem')
+
+      sub_cotas.add_item('Cotar Modulo (Externas)') {
+        sel = Sketchup.active_model.selection
+        if sel.length == 1 && Utils.modulo_ornato?(sel.first)
+          Engines::MotorCotagem.cotar_modulo(sel.first, externas: true, internas: false)
+        else
+          ::UI.messagebox('Selecione um modulo Ornato primeiro.', MB_OK)
+        end
+      }
+
+      sub_cotas.add_item('Cotar Modulo (Externas + Internas)') {
+        sel = Sketchup.active_model.selection
+        if sel.length == 1 && Utils.modulo_ornato?(sel.first)
+          Engines::MotorCotagem.cotar_modulo(sel.first, externas: true, internas: true)
+        else
+          ::UI.messagebox('Selecione um modulo Ornato primeiro.', MB_OK)
+        end
+      }
+
+      sub_cotas.add_item('Cotar Pecas Individuais') {
+        sel = Sketchup.active_model.selection
+        if sel.length == 1 && Utils.modulo_ornato?(sel.first)
+          Engines::MotorCotagem.cotar_pecas(sel.first)
+        else
+          ::UI.messagebox('Selecione um modulo Ornato primeiro.', MB_OK)
+        end
+      }
+
+      sub_cotas.add_item('Cotar Projeto Completo') {
+        Engines::MotorCotagem.cotar_projeto
+      }
+
+      sub_cotas.add_separator
+
+      sub_cotas.add_item('Remover Cotas (Modulo)') {
+        sel = Sketchup.active_model.selection
+        if sel.length == 1 && Utils.modulo_ornato?(sel.first)
+          Engines::MotorCotagem.remover_cotas(sel.first)
+        else
+          ::UI.messagebox('Selecione um modulo Ornato primeiro.', MB_OK)
+        end
+      }
+
+      sub_cotas.add_item('Remover Todas as Cotas') {
+        Engines::MotorCotagem.remover_cotas(Sketchup.active_model)
+      }
+
+      sub_cotas.add_item('Mostrar/Ocultar Cotas') {
+        Engines::MotorCotagem.toggle_cotas
+      }
+
+      menu.add_separator
+
       # ─── Painel ───
       menu.add_item('Painel Ornato') { Ornato.mostrar_painel }
 
@@ -364,6 +574,89 @@ module Ornato
       ::UI.messagebox("Orcamento exportado:\n#{path}", MB_OK)
     end
 
+    # ── Mostra HTML em HtmlDialog ──
+    def self.mostrar_html(titulo, html, largura = 800, altura = 600)
+      dialog = ::UI::HtmlDialog.new(
+        dialog_title: "Ornato - #{titulo}",
+        width: largura, height: altura,
+        resizable: true,
+        style: ::UI::HtmlDialog::STYLE_DIALOG
+      )
+      dialog.set_html(html)
+      dialog.show
+    end
+
+    # ── Formata roteiro de producao ──
+    def self.formatar_roteiro(roteiro)
+      texto = "═══ ROTEIRO DE PRODUCAO ═══\n\n"
+      roteiro.each do |etapa|
+        texto += "#{etapa[:numero]}. #{etapa[:nome]}\n"
+        texto += "   #{etapa[:descricao]}\n" if etapa[:descricao]
+        if etapa[:pecas]
+          etapa[:pecas].each { |p| texto += "   - #{p}\n" }
+        end
+        texto += "\n"
+      end
+      texto
+    end
+
+    # ── Formata agrupamento de pecas iguais ──
+    def self.formatar_agrupamento(agrupadas)
+      texto = "═══ PECAS AGRUPADAS (IGUAIS) ═══\n\n"
+      agrupadas.each_with_index do |etq, i|
+        texto += "#{i + 1}. #{etq.peca_nome} (#{etq.quantidade}x)\n"
+        texto += "   #{etq.comprimento} x #{etq.largura} x #{etq.espessura}mm"
+        texto += " [Real: #{etq.espessura_real}mm]" if etq.espessura_real != etq.espessura
+        texto += "\n   Material: #{etq.material}\n"
+        texto += "   Fita: #{etq.fita_codigo}\n\n"
+      end
+      texto += "═══ Total: #{agrupadas.length} itens distintos, #{agrupadas.sum { |e| e.quantidade || 1 }} pecas ═══"
+      texto
+    end
+
+    # ── Formata lista de compras ──
+    def self.formatar_lista_compras(resumo)
+      texto = "═══ LISTA DE COMPRAS ═══\n\n"
+      if resumo[:lista_compras]
+        lc = resumo[:lista_compras]
+        if lc[:chapas]
+          texto += "── CHAPAS ──\n"
+          lc[:chapas].each { |c| texto += "  #{c}\n" }
+          texto += "\n"
+        end
+        if lc[:fitas]
+          texto += "── FITAS DE BORDA ──\n"
+          lc[:fitas].each { |f| texto += "  #{f}\n" }
+          texto += "\n"
+        end
+        if lc[:ferragens]
+          texto += "── FERRAGENS ──\n"
+          lc[:ferragens].each { |f| texto += "  #{f}\n" }
+          texto += "\n"
+        end
+      end
+      texto += "\n── RESUMO ──\n"
+      texto += "Peso estimado: #{resumo[:peso_total_kg]&.round(1) || '?'} kg\n"
+      texto += "Area total: #{resumo[:area_total_m2]&.round(2) || '?'} m2\n"
+      texto
+    end
+
+    # ── Formata comparacao de niveis ──
+    def self.formatar_comparacao_niveis(comparacao)
+      texto = "═══ COMPARACAO DE NIVEIS ═══\n\n"
+      comparacao.each do |nivel, dados|
+        texto += "── #{nivel.to_s.upcase} ──\n"
+        if dados.is_a?(Hash)
+          dados.each do |k, v|
+            next if v.is_a?(Hash) || v.is_a?(Array)
+            texto += "  #{k}: #{v}\n"
+          end
+        end
+        texto += "\n"
+      end
+      texto
+    end
+
     def self.mostrar_sobre
       ::UI.messagebox(
         "#{PLUGIN_NAME} v#{PLUGIN_VERSION}\n\n" \
@@ -377,7 +670,15 @@ module Ornato
         "- Motor de usinagem CNC completo\n" \
         "- Fita de borda inteligente\n" \
         "- Pecas avulsas (tampo, painel cavilhado...)\n" \
+        "- Motor de inteligencia (selecao automatica)\n" \
+        "- Validacao de engenharia\n" \
+        "- Ficha tecnica automatica\n" \
+        "- Etiquetas inteligentes de producao\n" \
+        "- Cotagem 3D automatica\n" \
+        "- Roteiro de producao\n" \
+        "- Agrupamento de pecas iguais\n" \
         "- Integracao Ornato ERP\n\n" \
+        "Espessuras REAIS: MDF 15→15.5, 18→18.5, 25→25.5, Engrossado→31mm\n\n" \
         "2026 Ornato",
         MB_OK
       )

@@ -83,6 +83,85 @@ module Ornato
 
       tb.add_separator
 
+      # ─── Cotagem ───
+      cmd_cotas = UI::Command.new('Cotagem') {
+        sel = Sketchup.active_model.selection
+        if sel.length == 1 && Utils.modulo_ornato?(sel.first)
+          Engines::MotorCotagem.cotar_modulo(sel.first, externas: true, internas: true)
+        else
+          Engines::MotorCotagem.cotar_projeto
+        end
+      }
+      cmd_cotas.tooltip = 'Cotagem automatica (dimensoes 3D)'
+      cmd_cotas.status_bar_text = 'Adiciona cotas ao modulo selecionado ou ao projeto'
+      cmd_cotas.small_icon = cmd_cotas.large_icon = icon_path('cotagem')
+      tb.add_item(cmd_cotas)
+
+      # ─── Ficha Tecnica ───
+      cmd_ficha = UI::Command.new('Ficha Tecnica') {
+        sel = Sketchup.active_model.selection
+        if sel.length == 1 && Utils.modulo_ornato?(sel.first)
+          mi = Models::ModuloInfo.carregar_do_grupo(sel.first)
+          if mi
+            ficha = Engines::MotorFichaTecnica.gerar_ficha(mi)
+            html = Engines::MotorFichaTecnica.gerar_html_ficha(ficha, formato: :completa)
+            MenuSetup.mostrar_html('Ficha Tecnica', html, 800, 1000)
+          end
+        else
+          ::UI.messagebox('Selecione um modulo Ornato primeiro.', MB_OK)
+        end
+      }
+      cmd_ficha.tooltip = 'Gerar ficha tecnica do modulo'
+      cmd_ficha.status_bar_text = 'Gera ficha tecnica completa para producao'
+      cmd_ficha.small_icon = cmd_ficha.large_icon = icon_path('ficha')
+      tb.add_item(cmd_ficha)
+
+      # ─── Etiquetas ───
+      cmd_etiq = UI::Command.new('Etiquetas') {
+        sel = Sketchup.active_model.selection
+        if sel.length == 1 && Utils.modulo_ornato?(sel.first)
+          mi = Models::ModuloInfo.carregar_do_grupo(sel.first)
+          if mi
+            etiquetas = Engines::MotorEtiquetas.gerar_etiquetas(mi)
+            html = Engines::MotorEtiquetas.gerar_html_etiquetas(etiquetas, formato: :folha)
+            MenuSetup.mostrar_html('Etiquetas', html, 800, 1000)
+          end
+        else
+          modulos = Utils.listar_modulos
+          if modulos.any?
+            etiquetas = Engines::MotorEtiquetas.gerar_etiquetas_projeto(modulos)
+            html = Engines::MotorEtiquetas.gerar_html_etiquetas(etiquetas, formato: :folha)
+            MenuSetup.mostrar_html('Etiquetas - Projeto', html, 800, 1000)
+          else
+            ::UI.messagebox('Nenhum modulo Ornato encontrado.', MB_OK)
+          end
+        end
+      }
+      cmd_etiq.tooltip = 'Gerar etiquetas de producao'
+      cmd_etiq.status_bar_text = 'Gera etiquetas para cada peca do modulo'
+      cmd_etiq.small_icon = cmd_etiq.large_icon = icon_path('etiquetas')
+      tb.add_item(cmd_etiq)
+
+      # ─── Validar ───
+      cmd_validar = UI::Command.new('Validar') {
+        sel = Sketchup.active_model.selection
+        if sel.length == 1 && Utils.modulo_ornato?(sel.first)
+          mi = Models::ModuloInfo.carregar_do_grupo(sel.first)
+          if mi
+            texto = Engines::MotorValidacao.relatorio(mi)
+            ::UI.messagebox(texto, MB_MULTILINE)
+          end
+        else
+          ::UI.messagebox('Selecione um modulo Ornato para validar.', MB_OK)
+        end
+      }
+      cmd_validar.tooltip = 'Validar engenharia do modulo'
+      cmd_validar.status_bar_text = 'Verifica regras de engenharia e sugere correcoes'
+      cmd_validar.small_icon = cmd_validar.large_icon = icon_path('validar')
+      tb.add_item(cmd_validar)
+
+      tb.add_separator
+
       # ─── Painel ───
       cmd_painel = UI::Command.new('Painel') {
         Ornato.mostrar_painel

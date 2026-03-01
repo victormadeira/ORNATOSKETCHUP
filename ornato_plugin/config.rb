@@ -2,8 +2,32 @@
 
 module Ornato
   module Config
+    # ─── Espessuras REAIS de MDF (mm) ───
+    # MDF vem com espessura ligeiramente maior que o nominal
+    # devido a imperfeições do processo de fabricação.
+    # Todas as dimensões de corte e montagem usam a espessura REAL.
+    ESPESSURA_REAL = {
+      3     => 3.0,     # HDF 3mm — espessura real igual
+      6     => 6.0,     # HDF/Compensado 6mm — espessura real igual
+      9     => 9.0,     # MDF 9mm
+      12    => 12.0,    # MDF 12mm
+      15    => 15.5,    # MDF 15mm → real 15.5mm
+      18    => 18.5,    # MDF 18mm → real 18.5mm
+      20    => 20.5,    # MDF 20mm → real 20.5mm
+      25    => 25.5,    # MDF 25mm → real 25.5mm
+    }.freeze
+
+    # Espessura do engrossado (duas chapas de 15mm coladas)
+    ESPESSURA_ENGROSSADO     = 31.0   # 15.5 + 15.5 = 31mm
+
+    # Retorna a espessura real de uma chapa dado o nominal
+    def self.espessura_real(nominal)
+      ESPESSURA_REAL[nominal] || nominal
+    end
+
     # ─── Dimensões Padrão (mm) ───
-    ESPESSURA_CORPO_PADRAO   = 15
+    ESPESSURA_CORPO_PADRAO   = 15     # nominal (usar espessura_real() para valor real)
+    ESPESSURA_CORPO_REAL     = 15.5   # espessura real do corpo padrão
     ESPESSURA_FUNDO_PADRAO   = 3
     REBAIXO_FUNDO_PADRAO     = 8
     FOLGA_PORTA              = 2
@@ -17,7 +41,7 @@ module Ornato
     # ─── Sistema 32mm ───
     SISTEMA_32_PASSO         = 32
     SISTEMA_32_INICIO        = 37    # distância da borda frontal
-    SISTEMA_32_RECUO_BORDA   = 9.5   # centro do furo na espessura 15mm
+    SISTEMA_32_RECUO_BORDA   = 9.75  # centro do furo na espessura real 15.5mm (15.5/2 = 7.75)
 
     # ─── Furação ───
     FURO_MINIFIX_FACE_D      = 15.0

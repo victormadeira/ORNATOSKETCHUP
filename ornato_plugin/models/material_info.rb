@@ -8,6 +8,8 @@ module Ornato
 
       # tipo: :mdf, :mdp, :hdf, :compensado, :laca, :vidro, :espelho, :aluminio, :macica
       # categoria: :corpo, :frente, :fundo, :premium
+      # espessura: espessura NOMINAL (15, 18, 25mm)
+      # espessura_real: calculada automaticamente via Config.espessura_real()
       def initialize(opts = {})
         @id         = opts[:id] || Utils.gerar_id
         @nome       = opts[:nome] || 'MDF Branco 15mm'
@@ -23,12 +25,18 @@ module Ornato
         @preco_m2   = opts[:preco_m2] || 0.0
       end
 
+      # Retorna a espessura REAL da chapa (ex: 15mm nominal → 15.5mm real)
+      def espessura_real
+        Config.espessura_real(@espessura)
+      end
+
       def cor_sketchup
         Sketchup::Color.new(@cor_r, @cor_g, @cor_b)
       end
 
       def to_hash
-        { id: @id, nome: @nome, tipo: @tipo, espessura: @espessura,
+        { id: @id, nome: @nome, tipo: @tipo,
+          espessura: @espessura, espessura_real: espessura_real,
           cor: [@cor_r, @cor_g, @cor_b], textura: @textura,
           fabricante: @fabricante, padrao: @padrao,
           categoria: @categoria, preco_m2: @preco_m2 }

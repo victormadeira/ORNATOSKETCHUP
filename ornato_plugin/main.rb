@@ -14,7 +14,7 @@ module Ornato
   require File.join(PLUGIN_DIR, 'models', 'modulo_info')
   require File.join(PLUGIN_DIR, 'models', 'material_info')
 
-  # ─── Engines ───
+  # ─── Engines (motores existentes) ───
   require File.join(PLUGIN_DIR, 'engines', 'motor_caixa')
   require File.join(PLUGIN_DIR, 'engines', 'motor_agregados')
   require File.join(PLUGIN_DIR, 'engines', 'motor_furacao')
@@ -26,6 +26,13 @@ module Ornato
   require File.join(PLUGIN_DIR, 'engines', 'motor_templates')
   require File.join(PLUGIN_DIR, 'engines', 'motor_precificacao')
   require File.join(PLUGIN_DIR, 'engines', 'motor_alinhamento')
+
+  # ─── Engines (novos — upgrade v2) ───
+  require File.join(PLUGIN_DIR, 'engines', 'motor_inteligencia')
+  require File.join(PLUGIN_DIR, 'engines', 'motor_validacao')
+  require File.join(PLUGIN_DIR, 'engines', 'motor_etiquetas')
+  require File.join(PLUGIN_DIR, 'engines', 'motor_ficha_tecnica')
+  require File.join(PLUGIN_DIR, 'engines', 'motor_cotagem')
 
   # ─── Tools ───
   require File.join(PLUGIN_DIR, 'tools', 'caixa_tool')

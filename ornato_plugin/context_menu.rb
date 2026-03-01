@@ -80,6 +80,20 @@ module Ornato
             UI.messagebox(texto, MB_MULTILINE)
           end
 
+          info_menu.add_item('Ficha Tecnica') do
+            ficha = Engines::MotorFichaTecnica.gerar_ficha(mi)
+            html = Engines::MotorFichaTecnica.gerar_html_ficha(ficha, formato: :completa)
+            MenuSetup.mostrar_html('Ficha Tecnica', html, 800, 1000)
+          end
+
+          info_menu.add_item('Etiquetas de Producao') do
+            etiquetas = Engines::MotorEtiquetas.gerar_etiquetas(mi)
+            html = Engines::MotorEtiquetas.gerar_html_etiquetas(etiquetas, formato: :folha)
+            MenuSetup.mostrar_html('Etiquetas', html, 800, 1000)
+          end
+
+          info_menu.add_separator
+
           info_menu.add_item('Mapa de Furacao') do
             furos = Engines::MotorFuracao.gerar_mapa(mi)
             texto = Engines::MotorFuracao.relatorio_texto(furos)
@@ -100,6 +114,19 @@ module Ornato
           info_menu.add_item('Orcamento Modulo') do
             custo = Engines::MotorPrecificacao.calcular_modulo(mi)
             texto = formatar_orcamento_modulo(mi, custo)
+            UI.messagebox(texto, MB_MULTILINE)
+          end
+
+          info_menu.add_separator
+
+          info_menu.add_item('Validar Engenharia') do
+            texto = Engines::MotorValidacao.relatorio(mi)
+            UI.messagebox(texto, MB_MULTILINE)
+          end
+
+          info_menu.add_item('Sugerir Ferragens') do
+            sugestao = Engines::MotorInteligencia.sugerir_configuracao(mi)
+            texto = Engines::MotorInteligencia.relatorio_texto(sugestao)
             UI.messagebox(texto, MB_MULTILINE)
           end
 
@@ -149,6 +176,27 @@ module Ornato
 
           ornato_menu.add_item('Trocar Material') do
             trocar_material_dialog(mi, grupo)
+          end
+
+          ornato_menu.add_separator
+
+          # ── Cotagem ──
+          cotas_menu = ornato_menu.add_submenu('Cotagem')
+
+          cotas_menu.add_item('Cotar Externas') do
+            Engines::MotorCotagem.cotar_modulo(grupo, externas: true, internas: false)
+          end
+
+          cotas_menu.add_item('Cotar Externas + Internas') do
+            Engines::MotorCotagem.cotar_modulo(grupo, externas: true, internas: true)
+          end
+
+          cotas_menu.add_item('Cotar Pecas') do
+            Engines::MotorCotagem.cotar_pecas(grupo)
+          end
+
+          cotas_menu.add_item('Remover Cotas') do
+            Engines::MotorCotagem.remover_cotas(grupo)
           end
 
         # ═══════════════════════════════════════════════

@@ -26,7 +26,7 @@ module Ornato
         @altura            = opts[:altura] || 700
         @profundidade      = opts[:profundidade] || 560
 
-        # Estrutura
+        # Estrutura (espessura_corpo é o valor NOMINAL — usar espessura_corpo_real para cálculos)
         @espessura_corpo   = opts[:espessura_corpo] || Config::ESPESSURA_CORPO_PADRAO
         @espessura_fundo   = opts[:espessura_fundo] || Config::ESPESSURA_FUNDO_PADRAO
         @tipo_fundo        = opts[:tipo_fundo] || Config::FUNDO_REBAIXADO
@@ -53,22 +53,40 @@ module Ornato
         @grupo_ref         = nil  # Referência ao Group do SketchUp
       end
 
-      # Dimensões internas calculadas
+      # ─── Espessura REAL do corpo (considera imperfeição do MDF) ───
+      # MDF 15mm → real 15.5mm, 18mm → 18.5mm, 25mm → 25.5mm
+      # Engrossado (2×15) → 31mm
+      def espessura_corpo_real
+        Config.espessura_real(@espessura_corpo)
+      end
+
+      def espessura_fundo_real
+        Config.espessura_real(@espessura_fundo)
+      end
+
+      # Espessura para engrossado (duas chapas coladas)
+      def espessura_engrossado
+        Config::ESPESSURA_ENGROSSADO
+      end
+
+      # Dimensões internas calculadas (usando espessura REAL)
       def largura_interna
+        esp = espessura_corpo_real
         case @montagem
         when Config::MONTAGEM_BRASIL
-          @largura - (2 * @espessura_corpo)
+          @largura - (2 * esp)
         when Config::MONTAGEM_EUROPA
           @largura
         end
       end
 
       def altura_interna
+        esp = espessura_corpo_real
         case @montagem
         when Config::MONTAGEM_BRASIL
           @altura
         when Config::MONTAGEM_EUROPA
-          @altura - (2 * @espessura_corpo)
+          @altura - (2 * esp)
         end
       end
 
@@ -151,6 +169,7 @@ module Ornato
           id: @id, nome: @nome, tipo: @tipo, ambiente: @ambiente,
           largura: @largura, altura: @altura, profundidade: @profundidade,
           espessura_corpo: @espessura_corpo,
+          espessura_corpo_real: espessura_corpo_real,
           largura_interna: largura_interna,
           altura_interna: altura_interna,
           profundidade_interna: profundidade_interna,

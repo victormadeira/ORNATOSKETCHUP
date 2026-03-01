@@ -10,11 +10,13 @@ module Ornato
 
       # tipo: :lateral, :base, :topo, :fundo, :prateleira, :divisoria,
       #       :porta, :frente_gaveta, :lateral_gaveta, :traseira_gaveta, :fundo_gaveta
+      # espessura: valor NOMINAL (15, 18, 25mm)
+      # espessura_real: calculada automaticamente (15.5, 18.5, 25.5mm)
       def initialize(opts = {})
         @nome        = opts[:nome] || 'Peça'
         @comprimento = opts[:comprimento] || 0  # mm (maior dimensão)
         @largura     = opts[:largura] || 0      # mm (menor dimensão)
-        @espessura   = opts[:espessura] || 15   # mm
+        @espessura   = opts[:espessura] || 15   # mm (nominal)
         @quantidade  = opts[:quantidade] || 1
         @material    = opts[:material] || 'MDF Branco 15mm'
         @tipo        = opts[:tipo] || :generica
@@ -24,6 +26,16 @@ module Ornato
         @fita_base   = opts[:fita_base] || false
         @fita_material = opts[:fita_material] || 'PVC 1mm'
         @grupo_ref   = opts[:grupo_ref]  # referência ao grupo SketchUp
+        @engrossado  = opts[:engrossado] || false  # chapa engrossada (2× coladas)
+      end
+
+      # Espessura REAL (considerando imperfeição do MDF)
+      def espessura_real
+        if @engrossado
+          Config::ESPESSURA_ENGROSSADO  # 31mm
+        else
+          Config.espessura_real(@espessura)
+        end
       end
 
       # Código visual de fita: ■□□□
@@ -54,7 +66,9 @@ module Ornato
       def to_hash
         {
           nome: @nome, comprimento: @comprimento, largura: @largura,
-          espessura: @espessura, quantidade: @quantidade, material: @material,
+          espessura: @espessura, espessura_real: espessura_real,
+          engrossado: @engrossado,
+          quantidade: @quantidade, material: @material,
           tipo: @tipo, fita: fita_codigo, fita_metros: fita_metros.round(3),
           area_m2: area_m2.round(4)
         }
