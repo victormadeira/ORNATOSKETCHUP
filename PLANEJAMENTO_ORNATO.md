@@ -947,6 +947,115 @@ ornato_plugin/
 
 ---
 
+---
+
+## PARTE 7 — MODELO HIBRIDO (Decisao do Victor — 28/02/2026)
+
+> Victor: "eu gosto desse modelo" (referindo-se ao fluxo Plugin → JSON → Web)
+
+### 7.1 Decisao Arquitetural
+
+Apos explorar a plataforma web UpMobb (app.upmobb.net), Victor decidiu adotar
+o **modelo hibrido**: Plugin faz modelagem, exporta JSON, plataforma web faz
+otimizacao/producao.
+
+```
+┌─────────────────────────────────────┐
+│   PLUGIN ORNATO (SketchUp)           │
+│                                       │
+│ • Modelagem parametrica               │
+│ • Inteligencia de ferragem            │
+│ • Validacao de engenharia             │
+│ • Precificacao em tempo real          │
+│ • Export JSON (compativel UpMobb)      │
+│                                       │
+│ STATUS: ✅ 29 arquivos, 17 engines    │
+│         v0.3.0 (motor_export pronto)  │
+└──────────────┬────────────────────────┘
+               │ JSON
+               ▼
+┌─────────────────────────────────────┐
+│   PLATAFORMA WEB ORNATO (a construir)│
+│                                       │
+│ • Importar JSON do plugin             │
+│ • Otimizador plano de corte (nesting) │
+│ • Geracao G-code CNC (.nc)            │
+│ • Editor de etiquetas (customizavel)  │
+│ • Armazem de materiais                │
+│ • Controle de sobras                  │
+│ • Lotes de producao                   │
+│ • Configuracoes CNC/otimizador        │
+│                                       │
+│ STATUS: 🔲 A construir               │
+└──────────────┬────────────────────────┘
+               │ APIs
+               ▼
+┌─────────────────────────────────────┐
+│   ERP ORNATO (existente — Express)    │
+│                                       │
+│ • Orcamentos                          │
+│ • Estoque                             │
+│ • Clientes                            │
+│ • Financeiro                          │
+│ • Expedição                           │
+│                                       │
+│ STATUS: ✅ Existente (port 3001)      │
+└───────────────────────────────────────┘
+```
+
+### 7.2 Vantagens do Modelo Hibrido
+
+1. **Plugin leve** — SketchUp nao precisa processar nesting/G-code
+2. **Web acessivel** — qualquer navegador acessa producao
+3. **Multi-usuario** — projetista modela, marceneiro ve producao
+4. **Atualizavel** — web atualiza sem reinstalar plugin
+5. **Compativel** — JSON funciona com UpMobb tambem (migração facil)
+
+### 7.3 O que o Plugin JA faz (v0.3.0)
+
+| Engine | Funcao | Linhas |
+|---|---|---|
+| motor_caixa | Caixa parametrica | ~280 |
+| motor_agregados | Porta/gaveta/prat/div | ~820 |
+| motor_portas | 9 tipos + dobradicas | ~600 |
+| motor_furacao | Minifix/cavilha/system32 | ~260 |
+| motor_fita_borda | 4 lados automatico | ~400 |
+| motor_usinagem | Canal/rebaixo/rasgo/gola | ~900 |
+| motor_pecas_avulsas | Pecas independentes | ~400 |
+| motor_plano_corte | FFD + esquadrejadeira | ~380 |
+| motor_templates | 20+ modelos, 6 ambientes | ~360 |
+| motor_precificacao | Custo em tempo real | ~240 |
+| motor_alinhamento | Snap entre modulos | ~190 |
+| motor_inteligencia | Auto-ferragem | ~870 |
+| motor_validacao | Regras engenharia | ~940 |
+| motor_etiquetas | Etiquetas producao | ~1010 |
+| motor_ficha_tecnica | Ficha tecnica completa | ~1340 |
+| motor_cotagem | Cotagem 3D automatica | ~520 |
+| motor_export | JSON compativel UpMobb | ~1100 |
+| **TOTAL** | **17 engines** | **~10.610** |
+
+### 7.4 Proximos Passos
+
+**Imediato (Plugin)**:
+1. Testar motor_export no SketchUp com modulo real
+2. Importar JSON gerado no UpMobb para validar compatibilidade
+3. Ajustar mapeamentos se necessário
+
+**Curto prazo (Web Platform)**:
+1. Criar importador JSON na plataforma web Ornato
+2. Implementar listagem de pecas (22 colunas)
+3. Implementar otimizador de plano de corte
+4. Implementar geracao de etiquetas
+
+**Medio prazo (Producao)**:
+1. Magazine de ferramentas CNC
+2. Geracao G-code (.nc)
+3. Armazem de materiais + controle de sobras
+4. Integracao com ERP existente
+
+---
+
 *Planejamento criado em 28/02/2026*
 *Baseado na análise completa do UpMobb V2.10.22*
-*Para implementação no Plugin Ornato SketchUp*
+*Atualizado com exploracao da plataforma web UpMobb e decisao de modelo hibrido em 28/02/2026*
+*Para implementação no Plugin Ornato SketchUp + Plataforma Web*

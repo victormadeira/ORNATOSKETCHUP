@@ -1449,4 +1449,341 @@ Este é um **ponto de diferenciação competitiva** do Plugin Ornato:
 *Atualizado com posicao de prateleiras (recuo frente, altura pela base) e escopo online em 28/02/2026*
 *Atualizado com mapeamento completo dos 11 grupos de Trocas gerais em 28/02/2026*
 *Atualizado com tampos, pes/rodapes, pecas avulsas e oportunidade de templates em 28/02/2026*
+*Atualizado com exploracao completa da plataforma web UpMobb (app.upmobb.net) em 28/02/2026*
 *Para uso na replicacao das funcionalidades no Plugin Ornato*
+
+---
+
+## 24. PLATAFORMA WEB UPMOBB — Exploracao Completa (app.upmobb.net)
+
+> Exploracao realizada em 28/02/2026 via Chrome em app.upmobb.net
+> Lote de teste: "teste otimizador" (batch=21460, 45 pecas, 2 modulos)
+
+### 24.1 Visao Geral da Plataforma
+
+A plataforma web UpMobb (app.upmobb.net) e onde acontece TODO o processamento de producao:
+- **Otimizacao de plano de corte** (nesting)
+- **Geracao de G-code CNC**
+- **Impressao de etiquetas**
+- **Gerenciamento de materiais e sobras**
+- **Configuracao do otimizador**
+
+O fluxo e: Plugin SketchUp → Exporta JSON → Upload na plataforma → Processamento completo
+
+### 24.2 Toolbar da Plataforma (12 icones)
+
+```
+1. Controle de sobras          — gerenciar retalhos de chapa
+2. Marcar para Editar          — selecionar pecas para edicao
+3. Plano de corte              — visualizar otimizacao de chapas
+4. Lista de pecas              — tabela completa de todas as pecas
+5. Exportar Plano de corte     — gerar arquivo de plano de corte/CNC
+6. Imprimir Etiquetas          — gerar etiquetas para producao
+7. Importar lista de pecas     — importar JSON do plugin
+8. Exportar lista              — exportar lista de pecas
+9. Limpar entrada              — limpar dados
+10. Estoque de materiais       — gerenciar chapas disponíveis
+11. Lotes de producao          — gerenciar batches
+12. Configuracoes do otimizador — parametros de nesting/CNC
+```
+
+### 24.3 Tabela de Pecas — 22 Colunas
+
+A listagem de pecas importada do JSON mostra 22 colunas:
+
+```
+#                    — checkbox de selecao
+Item                 — numero sequencial (1-45)
+quantidade           — qtd de pecas identicas
+material             — ex: "MDF Branco tx 18mm"
+comprimento          — dimensao em mm
+largura              — dimensao em mm
+borda direita        — codigo da fita (ex: CMBOR22x045BRANCO_TX)
+borda esquerda       — codigo da fita
+borda frontal        — codigo da fita
+borda traseira       — codigo da fita
+Acabamento           — codigo resumo (1C, 2C, 2C+1L, 1C+2L, 4Lados)
+Cliente              — nome do cliente
+Descricao peca       — ex: "Lateral Direita", "Base MDF"
+Descricao projeto    — nome do projeto
+Id Master            — ID do modulo pai
+Id Peca              — ID unico da peca
+Meu codigo           — codigo interno do projeto
+Observacao            — campo livre
+Produto final        — ex: "Armario Alto", "Balcao teste"
+Qtde pecas modulo    — quantidade total de pecas no modulo
+UsiA                 — codigo de usinagem lado A (ex: "325739A")
+UsiB                 — codigo de usinagem lado B (ex: "325739B")
+```
+
+### 24.4 Dados Observados no Lote de Teste
+
+```
+Total de pecas:        45
+Descricoes unicas:     17 tipos de peca
+Materiais:             3 (MDF Branco tx 18mm, 15mm, 6mm)
+Fitas de borda:        3 codigos (CMBOR22x045, CMBOR19X045, CMBOR22X045)
+Acabamentos:           6 tipos (1C, 1C+2L, 2C, 2C+1L, 1C+1L, 4Lados)
+Produtos finais:       2 (Armario Alto, Balcao teste)
+```
+
+### 24.5 Sistema de Etiquetas
+
+Ao clicar "Imprimir Etiquetas", abre preview com formato padrao:
+
+```
+┌──────────────────────────────────────────────────┐
+│ Usinagem A: 325739A    Usinagem B: 325739B       │
+│ Material: MDF Branco tx 6mm                      │
+│ Cliente: Victor        Desc. projeto: teste       │
+│ Modulo: Balcao teste   Peca: Fundo MDF           │
+│ ID Mod.: 2             Controle: 42               │
+│ Fita de borda: CMBOR19X045BRANCO_TX              │
+│                                                    │
+│ ┌─────────────────┐  ┌──────┐                     │
+│ │   DIAGRAMA       │  │ |||  │  ← Barcode         │
+│ │   da peca com    │  │ |||  │                     │
+│ │   indicadores    │  └──────┘                     │
+│ │   de fita borda  │                               │
+│ └─────────────────┘  Expedicao: 42                 │
+│                                                    │
+│ Fita: 19X045 - BRANCO TX              │ 42 │      │
+└──────────────────────────────────────────────────┘
+```
+
+**Campos da etiqueta:**
+- Usinagem A/B (codigos de producao)
+- Material (nome completo)
+- Cliente + Descricao do projeto
+- Modulo + Peca (descricao)
+- ID Modulo + Controle (numero sequencial)
+- Fita de borda (codigo)
+- Diagrama visual da peca com indicadores de fita em cada borda
+- Barcode + Expedicao
+- Numero grande vertical na lateral direita (ID)
+
+**Nota:** UpMobb possui plataforma propria de edicao de etiquetas — abre uma folha
+onde o usuario pode personalizar layout com base em variaveis pre-determinadas.
+
+### 24.6 Configuracoes do Otimizador
+
+Pagina: `production_optimizer_setting.html`
+
+#### Padroes de Importacao
+- **Padrao**: "UpMobb 3D" — Importador para arquivos UpMobb
+- Permite selecionar qual parser usar para o JSON importado
+
+#### Motor de Calculo
+- **Motor**: R-Hex
+- **Calcular para**: Nesting (otimizacao de chapas)
+- **Rotacao de peca sem veio**: ON (pecas sem direcao de veio podem ser rotacionadas)
+
+#### Configuracao de Sobras
+- **Considerar sobra**: ON — reaproveitar retalhos de cortes anteriores
+- **Adicionar automatico**: ON — registrar novas sobras automaticamente
+- **Dimensao minima de sobra**: 600 × 300 mm
+
+#### Parametros de Nesting
+- **Tipo**: Furos | Rebaixos | Usinagens
+- **Aplicar**: Lado A
+- **Sentido**: Horario
+- **Formato saida**: .nc (G-code)
+- **Z seguro**: 30 mm (altura de recuo entre operacoes)
+- **Velocidade vazio**: 20.000 mm/min (rapido entre posicoes)
+- **Espaco entre pecas**: 7 mm
+- **Profundidade extra**: 0.20 mm (para garantir corte completo)
+
+#### Pecas Pequenas
+- **Estrategia**: Cortar primeiro
+- **Velocidade**: 4.000 mm/min
+- **Passos**: 1 passo
+- **Passo reservado**: 0.20 mm
+
+#### Validacoes
+- **Dimensao minima de peca**: 200 × 200 mm
+
+#### Deslocamentos CNC
+- Deslocamentos X/Y/Z configuráveis para lado A e lado B/reverso
+- Permite ajustar offset da maquina CNC
+
+#### Furos e Usinagens (toggles)
+- **Furos**: ON/OFF
+- **Rebaixos/corte de serra**: ON/OFF
+- **Usinagens ponto a ponto**: ON/OFF
+
+#### G-code — Instrucoes Iniciais e Finais
+
+```gcode
+# Instrucoes iniciais (header):
+%
+M71 M10 G90 G00 G54 G17
+
+# Instrucoes finais (footer):
+G0 Z200.000
+G40 M5 M74 M72 M11
+G0 X500.000 Y2000.000
+M141 M30
+%
+```
+
+#### Ferramentas Nesting (Magazine)
+```
+T01 — Broca 15mm (para minifix/cavilha)
+T02 — Broca 35mm (para cup de dobradica)
+T03 — Broca 3mm  (para furos piloto)
+```
+
+### 24.7 Armazem de Materiais (Chapas)
+
+Pagina: `production_stock_panel.html`
+
+#### Materiais Cadastrados (3 no teste)
+
+| Material | Chapa (mm) | Refilo | Veio |
+|---|---|---|---|
+| MDF Branco tx 6mm | 2750 × 1850 | 10mm | Sem veio |
+| MDF Branco tx 15mm | 2750 × 1850 | 10mm | Sem veio |
+| MDF Branco tx 18mm | 2750 × 1850 | 10mm | Sem veio |
+
+**CONFIRMACAO CRITICA**: Ao editar o material "MDF 18mm", a espessura real
+configurada e **18,50 mm** (nao 18mm nominal). Isso confirma que o UpMobb
+tambem usa espessuras reais de MDF, identico ao Ornato:
+
+```
+Nominal → Real (UpMobb/Ornato)
+6mm     → 6.5mm
+15mm    → 15.5mm
+18mm    → 18.5mm
+25mm    → 25.5mm
+```
+
+#### Parametros de cada chapa:
+- Espessura (mm) — espessura REAL
+- Comprimento da chapa (mm) — ex: 2750
+- Largura da chapa (mm) — ex: 1850
+- Refilo (mm) — margem de corte nas bordas (ex: 10mm)
+- Veio — direcao do veio (sem veio / horizontal / vertical)
+
+#### Lista de Sobras
+- Pagina separada para gerenciar retalhos de chapas cortadas
+- No teste: vazia (nenhuma sobra registrada)
+- Funciona em conjunto com "Considerar sobra: ON" do otimizador
+
+### 24.8 Plano de Corte (Exportacao)
+
+Ao tentar exportar plano de corte, o sistema verificou configuracoes e retornou:
+> "O Furo f_8mm_cavilha parece nao esta configurado"
+
+Isso indica que:
+1. O web platform valida as ferramentas CNC antes de gerar o plano
+2. Cada furo/usinagem precisa de uma ferramenta cadastrada no magazine
+3. No teste, apenas T01 (15mm), T02 (35mm) e T03 (3mm) estavam configurados
+4. Faltava cadastrar a broca de 8mm para cavilha
+
+### 24.9 Formato de Codigos de Fita de Borda
+
+```
+CMBOR{LARGURA}x{ESPESSURA}{ACABAMENTO}
+
+Exemplos:
+CMBOR22x045BRANCO_TX   — 22mm largura, 0.45mm espessura, Branco Texturizado
+CMBOR19X045BRANCO_TX   — 19mm largura, 0.45mm espessura, Branco Texturizado
+
+Nota: variacao de maiusculas (x vs X) observada nos dados
+```
+
+### 24.10 Formato de Codigos de Acabamento
+
+```
+1C      — 1 lado comprimento com fita
+1C+1L   — 1 comprimento + 1 largura
+1C+2L   — 1 comprimento + 2 larguras
+2C      — 2 lados comprimento
+2C+1L   — 2 comprimentos + 1 largura
+4Lados  — todos os 4 lados (= 2C+2L)
+```
+
+### 24.11 Arquitetura Completa Plugin → Web
+
+```
+┌─────────────────────────────────┐
+│   Plugin SketchUp (Ornato)      │
+│                                 │
+│ ┌─────────────┐ ┌─────────────┐│
+│ │ Modelagem   │ │ motor_export││
+│ │ Parametrica │→│ .rb (JSON)  ││
+│ └─────────────┘ └──────┬──────┘│
+└────────────────────────┼───────┘
+                         │ JSON
+                         ▼
+┌─────────────────────────────────┐
+│   Plataforma Web (ERP/Ornato)   │
+│                                 │
+│ ┌──────────┐ ┌───────────────┐ │
+│ │Importador│→│ Otimizador    │ │
+│ │ JSON     │ │ (R-Hex/FFD)   │ │
+│ └──────────┘ └───────┬───────┘ │
+│                      │         │
+│ ┌──────┬──────┬──────┼──────┐  │
+│ │Plano │Etiqu│G-code│Armazem│  │
+│ │Corte │etas │ CNC  │Sobras │  │
+│ └──────┴──────┴──────┴──────┘  │
+│                                │
+│ ┌──────────────────────────┐   │
+│ │ Orcamento / Precificacao │   │
+│ └──────────────────────────┘   │
+└─────────────────────────────────┘
+```
+
+---
+
+## 25. RESUMO — O que o Ornato ja tem vs O que falta
+
+### 25.1 Plugin SketchUp (COMPLETO para MVP)
+
+| Funcionalidade | Status | Arquivo |
+|---|---|---|
+| Caixa parametrica | ✅ OK | motor_caixa.rb |
+| Agregados (porta/gaveta/prat/div) | ✅ OK | motor_agregados.rb |
+| Portas (9 tipos + dobradicas) | ✅ OK | motor_portas.rb |
+| Furacao (minifix/cavilha/system32) | ✅ OK | motor_furacao.rb |
+| Fita de borda (4 lados) | ✅ OK | motor_fita_borda.rb |
+| Usinagem (canal/rebaixo/rasgo/gola) | ✅ OK | motor_usinagem.rb |
+| Pecas avulsas | ✅ OK | motor_pecas_avulsas.rb |
+| Plano de corte (FFD) | ✅ OK | motor_plano_corte.rb |
+| Templates (20+ modelos) | ✅ OK | motor_templates.rb |
+| Precificacao | ✅ OK | motor_precificacao.rb |
+| Alinhamento | ✅ OK | motor_alinhamento.rb |
+| Inteligencia (auto-ferragem) | ✅ OK | motor_inteligencia.rb |
+| Validacao (engenharia) | ✅ OK | motor_validacao.rb |
+| Etiquetas (producao) | ✅ OK | motor_etiquetas.rb |
+| Ficha tecnica | ✅ OK | motor_ficha_tecnica.rb |
+| Cotagem (3D) | ✅ OK | motor_cotagem.rb |
+| Export JSON (UpMobb compat) | ✅ OK | motor_export.rb |
+| UI Painel lateral | ✅ OK | ui/painel.rb |
+| UI Propriedades | ✅ OK | ui/propriedades.rb |
+| UI Catalogo templates | ✅ OK | ui/catalogo_templates.rb |
+| Toolbar (17 botoes) | ✅ OK | toolbar.rb |
+| Menu (Ornato) | ✅ OK | menu.rb |
+| Context menu (right-click) | ✅ OK | context_menu.rb |
+| Observers | ✅ OK | observers.rb |
+
+**Total: 29 arquivos Ruby, 17 engines, ~10.000+ linhas**
+
+### 25.2 Plataforma Web (A CONSTRUIR)
+
+Baseado na exploracao do UpMobb, a plataforma web Ornato precisa de:
+
+| Funcionalidade | Prioridade | Referencia UpMobb |
+|---|---|---|
+| Importador JSON | ALTA | Importa JSON do plugin |
+| Otimizador plano de corte | ALTA | R-Hex/Nesting engine |
+| Geracao G-code CNC (.nc) | ALTA | Com header/footer configuravel |
+| Etiquetas (editor visual) | ALTA | Editor de layout de etiquetas |
+| Armazem de materiais | MEDIA | Cadastro de chapas + espessuras reais |
+| Controle de sobras | MEDIA | Registro e reaproveitamento |
+| Lotes de producao | MEDIA | Agrupamento de pecas em batches |
+| Configuracoes do otimizador | MEDIA | Nesting params, CNC tools |
+| Magazine de ferramentas CNC | MEDIA | T01-Tn com brocas/fresas |
+| Validacao pre-corte | BAIXA | Checa tools cadastrados |
+| Orcamento/precificacao web | BAIXA | Ja tem local (motor_precificacao) |
