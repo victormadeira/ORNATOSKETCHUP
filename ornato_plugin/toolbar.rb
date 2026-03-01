@@ -142,6 +142,15 @@ module Ornato
       cmd_etiq.small_icon = cmd_etiq.large_icon = icon_path('etiquetas')
       tb.add_item(cmd_etiq)
 
+      # ─── Exportar JSON ───
+      cmd_export = UI::Command.new('Exportar JSON') {
+        Engines::MotorExport.mostrar_dialog_exportacao
+      }
+      cmd_export.tooltip = 'Exportar JSON para producao (compativel UpMobb)'
+      cmd_export.status_bar_text = 'Exporta JSON com pecas, fitas, ferragens e usinagens'
+      cmd_export.small_icon = cmd_export.large_icon = icon_path('exportar')
+      tb.add_item(cmd_export)
+
       # ─── Validar ───
       cmd_validar = UI::Command.new('Validar') {
         sel = Sketchup.active_model.selection

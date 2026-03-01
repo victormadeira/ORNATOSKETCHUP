@@ -161,6 +161,13 @@ module Ornato
 
           ornato_menu.add_separator
 
+          # ── Exportar JSON ──
+          ornato_menu.add_item('Exportar JSON (UpMobb)') do
+            Engines::MotorExport.exportar_modulo(grupo)
+          end
+
+          ornato_menu.add_separator
+
           # ── Ações ──
           ornato_menu.add_item('Salvar como Template') do
             salvar_template_dialog(mi, grupo)

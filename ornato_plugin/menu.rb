@@ -333,6 +333,18 @@ module Ornato
       sub_export.add_separator
       sub_export.add_item('Exportar XML (OpenCutList)') { exportar_xml_opencutlist }
       sub_export.add_item('Exportar Corte Certo') { exportar_corte_certo }
+      sub_export.add_separator
+      sub_export.add_item('JSON Producao (UpMobb)...') {
+        Engines::MotorExport.mostrar_dialog_exportacao
+      }
+      sub_export.add_item('JSON Modulo Selecionado') {
+        sel = Sketchup.active_model.selection
+        if sel.length == 1 && Utils.modulo_ornato?(sel.first)
+          Engines::MotorExport.exportar_modulo(sel.first)
+        else
+          ::UI.messagebox('Selecione um modulo Ornato primeiro.', MB_OK)
+        end
+      }
 
       menu.add_separator
       menu.add_item('Sobre') { mostrar_sobre }
@@ -677,6 +689,7 @@ module Ornato
         "- Cotagem 3D automatica\n" \
         "- Roteiro de producao\n" \
         "- Agrupamento de pecas iguais\n" \
+        "- Export JSON producao (compativel UpMobb)\n" \
         "- Integracao Ornato ERP\n\n" \
         "Espessuras REAIS: MDF 15→15.5, 18→18.5, 25→25.5, Engrossado→31mm\n\n" \
         "2026 Ornato",

@@ -33,6 +33,7 @@ module Ornato
   require File.join(PLUGIN_DIR, 'engines', 'motor_etiquetas')
   require File.join(PLUGIN_DIR, 'engines', 'motor_ficha_tecnica')
   require File.join(PLUGIN_DIR, 'engines', 'motor_cotagem')
+  require File.join(PLUGIN_DIR, 'engines', 'motor_export')
 
   # ─── Tools ───
   require File.join(PLUGIN_DIR, 'tools', 'caixa_tool')

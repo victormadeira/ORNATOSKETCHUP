@@ -6,7 +6,7 @@ require 'extensions.rb'
 
 module Ornato
   PLUGIN_NAME    = 'Ornato Marcenaria'.freeze
-  PLUGIN_VERSION = '0.2.0'.freeze
+  PLUGIN_VERSION = '0.3.0'.freeze
   PLUGIN_DIR     = File.join(File.dirname(__FILE__), 'ornato_plugin').freeze
 
   unless file_loaded?(__FILE__)
