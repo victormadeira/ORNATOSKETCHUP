@@ -35,17 +35,24 @@ module Ornato
   require File.join(PLUGIN_DIR, 'engines', 'motor_cotagem')
   require File.join(PLUGIN_DIR, 'engines', 'motor_export')
 
+  # ─── Engines (contorno + API) ───
+  require File.join(PLUGIN_DIR, 'engines', 'motor_contorno')
+  require File.join(PLUGIN_DIR, 'engines', 'motor_api')
+
   # ─── Tools ───
   require File.join(PLUGIN_DIR, 'tools', 'caixa_tool')
   require File.join(PLUGIN_DIR, 'tools', 'agregado_tool')
   require File.join(PLUGIN_DIR, 'tools', 'editor_tool')
   require File.join(PLUGIN_DIR, 'tools', 'template_tool')
   require File.join(PLUGIN_DIR, 'tools', 'pecas_avulsas_tool')
+  require File.join(PLUGIN_DIR, 'tools', 'transformar_peca_tool')
+  require File.join(PLUGIN_DIR, 'tools', 'usinagem_avulsa_tool')
 
   # ─── UI ───
   require File.join(PLUGIN_DIR, 'ui', 'painel')
   require File.join(PLUGIN_DIR, 'ui', 'propriedades')
   require File.join(PLUGIN_DIR, 'ui', 'catalogo_templates')
+  require File.join(PLUGIN_DIR, 'ui', 'painel_usinagem')
 
   # ─── Sistema ───
   require File.join(PLUGIN_DIR, 'toolbar')

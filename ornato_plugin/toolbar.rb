@@ -6,7 +6,7 @@ module Ornato
       tb = ::UI::Toolbar.new(PLUGIN_NAME)
 
       # ─── Nova Caixa ───
-      cmd_caixa = UI::Command.new('Nova Caixa') {
+      cmd_caixa = ::UI::Command.new('Nova Caixa') {
         Sketchup.active_model.select_tool(Tools::CaixaTool.new)
       }
       cmd_caixa.tooltip = 'Criar novo modulo (caixa)'
@@ -15,7 +15,7 @@ module Ornato
       tb.add_item(cmd_caixa)
 
       # ─── Templates ───
-      cmd_template = UI::Command.new('Templates') {
+      cmd_template = ::UI::Command.new('Templates') {
         Sketchup.active_model.select_tool(Tools::TemplateTool.new)
       }
       cmd_template.tooltip = 'Catalogo de templates pre-configurados'
@@ -26,7 +26,7 @@ module Ornato
       tb.add_separator
 
       # ─── Porta ───
-      cmd_porta = UI::Command.new('Porta') {
+      cmd_porta = ::UI::Command.new('Porta') {
         Sketchup.active_model.select_tool(Tools::AgregadoTool.new(:porta))
       }
       cmd_porta.tooltip = 'Adicionar porta ao modulo'
@@ -35,7 +35,7 @@ module Ornato
       tb.add_item(cmd_porta)
 
       # ─── Gaveta ───
-      cmd_gaveta = UI::Command.new('Gaveta') {
+      cmd_gaveta = ::UI::Command.new('Gaveta') {
         Sketchup.active_model.select_tool(Tools::AgregadoTool.new(:gaveta))
       }
       cmd_gaveta.tooltip = 'Adicionar gaveta ao modulo'
@@ -44,7 +44,7 @@ module Ornato
       tb.add_item(cmd_gaveta)
 
       # ─── Prateleira ───
-      cmd_prat = UI::Command.new('Prateleira') {
+      cmd_prat = ::UI::Command.new('Prateleira') {
         Sketchup.active_model.select_tool(Tools::AgregadoTool.new(:prateleira))
       }
       cmd_prat.tooltip = 'Adicionar prateleira ao modulo'
@@ -53,7 +53,7 @@ module Ornato
       tb.add_item(cmd_prat)
 
       # ─── Divisoria ───
-      cmd_div = UI::Command.new('Divisoria') {
+      cmd_div = ::UI::Command.new('Divisoria') {
         Sketchup.active_model.select_tool(Tools::AgregadoTool.new(:divisoria))
       }
       cmd_div.tooltip = 'Adicionar divisoria ao modulo'
@@ -64,7 +64,7 @@ module Ornato
       tb.add_separator
 
       # ─── Pecas Avulsas ───
-      cmd_pecas = UI::Command.new('Pecas Avulsas') {
+      cmd_pecas = ::UI::Command.new('Pecas Avulsas') {
         Sketchup.active_model.select_tool(Tools::PecasAvulsasTool.new)
       }
       cmd_pecas.tooltip = 'Tampo, rodape, painel cavilhado, moldura...'
@@ -73,7 +73,7 @@ module Ornato
       tb.add_item(cmd_pecas)
 
       # ─── Editar ───
-      cmd_edit = UI::Command.new('Editar') {
+      cmd_edit = ::UI::Command.new('Editar') {
         Sketchup.active_model.select_tool(Tools::EditorTool.new)
       }
       cmd_edit.tooltip = 'Editar modulo selecionado'
@@ -83,8 +83,28 @@ module Ornato
 
       tb.add_separator
 
+      # ─── Transformar Peca ───
+      cmd_transf = ::UI::Command.new('Transformar Peca') {
+        Sketchup.active_model.select_tool(Tools::TransformarPecaTool.new)
+      }
+      cmd_transf.tooltip = 'Converter face ou grupo em peca Ornato'
+      cmd_transf.status_bar_text = 'Clique em uma face ou grupo para transformar em peca reconhecida pelo sistema'
+      cmd_transf.small_icon = cmd_transf.large_icon = icon_path('transformar')
+      tb.add_item(cmd_transf)
+
+      # ─── Usinagem Avulsa ───
+      cmd_usina = ::UI::Command.new('Usinagem Avulsa') {
+        Sketchup.active_model.select_tool(Tools::UsinagemAvulsaTool.new)
+      }
+      cmd_usina.tooltip = 'Adicionar usinagem manual (furo, canal, pocket...)'
+      cmd_usina.status_bar_text = 'Clique em uma peca Ornato para adicionar usinagem ponto a ponto'
+      cmd_usina.small_icon = cmd_usina.large_icon = icon_path('usinagem')
+      tb.add_item(cmd_usina)
+
+      tb.add_separator
+
       # ─── Cotagem ───
-      cmd_cotas = UI::Command.new('Cotagem') {
+      cmd_cotas = ::UI::Command.new('Cotagem') {
         sel = Sketchup.active_model.selection
         if sel.length == 1 && Utils.modulo_ornato?(sel.first)
           Engines::MotorCotagem.cotar_modulo(sel.first, externas: true, internas: true)
@@ -98,7 +118,7 @@ module Ornato
       tb.add_item(cmd_cotas)
 
       # ─── Ficha Tecnica ───
-      cmd_ficha = UI::Command.new('Ficha Tecnica') {
+      cmd_ficha = ::UI::Command.new('Ficha Tecnica') {
         sel = Sketchup.active_model.selection
         if sel.length == 1 && Utils.modulo_ornato?(sel.first)
           mi = Models::ModuloInfo.carregar_do_grupo(sel.first)
@@ -117,7 +137,7 @@ module Ornato
       tb.add_item(cmd_ficha)
 
       # ─── Etiquetas ───
-      cmd_etiq = UI::Command.new('Etiquetas') {
+      cmd_etiq = ::UI::Command.new('Etiquetas') {
         sel = Sketchup.active_model.selection
         if sel.length == 1 && Utils.modulo_ornato?(sel.first)
           mi = Models::ModuloInfo.carregar_do_grupo(sel.first)
@@ -143,7 +163,7 @@ module Ornato
       tb.add_item(cmd_etiq)
 
       # ─── Exportar JSON ───
-      cmd_export = UI::Command.new('Exportar JSON') {
+      cmd_export = ::UI::Command.new('Exportar JSON') {
         Engines::MotorExport.mostrar_dialog_exportacao
       }
       cmd_export.tooltip = 'Exportar JSON para producao (compativel UpMobb)'
@@ -152,7 +172,7 @@ module Ornato
       tb.add_item(cmd_export)
 
       # ─── Validar ───
-      cmd_validar = UI::Command.new('Validar') {
+      cmd_validar = ::UI::Command.new('Validar') {
         sel = Sketchup.active_model.selection
         if sel.length == 1 && Utils.modulo_ornato?(sel.first)
           mi = Models::ModuloInfo.carregar_do_grupo(sel.first)
@@ -172,7 +192,7 @@ module Ornato
       tb.add_separator
 
       # ─── Painel ───
-      cmd_painel = UI::Command.new('Painel') {
+      cmd_painel = ::UI::Command.new('Painel') {
         Ornato.mostrar_painel
       }
       cmd_painel.tooltip = 'Abrir painel Ornato'

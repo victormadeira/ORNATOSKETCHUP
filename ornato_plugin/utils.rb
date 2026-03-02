@@ -118,6 +118,46 @@ module Ornato
       }
     end
 
+    # Verifica se uma entidade é uma peça Ornato (sub-grupo com DICT_PECA)
+    def self.peca_ornato?(entity)
+      return false unless entity.is_a?(Sketchup::Group) || entity.is_a?(Sketchup::ComponentInstance)
+      get_attr(entity, Config::DICT_PECA, 'tipo') != nil
+    end
+
+    # Encontra todas as peças Ornato no modelo (sub-grupos e peças avulsas)
+    def self.listar_pecas(model = nil)
+      model ||= Sketchup.active_model
+      pecas = []
+
+      model.active_entities.each do |e|
+        if peca_ornato?(e)
+          pecas << e
+        elsif modulo_ornato?(e) && e.respond_to?(:entities)
+          # Procurar sub-grupos peça dentro do módulo
+          e.entities.each do |sub|
+            pecas << sub if peca_ornato?(sub)
+          end
+        end
+      end
+
+      pecas
+    end
+
+    # Retorna informações de uma peça Ornato
+    def self.info_peca(entity)
+      return nil unless peca_ornato?(entity)
+      {
+        nome:        get_attr(entity, Config::DICT_PECA, 'nome'),
+        tipo:        get_attr(entity, Config::DICT_PECA, 'tipo'),
+        comprimento: get_attr(entity, Config::DICT_PECA, 'comprimento'),
+        largura:     get_attr(entity, Config::DICT_PECA, 'largura'),
+        espessura:   get_attr(entity, Config::DICT_PECA, 'espessura'),
+        material:    get_attr(entity, Config::DICT_PECA, 'material'),
+        origem:      get_attr(entity, Config::DICT_PECA, 'origem') || 'auto',
+        usinagens:   get_attr(entity, Config::DICT_PECA, 'usinagens_count') || 0
+      }
+    end
+
     # Desenha um retângulo 3D (caixa) dentro de um grupo/entities
     # Retorna o grupo criado
     def self.criar_caixa_3d(entities, x, y, z, larg, alt, prof, nome: nil, material: nil)

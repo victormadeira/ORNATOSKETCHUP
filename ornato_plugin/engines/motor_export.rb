@@ -216,11 +216,11 @@ module Ornato
         caminho
       end
 
-      # Gera JSON como string (sem salvar arquivo) — util para API/ERP
-      def self.gerar_json_string(opcoes = {})
+      # Gera JSON como Hash (sem salvar arquivo) — util para API/ERP
+      # @return [Hash] JSON data com model_entities, details_project, machining
+      def self.gerar_json_data(opcoes = {})
         model = Sketchup.active_model
         modulos = Utils.listar_modulos
-        return '{}' if modulos.empty?
 
         dados_modulos = []
         modulos.each_with_index do |grupo, idx|
@@ -229,12 +229,19 @@ module Ornato
           dados_modulos << { modulo_info: mi, grupo: grupo, master_id: idx + 1 }
         end
 
-        json_data = {
-          'model_entities' => gerar_model_entities(dados_modulos),
-          'details_project' => gerar_details_project(opcoes, model),
-          'machining' => gerar_machining(dados_modulos),
-        }
+        return nil if dados_modulos.empty?
 
+        {
+          'model_entities'  => gerar_model_entities(dados_modulos),
+          'details_project' => gerar_details_project(opcoes, model),
+          'machining'       => gerar_machining(dados_modulos),
+        }
+      end
+
+      # Gera JSON como string (sem salvar arquivo)
+      def self.gerar_json_string(opcoes = {})
+        json_data = gerar_json_data(opcoes)
+        return '{}' unless json_data
         JSON.pretty_generate(json_data)
       end
 
@@ -290,6 +297,19 @@ module Ornato
         comp_corte = peca.comprimento.to_f
         larg_corte = peca.largura.to_f
 
+        # Contorno 2D (para pecas nao-retangulares)
+        contour = nil
+        if peca.respond_to?(:grupo_ref) && peca.grupo_ref
+          contour = MotorContorno.extrair(peca.grupo_ref)
+          if contour
+            bbox = MotorContorno.bounding_box(contour)
+            if bbox
+              comp_corte = bbox['w'] if bbox['w'] > 0
+              larg_corte = bbox['h'] if bbox['h'] > 0
+            end
+          end
+        end
+
         # Codigos de fita de borda para os 4 lados
         fitas = calcular_fitas_4_lados(peca, mi)
 
@@ -324,6 +344,9 @@ module Ornato
           'upmtextaggregates'    => '',
           'entities'             => gerar_sub_entidades(peca, mi, esp_real, comp_corte, larg_corte, fitas),
         }
+
+        # Adicionar contorno 2D se existir (pecas nao-retangulares)
+        entity['contour'] = contour if contour
 
         entity
       end
@@ -465,7 +488,13 @@ module Ornato
             # Workers (operacoes CNC)
             workers = gerar_workers_peca(peca, mi, comp, larg, esp_real)
 
-            machining[persistent_id.to_s] = {
+            # Contorno 2D (para pecas nao-retangulares)
+            contour = nil
+            if peca.respond_to?(:grupo_ref) && peca.grupo_ref
+              contour = MotorContorno.extrair(peca.grupo_ref)
+            end
+
+            mach_entry = {
               'code'       => "#{persistent_id}A",
               'name_peace' => peca.nome,
               'length'     => comp,
@@ -474,6 +503,9 @@ module Ornato
               'borders'    => fitas,
               'workers'    => workers,
             }
+            mach_entry['contour'] = contour if contour
+
+            machining[persistent_id.to_s] = mach_entry
           end
         end
 
@@ -960,6 +992,28 @@ module Ornato
           dialog.close
         end
 
+        # Callback: Enviar diretamente para o ERP (sem salvar arquivo)
+        dialog.add_action_callback('enviar_erp') do |_ctx, dados_json|
+          begin
+            dados = JSON.parse(dados_json)
+            opcoes = {
+              cliente: dados['cliente'],
+              projeto: dados['projeto'],
+              codigo: dados['codigo'],
+              vendedor: dados['vendedor'],
+            }
+            dialog.close
+            json_data = gerar_json_data(opcoes)
+            if json_data
+              MotorApi.mostrar_dialog_envio(json_data)
+            else
+              ::UI.messagebox('Nenhum modulo Ornato encontrado para enviar.', MB_OK)
+            end
+          rescue => e
+            puts "[Ornato] Erro no envio ERP: #{e.message}"
+          end
+        end
+
         dialog.show
       end
 
@@ -1016,6 +1070,10 @@ module Ornato
                 background: #e0e0e0; color: #555;
               }
               .btn-secondary:hover { background: #ccc; }
+              .btn-enviar {
+                background: #22c55e; color: white;
+              }
+              .btn-enviar:hover { background: #16a34a; }
               .checkbox-row {
                 display: flex; align-items: center; gap: 8px;
                 margin-bottom: 8px; font-size: 13px;
@@ -1071,6 +1129,7 @@ module Ornato
 
             <div class="buttons">
               <button class="btn btn-secondary" onclick="sketchup.cancelar()">Cancelar</button>
+              <button class="btn btn-enviar" onclick="doEnviarERP()">Enviar para ERP</button>
               <button class="btn btn-primary" onclick="doExport()">Exportar JSON</button>
             </div>
 
@@ -1086,6 +1145,18 @@ module Ornato
                   ferragens: document.getElementById('chk_ferragens').checked
                 };
                 sketchup.exportar(JSON.stringify(dados));
+              }
+              function doEnviarERP() {
+                var dados = {
+                  projeto: document.getElementById('projeto').value,
+                  cliente: document.getElementById('cliente').value,
+                  codigo: document.getElementById('codigo').value,
+                  vendedor: document.getElementById('vendedor').value,
+                  usinagem: document.getElementById('chk_usinagem').checked,
+                  furos: document.getElementById('chk_furos').checked,
+                  ferragens: document.getElementById('chk_ferragens').checked
+                };
+                sketchup.enviar_erp(JSON.stringify(dados));
               }
             </script>
           </body>

@@ -57,6 +57,52 @@ module Ornato
 
       menu.add_separator
 
+      # ─── Identificacao / Usinagem Manual ───
+      sub_ident = menu.add_submenu('Identificar Pecas')
+
+      sub_ident.add_item('Transformar Face/Grupo em Peca...') {
+        Sketchup.active_model.select_tool(Tools::TransformarPecaTool.new)
+      }
+
+      sub_ident.add_item('Usinagem Avulsa (ponto a ponto)...') {
+        Sketchup.active_model.select_tool(Tools::UsinagemAvulsaTool.new)
+      }
+
+      sub_ident.add_separator
+
+      sub_ident.add_item('Visualizar Usinagens da Peca...') {
+        sel = Sketchup.active_model.selection
+        if sel.length == 1 && Utils.peca_ornato?(sel.first)
+          mi = nil
+          painel_usi = UI::PainelUsinagem.new
+          painel_usi.mostrar(sel.first, mi)
+        else
+          ::UI.messagebox('Selecione uma peca Ornato (grupo com tipo definido).', MB_OK)
+        end
+      }
+
+      sub_ident.add_separator
+
+      sub_ident.add_item('Listar Todas as Pecas') {
+        pecas = Utils.listar_pecas
+        if pecas.any?
+          texto = "=== PECAS ORNATO NO PROJETO ===\n\n"
+          pecas.each_with_index do |p, i|
+            info = Utils.info_peca(p)
+            next unless info
+            texto += "#{i + 1}. #{info[:nome]} (#{info[:tipo]})\n"
+            texto += "   #{info[:comprimento]}x#{info[:largura]}x#{info[:espessura]}mm | #{info[:material]}\n"
+            texto += "   Origem: #{info[:origem]} | Usinagens: #{info[:usinagens]}\n\n"
+          end
+          texto += "=== Total: #{pecas.length} pecas ==="
+          ::UI.messagebox(texto, MB_MULTILINE)
+        else
+          ::UI.messagebox('Nenhuma peca Ornato encontrada.', MB_OK)
+        end
+      }
+
+      menu.add_separator
+
       # ─── Edicao ───
       menu.add_item('Editar Modulo') {
         Sketchup.active_model.select_tool(Tools::EditorTool.new)
@@ -343,6 +389,15 @@ module Ornato
           Engines::MotorExport.exportar_modulo(sel.first)
         else
           ::UI.messagebox('Selecione um modulo Ornato primeiro.', MB_OK)
+        end
+      }
+      sub_export.add_separator
+      sub_export.add_item('Enviar para ERP...') {
+        json_data = Engines::MotorExport.gerar_json_data
+        if json_data
+          Engines::MotorApi.mostrar_dialog_envio(json_data)
+        else
+          ::UI.messagebox('Nenhum modulo Ornato encontrado no projeto.', MB_OK)
         end
       }
 

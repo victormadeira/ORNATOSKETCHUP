@@ -382,5 +382,13 @@ module Ornato
     DICT_PECA        = 'ornato_peca'.freeze
     DICT_AGREGADO    = 'ornato_agregado'.freeze
     DICT_VAO         = 'ornato_vao'.freeze
+
+    # ─── API / ERP ───
+    API_SERVER_DEFAULT  = 'http://localhost:3001'.freeze
+    API_TIMEOUT         = 15  # segundos
+
+    # ─── Contorno 2D ───
+    CONTORNO_TOLERANCIA    = 0.1  # mm — tolerancia para edges colineares
+    CONTORNO_MIN_SEGMENTO  = 0.5  # mm — segmentos menores sao ignorados
   end
 end
