@@ -1,0 +1,3459 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ORNATO</title>
+  <style>
+    /* ═══════════════════════════════════════════════════════════
+       ORNATO — Painel Principal SketchUp HtmlDialog
+       Design System v2 — Premium Furniture Plugin UI
+       ═══════════════════════════════════════════════════════════ */
+
+    :root {
+      /* Brand */
+      --orn-primary: #D4894A;
+      --orn-primary-hover: #C07A3E;
+      --orn-primary-light: rgba(212,137,74,0.12);
+      --orn-primary-glow: rgba(212,137,74,0.25);
+      --orn-accent: #C9A96E;
+
+      /* Neutrals */
+      --bg-root: #F5F3F0;
+      --bg-card: #FFFFFF;
+      --bg-card-hover: #FAFAF8;
+      --bg-input: #F8F7F5;
+      --bg-badge: #F0EDE8;
+
+      --border: #E8E4DF;
+      --border-light: #F0EDE8;
+      --border-focus: var(--orn-primary);
+
+      --text-primary: #2C2420;
+      --text-secondary: #7A7067;
+      --text-muted: #A89E94;
+      --text-inverse: #FFFFFF;
+
+      /* Semantic */
+      --success: #4A9D6E;
+      --success-bg: #EDF7F0;
+      --warning: #D49A4A;
+      --warning-bg: #FDF5EB;
+      --error: #C45454;
+      --error-bg: #FBEEEE;
+      --info: #5A8DC4;
+      --info-bg: #EDF3FA;
+
+      /* Badge colors */
+      --badge-struct: #4A9D6E;
+      --badge-struct-bg: #EDF7F0;
+      --badge-front: #5A8DC4;
+      --badge-front-bg: #EDF3FA;
+      --badge-intern: #D49A4A;
+      --badge-intern-bg: #FDF5EB;
+      --badge-drawer: #C45454;
+      --badge-drawer-bg: #FBEEEE;
+      --badge-hw: #8B6BB5;
+      --badge-hw-bg: #F3EFF8;
+
+      /* Layout */
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-full: 100px;
+      --shadow-sm: 0 1px 2px rgba(44,36,32,0.04);
+      --shadow-md: 0 2px 8px rgba(44,36,32,0.06), 0 1px 2px rgba(44,36,32,0.04);
+      --shadow-lg: 0 8px 24px rgba(44,36,32,0.08), 0 2px 6px rgba(44,36,32,0.04);
+
+      /* Typography */
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+    }
+
+    /* ── Dark Mode ── */
+    body.dark {
+      --bg-root: #1A1816;
+      --bg-card: #242220;
+      --bg-card-hover: #2C2A28;
+      --bg-input: #1E1C1A;
+      --bg-badge: #2C2A28;
+
+      --border: #3A3632;
+      --border-light: #2C2A28;
+
+      --text-primary: #EAE6E2;
+      --text-secondary: #9A9088;
+      --text-muted: #6A6058;
+
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.15);
+      --shadow-md: 0 2px 8px rgba(0,0,0,0.2), 0 1px 2px rgba(0,0,0,0.12);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.15);
+
+      --badge-struct-bg: rgba(74,157,110,0.15);
+      --badge-front-bg: rgba(90,141,196,0.15);
+      --badge-intern-bg: rgba(212,154,74,0.15);
+      --badge-drawer-bg: rgba(196,84,84,0.15);
+      --badge-hw-bg: rgba(139,107,181,0.15);
+      --success-bg: rgba(74,157,110,0.12);
+      --warning-bg: rgba(212,154,74,0.12);
+      --error-bg: rgba(196,84,84,0.12);
+      --info-bg: rgba(90,141,196,0.12);
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font);
+      font-size: 13px;
+      color: var(--text-primary);
+      background: var(--bg-root);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* ═══ HEADER ═══ */
+    .header {
+      background: linear-gradient(135deg, #2C2420 0%, #3A3230 100%);
+      color: var(--text-inverse);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 2px solid var(--orn-primary);
+    }
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-logo {
+      width: 28px;
+      height: 28px;
+      background: var(--orn-primary);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      color: white;
+    }
+    .header h1 {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .header-btn {
+      background: rgba(255,255,255,0.08);
+      border: none;
+      border-radius: var(--radius-sm);
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: rgba(255,255,255,0.6);
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .header-btn:hover { background: rgba(255,255,255,0.15); color: white; }
+    .header .ver {
+      font-size: 10px;
+      opacity: 0.4;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    /* ═══ BREADCRUMB ═══ */
+    .breadcrumb {
+      background: var(--bg-card);
+      padding: 10px 18px;
+      font-size: 12px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-wrap: wrap;
+    }
+    .bc-item {
+      color: var(--orn-primary);
+      cursor: pointer;
+      font-weight: 600;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: all 0.15s;
+    }
+    .bc-item:hover { background: var(--orn-primary-light); }
+    .bc-current { color: var(--text-primary); font-weight: 600; padding: 2px 4px; }
+    .bc-sep { color: var(--text-muted); margin: 0 1px; font-size: 10px; }
+
+    /* ═══ CONTENT ═══ */
+    .content {
+      padding: 14px;
+      overflow-y: auto;
+      height: calc(100vh - 120px);
+    }
+
+    /* ═══ CARDS ═══ */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-light);
+      transition: box-shadow 0.2s;
+    }
+    .card:hover { box-shadow: var(--shadow-md); }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .card h3 {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .card-count {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--orn-primary);
+      background: var(--orn-primary-light);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+    }
+
+    /* ═══ FIELDS ═══ */
+    .field {
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 3px 0;
+    }
+    .field label {
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .field .value {
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-primary);
+    }
+    .field .value-sm { font-size: 11px; }
+
+    .field-dim {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .field-dim label {
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+      min-width: 80px;
+    }
+    .field-dim .dim-max {
+      font-size: 9px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .field-dim input {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      width: 80px;
+      text-align: right;
+      background: var(--bg-input);
+      color: var(--text-primary);
+      transition: all 0.2s;
+      font-family: var(--font-mono);
+    }
+    .field-dim input:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--orn-primary-glow);
+      background: var(--bg-card);
+    }
+    .field-dim input.over-limit {
+      border-color: var(--error);
+      color: var(--error);
+    }
+    .field-dim .unit {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .field-sep {
+      border-top: 1px solid var(--border-light);
+      margin: 8px 0;
+      padding-top: 8px;
+    }
+
+    /* ═══ ITEM LIST ═══ */
+    .item-list { list-style: none; }
+    .item-list li {
+      padding: 8px 10px;
+      margin: 2px 0;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+    }
+    .item-list li:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border);
+    }
+    .item-name { font-weight: 600; font-size: 12px; }
+    .item-meta { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+    .item-badge {
+      font-size: 9px;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      flex-shrink: 0;
+    }
+    .badge-struct { background: var(--badge-struct-bg); color: var(--badge-struct); }
+    .badge-front  { background: var(--badge-front-bg);  color: var(--badge-front); }
+    .badge-intern { background: var(--badge-intern-bg); color: var(--badge-intern); }
+    .badge-drawer { background: var(--badge-drawer-bg); color: var(--badge-drawer); }
+    .badge-hw     { background: var(--badge-hw-bg);     color: var(--badge-hw); }
+
+    /* ═══ BUTTONS ═══ */
+    .btn {
+      border: none;
+      border-radius: var(--radius-sm);
+      padding: 9px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-family: var(--font);
+    }
+    .btn-primary {
+      background: var(--orn-primary);
+      color: white;
+      box-shadow: 0 1px 3px rgba(212,137,74,0.3);
+    }
+    .btn-primary:hover {
+      background: var(--orn-primary-hover);
+      box-shadow: 0 2px 8px rgba(212,137,74,0.35);
+      transform: translateY(-1px);
+    }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-secondary {
+      background: var(--bg-badge);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: var(--border);
+      border-color: var(--text-muted);
+    }
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 11px;
+      width: auto;
+      border-radius: var(--radius-sm);
+    }
+    .btn-icon {
+      width: 32px;
+      height: 32px;
+      padding: 0;
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+    .btn-group {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .btn-group .btn { flex: 1; min-width: 0; }
+    .btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    /* ═══ STATUS / BADGES ═══ */
+    .status {
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-size: 10px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.3px;
+    }
+    .status::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .status-ok { background: var(--success-bg); color: var(--success); }
+    .status-ok::before { background: var(--success); }
+    .status-warn { background: var(--warning-bg); color: var(--warning); }
+    .status-warn::before { background: var(--warning); }
+    .status-error { background: var(--error-bg); color: var(--error); }
+    .status-error::before { background: var(--error); }
+
+    /* ═══ BORDA DIAGRAM ═══ */
+    .borda-diagram {
+      display: grid;
+      grid-template-columns: 32px 1fr 32px;
+      grid-template-rows: 28px 70px 28px;
+      gap: 3px;
+      margin: 10px auto;
+      width: 180px;
+    }
+    .borda-top { grid-column: 2; grid-row: 1; }
+    .borda-left { grid-column: 1; grid-row: 2; }
+    .borda-center {
+      grid-column: 2; grid-row: 2;
+      background: var(--bg-input);
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+    .borda-right { grid-column: 3; grid-row: 2; }
+    .borda-bottom { grid-column: 2; grid-row: 3; }
+    .borda-btn {
+      width: 100%;
+      height: 100%;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 9px;
+      font-weight: 700;
+      transition: all 0.15s;
+      letter-spacing: 0.3px;
+    }
+    .borda-btn.active {
+      background: var(--orn-primary);
+      color: white;
+      box-shadow: 0 1px 4px rgba(212,137,74,0.3);
+    }
+    .borda-btn.inactive { background: var(--bg-badge); color: var(--text-muted); }
+    .borda-btn:hover { opacity: 0.85; transform: scale(1.05); }
+
+    /* ═══ ALERTS ═══ */
+    .alert-item {
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 4px;
+      border-left: 3px solid transparent;
+      background: var(--bg-input);
+    }
+    .alert-item.alert-error { border-left-color: var(--error); }
+    .alert-item.alert-warn { border-left-color: var(--warning); }
+    .alert-module { color: var(--info); font-size: 11px; font-weight: 600; }
+    .alert-suggestion { color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+    .alert-filters {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    /* ═══ TOASTS ═══ */
+    .toast-container {
+      position: fixed;
+      bottom: 40px;
+      left: 14px;
+      right: 14px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+    }
+    .toast {
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      font-size: 12px;
+      font-weight: 600;
+      color: white;
+      animation: toastSlide 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: var(--shadow-lg);
+    }
+    .toast-success { background: var(--success); }
+    .toast-error { background: var(--error); }
+    .toast-info { background: #555; }
+    @keyframes toastSlide {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══ EMPTY STATE ═══ */
+    .empty-state {
+      text-align: center;
+      padding: 30px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state .empty-icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+      opacity: 0.4;
+    }
+    .empty-state p { font-size: 12px; line-height: 1.6; }
+    .empty-state .empty-hint {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* ═══ METRIC ROW ═══ */
+    .metrics-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .metric-card {
+      background: var(--bg-input);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      text-align: center;
+    }
+    .metric-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+    .metric-label {
+      font-size: 9px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* ═══ FOOTER ═══ */
+    .shortcut-footer {
+      background: var(--bg-card);
+      border-top: 1px solid var(--border);
+      padding: 6px 14px;
+      font-size: 9px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      flex-shrink: 0;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+    .shortcut-footer kbd {
+      background: var(--bg-badge);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      border: 1px solid var(--border);
+    }
+
+    /* ═══ ANIMATIONS ═══ */
+    .fade-in { animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ═══ BIBLIOTECA DE MODULOS ═══ */
+    .lib-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .lib-back {
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: var(--bg-badge);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .lib-back:hover { background: var(--border); color: var(--text-primary); }
+    .lib-search {
+      flex: 1;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: 7px 14px 7px 34px;
+      font-size: 12px;
+      font-family: var(--font);
+      background: var(--bg-input) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23A89E94' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='7' cy='7' r='4.5'/%3E%3Cline x1='10' y1='10' x2='14' y2='14'/%3E%3C/svg%3E") no-repeat 10px center;
+      color: var(--text-primary);
+      transition: all 0.2s;
+    }
+    .lib-search:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--orn-primary-glow);
+      background-color: var(--bg-card);
+    }
+    .lib-search::placeholder { color: var(--text-muted); }
+
+    .lib-cats {
+      display: flex;
+      gap: 6px;
+      padding: 10px 16px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .lib-cats::-webkit-scrollbar { display: none; }
+    .lib-chip {
+      white-space: nowrap;
+      padding: 5px 14px;
+      border-radius: var(--radius-full);
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+      flex-shrink: 0;
+    }
+    .lib-chip:hover { border-color: var(--orn-primary); color: var(--orn-primary); }
+    .lib-chip.active {
+      background: var(--orn-primary);
+      color: white;
+      border-color: var(--orn-primary);
+    }
+
+    .lib-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      padding: 10px 16px 16px;
+    }
+    .lib-card {
+      background: var(--bg-card);
+      border: 2px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 12px 10px 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      position: relative;
+    }
+    .lib-card:hover {
+      border-color: var(--orn-primary);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    .lib-card.selected {
+      border-color: var(--orn-primary);
+      background: var(--orn-primary-light);
+      box-shadow: 0 0 0 3px var(--orn-primary-glow);
+    }
+    .lib-thumb {
+      width: 100%;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--orn-primary);
+      margin-bottom: 6px;
+    }
+    .lib-card .lib-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.3;
+    }
+    .lib-card .lib-dims {
+      font-size: 9px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      font-family: var(--font-mono);
+    }
+
+    /* Painel de parametros inline (slide up) */
+    .lib-params {
+      background: var(--bg-card);
+      border-top: 2px solid var(--orn-primary);
+      padding: 16px;
+      position: sticky;
+      bottom: 0;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+      animation: slideUp 0.25s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .lib-params-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .lib-params-title .lib-sel-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-sm);
+      background: var(--orn-primary-light);
+      color: var(--orn-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .lib-params-title h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+    .lib-params-title .lib-sel-type {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .lib-dim-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .lib-dim-col label {
+      display: block;
+      font-size: 9px;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+    .lib-dim-col input {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 7px 8px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      text-align: center;
+      background: var(--bg-input);
+      color: var(--text-primary);
+      transition: all 0.2s;
+    }
+    .lib-dim-col input:focus {
+      outline: none;
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--orn-primary-glow);
+    }
+    .lib-dim-col .lib-unit {
+      font-size: 9px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 2px;
+    }
+    .lib-presets {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .lib-preset {
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-mono);
+    }
+    .lib-preset:hover { border-color: var(--orn-primary); color: var(--orn-primary); }
+    .lib-preset.active { background: var(--orn-primary-light); border-color: var(--orn-primary); color: var(--orn-primary); }
+    .lib-insert-btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: var(--orn-primary);
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(212,137,74,0.35);
+      font-family: var(--font);
+    }
+    .lib-insert-btn:hover {
+      background: var(--orn-primary-hover);
+      box-shadow: 0 4px 16px rgba(212,137,74,0.4);
+      transform: translateY(-1px);
+    }
+    .lib-insert-btn:active { transform: translateY(0); }
+
+    .lib-empty {
+      text-align: center;
+      padding: 30px 16px;
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    /* ═══ MODULE TYPE ICON ═══ */
+    .type-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: var(--radius-sm);
+      background: var(--orn-primary-light);
+      color: var(--orn-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    /* ═══ SECTION DIVIDER ═══ */
+    .section-label {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      padding: 12px 4px 6px;
+    }
+
+    /* ═══ COLLAPSIBLE SECTION ═══ */
+    .collapse-section {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease, opacity 0.2s ease;
+      opacity: 0;
+    }
+    .collapse-section.open {
+      max-height: 600px;
+      opacity: 1;
+    }
+    .collapse-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      padding: 2px 0;
+      user-select: none;
+    }
+    .collapse-toggle .arrow {
+      font-size: 10px;
+      color: var(--text-muted);
+      transition: transform 0.2s;
+    }
+    .collapse-toggle.open .arrow {
+      transform: rotate(90deg);
+    }
+
+    /* ═══ ACTION BAR (compact) ═══ */
+    .action-bar {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      padding: 4px 0;
+    }
+    .action-bar .abtn {
+      flex: 1;
+      min-width: 0;
+      padding: 8px 6px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      font-family: var(--font);
+    }
+    .action-bar .abtn:hover {
+      border-color: var(--orn-primary);
+      color: var(--orn-primary);
+      background: var(--orn-primary-light);
+    }
+    .action-bar .abtn .abtn-icon {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 2px;
+    }
+
+    /* ═══ [1] VISTA ESQUEMATICA DO MODULO ═══ */
+    .schematic-view {
+      background: var(--bg-input);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border-light);
+      position: relative;
+    }
+    .schematic-svg {
+      display: block;
+      margin: 0 auto;
+    }
+    .schematic-label {
+      font-size: 9px;
+      font-weight: 700;
+      fill: var(--text-secondary);
+      text-anchor: middle;
+      cursor: pointer;
+      transition: fill 0.2s;
+    }
+    .schematic-label:hover { fill: var(--orn-primary); }
+    .schematic-part {
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .schematic-part:hover { opacity: 0.7; }
+    .schematic-part-struct { stroke: var(--badge-struct); fill: var(--badge-struct-bg); }
+    .schematic-part-front { stroke: var(--badge-front); fill: var(--badge-front-bg); }
+    .schematic-part-intern { stroke: var(--badge-intern); fill: var(--badge-intern-bg); }
+    .schematic-part-drawer { stroke: var(--badge-drawer); fill: var(--badge-drawer-bg); }
+    .schematic-dim {
+      font-size: 8px;
+      fill: var(--text-muted);
+      font-family: var(--font-mono);
+      text-anchor: middle;
+    }
+    .schematic-dimline {
+      stroke: var(--text-muted);
+      stroke-width: 0.6;
+      stroke-dasharray: 2 2;
+    }
+
+    /* ═══ [2] DIAGRAMA DA PECA COM COTAS ═══ */
+    .piece-diagram {
+      background: var(--bg-input);
+      border-radius: var(--radius-md);
+      padding: 16px 12px;
+      margin: 10px 0;
+      border: 1px solid var(--border-light);
+    }
+    .piece-svg {
+      display: block;
+      margin: 0 auto;
+    }
+    .piece-edge {
+      stroke-width: 3;
+      stroke-linecap: round;
+    }
+    .piece-edge-active { stroke: var(--orn-primary); }
+    .piece-edge-inactive { stroke: var(--border); stroke-dasharray: 4 3; }
+    .piece-body {
+      fill: var(--bg-card);
+      stroke: var(--border);
+      stroke-width: 1;
+    }
+    .piece-cota {
+      font-size: 9px;
+      fill: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-weight: 600;
+      text-anchor: middle;
+    }
+    .piece-cota-line {
+      stroke: var(--text-muted);
+      stroke-width: 0.5;
+    }
+    .piece-cota-arrow {
+      stroke: var(--text-muted);
+      stroke-width: 0.8;
+      fill: none;
+    }
+    .piece-grain-arrow {
+      stroke: var(--text-muted);
+      stroke-width: 0.8;
+      fill: none;
+      opacity: 0.5;
+    }
+    .piece-grain-label {
+      font-size: 7px;
+      fill: var(--text-muted);
+      text-anchor: middle;
+    }
+
+    /* ═══ [3] OPERACOES CNC MINI-MAP ═══ */
+    .cnc-facemap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .cnc-face {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px;
+      text-align: center;
+    }
+    .cnc-face-title {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .cnc-face svg { display: block; margin: 0 auto; }
+    .cnc-dot-furo { fill: var(--error); }
+    .cnc-dot-cavilha { fill: var(--warning); }
+    .cnc-dot-minifix { fill: var(--info); }
+    .cnc-dot-rasgos { fill: var(--badge-hw); }
+    .cnc-legend {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-light);
+    }
+    .cnc-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .cnc-legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ═══ [4] CHIPS DE TAMANHO NO MODULO ═══ */
+    .dim-chips {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin: 6px 0 2px;
+    }
+    .dim-chip {
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: var(--font-mono);
+    }
+    .dim-chip:hover {
+      border-color: var(--orn-primary);
+      color: var(--orn-primary);
+    }
+    .dim-chip.active {
+      background: var(--orn-primary-light);
+      border-color: var(--orn-primary);
+      color: var(--orn-primary);
+    }
+
+    /* ═══ [5] BADGE ALERTAS NO MODULO (projeto) ═══ */
+    .alert-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: var(--radius-full);
+      font-size: 9px;
+      font-weight: 800;
+      color: white;
+      flex-shrink: 0;
+    }
+    .alert-badge-error {
+      background: var(--error);
+      box-shadow: 0 1px 4px rgba(196,84,84,0.3);
+    }
+    .alert-badge-warn {
+      background: var(--warning);
+      box-shadow: 0 1px 4px rgba(212,154,74,0.3);
+    }
+    .alert-badge-ok {
+      background: var(--success);
+      box-shadow: 0 1px 4px rgba(74,157,110,0.3);
+    }
+    .module-badges {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ═══ VISUAL POLISH (match web3d quality) ═══ */
+    .card {
+      backdrop-filter: blur(4px);
+    }
+    .card-header h3 {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 12px 0;
+    }
+
+    /* ═══ COMPOSICAO DETALHADA ═══ */
+    .comp-group-label {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 8px 0 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .comp-group-label .comp-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border-light);
+    }
+    .comp-item {
+      padding: 7px 10px;
+      margin: 2px 0;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+    }
+    .comp-item:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border);
+    }
+    .comp-item-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+    .comp-item-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 12px;
+    }
+    .comp-item-info {
+      min-width: 0;
+    }
+    .comp-item-name {
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .comp-item-dims {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      margin-top: 1px;
+    }
+    .comp-item-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    /* ═══ FERRAGENS RESUMO ═══ */
+    .hw-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin: 6px 0;
+    }
+    .hw-item {
+      background: var(--bg-input);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border-light);
+    }
+    .hw-item-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      background: var(--badge-hw-bg);
+      color: var(--badge-hw);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .hw-item-info {
+      min-width: 0;
+    }
+    .hw-item-qty {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+    .hw-item-label {
+      font-size: 9px;
+      color: var(--text-muted);
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ═══ MATERIAL BAR (projeto) ═══ */
+    .mat-bar {
+      display: flex;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 8px 0 6px;
+      background: var(--bg-input);
+    }
+    .mat-bar-seg {
+      height: 100%;
+      transition: width 0.3s;
+    }
+    .mat-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px 12px;
+      margin-top: 4px;
+    }
+    .mat-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: var(--text-secondary);
+    }
+    .mat-legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+    .mat-legend-val {
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: var(--text-primary);
+    }
+
+    /* ═══ RESUMO DE CORTE ═══ */
+    .cut-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .cut-stat {
+      background: var(--bg-input);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      text-align: center;
+      border: 1px solid var(--border-light);
+    }
+    .cut-stat-value {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+    .cut-stat-label {
+      font-size: 8px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+    .cut-stat-sub {
+      font-size: 9px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* ═══ ESPESSURA INDICATOR ═══ */
+    .esp-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      background: var(--bg-input);
+      border-radius: var(--radius-sm);
+      margin-top: 6px;
+    }
+    .esp-bar {
+      height: 24px;
+      border-radius: 2px;
+      background: var(--orn-primary);
+      opacity: 0.7;
+    }
+    .esp-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+    .esp-sublabel {
+      font-size: 9px;
+      color: var(--text-muted);
+    }
+
+    /* ═══ MODULE IDENTITY ENHANCED ═══ */
+    .mod-identity {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .mod-icon-lg {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--orn-primary-light), var(--orn-primary-glow));
+      color: var(--orn-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      border: 1px solid rgba(212,137,74,0.15);
+    }
+    .mod-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+    .mod-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .mod-mat-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ═══ QUICK DIMS STRIP ═══ */
+    .quick-dims {
+      display: flex;
+      gap: 2px;
+      margin-top: 8px;
+      background: var(--bg-input);
+      border-radius: var(--radius-sm);
+      padding: 6px 8px;
+      border: 1px solid var(--border-light);
+    }
+    .quick-dim {
+      flex: 1;
+      text-align: center;
+    }
+    .quick-dim-val {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+    }
+    .quick-dim-label {
+      font-size: 8px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+    .quick-dim-sep {
+      width: 1px;
+      background: var(--border);
+      margin: 0 2px;
+    }
+
+    /* ═══ SMART TIPS ═══ */
+    .smart-tip {
+      background: linear-gradient(135deg, var(--info-bg), transparent);
+      border: 1px solid rgba(90,141,196,0.2);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-top: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .smart-tip-icon {
+      flex-shrink: 0;
+      color: var(--info);
+      margin-top: 1px;
+    }
+
+    /* ═══ PROGRESS BAR (projeto) ═══ */
+    .proj-progress {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .proj-progress-bar {
+      flex: 1;
+      height: 6px;
+      background: var(--bg-input);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .proj-progress-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s;
+    }
+    .proj-progress-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    /* ═══ MODULE LIST ENHANCED ═══ */
+    .mod-list-item {
+      padding: 10px 12px;
+      margin: 3px 0;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+      background: transparent;
+    }
+    .mod-list-item:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border);
+      transform: translateX(2px);
+    }
+    .mod-list-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .mod-list-name {
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mod-list-meta {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .mod-list-meta .meta-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+    .mod-list-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    /* ═══ MODULE CODE BADGE ═══ */
+    .mod-code {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--orn-primary);
+      background: rgba(var(--orn-primary-rgb, 19,121,240), 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .dark .mod-code {
+      background: rgba(var(--orn-primary-rgb, 19,121,240), 0.15);
+    }
+
+    /* ═══ PIECE CODE IN COMPOSITION ═══ */
+    .comp-item-code {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--bg-badge);
+      padding: 1px 5px;
+      border-radius: 3px;
+      min-width: 22px;
+      text-align: center;
+      flex-shrink: 0;
+      margin-right: 6px;
+    }
+
+    /* ═══ DETALHAR VIEW — PIECE LEGEND TABLE ═══ */
+    .detalhar-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      font-size: 10px;
+    }
+    .detalhar-table thead th {
+      background: var(--bg-badge);
+      color: var(--text-muted);
+      font-size: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 6px 6px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    .detalhar-table thead th:first-child { border-radius: 6px 0 0 0; }
+    .detalhar-table thead th:last-child { border-radius: 0 6px 0 0; }
+    .detalhar-table tbody td {
+      padding: 5px 6px;
+      border-bottom: 1px solid var(--bg-badge);
+      vertical-align: middle;
+      color: var(--text-primary);
+    }
+    .detalhar-table tbody tr:hover td {
+      background: rgba(var(--orn-primary-rgb, 19,121,240), 0.04);
+    }
+    .detalhar-table tbody tr:last-child td { border-bottom: none; }
+    .detalhar-table .td-code {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--orn-primary);
+      font-size: 10px;
+    }
+    .detalhar-table .td-name {
+      font-weight: 600;
+    }
+    .detalhar-table .td-dims {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      white-space: nowrap;
+    }
+    .detalhar-table .td-borda {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 1px;
+      white-space: nowrap;
+    }
+    .detalhar-table .td-type {
+      font-size: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .borda-yes { color: var(--orn-primary); }
+    .borda-no { color: var(--border); }
+
+    /* Detalhar header */
+    .detalhar-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .detalhar-header .mod-code-lg {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--orn-primary);
+    }
+    .detalhar-header .mod-name-lg {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .detalhar-summary {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+    .detalhar-summary span { font-weight: 600; color: var(--text-secondary); }
+
+  </style>
+</head>
+<body>
+  <!-- ═══ SVG ICON SPRITE ═══ -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <!-- Module Types -->
+    <symbol id="i-inferior" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="14" rx="1.5"/><line x1="12" y1="4" x2="12" y2="18"/><line x1="3" y1="21" x2="7" y2="18"/><line x1="21" y1="21" x2="17" y2="18"/>
+    </symbol>
+    <symbol id="i-superior" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="12" rx="1.5"/><line x1="12" y1="3" x2="12" y2="15"/><line x1="3" y1="15" x2="3" y2="19"/><line x1="21" y1="15" x2="21" y2="19"/>
+    </symbol>
+    <symbol id="i-torre" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="5" y="2" width="14" height="20" rx="1.5"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><circle cx="16" cy="5.5" r="0.8" fill="currentColor"/>
+    </symbol>
+    <symbol id="i-gaveteiro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="1.5"/><line x1="3" y1="7.5" x2="21" y2="7.5"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="16.5" x2="21" y2="16.5"/><line x1="10" y1="4.5" x2="14" y2="4.5"/><line x1="10" y1="9" x2="14" y2="9"/><line x1="10" y1="13.5" x2="14" y2="13.5"/><line x1="10" y1="18" x2="14" y2="18"/>
+    </symbol>
+    <symbol id="i-estante" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="2" width="16" height="20" rx="1"/><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="14" x2="20" y2="14"/>
+    </symbol>
+    <symbol id="i-roupeiro" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="2" width="18" height="19" rx="1.5"/><line x1="12" y1="2" x2="12" y2="21"/><line x1="14" y1="10" x2="14" y2="13"/><line x1="10" y1="10" x2="10" y2="13"/><line x1="3" y1="21" x2="5" y2="21"/><line x1="19" y1="21" x2="21" y2="21"/>
+    </symbol>
+    <symbol id="i-bancada" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="6" width="20" height="4" rx="1"/><line x1="4" y1="10" x2="4" y2="20"/><line x1="20" y1="10" x2="20" y2="20"/><line x1="2" y1="20" x2="6" y2="20"/><line x1="18" y1="20" x2="22" y2="20"/>
+    </symbol>
+    <symbol id="i-pia" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="18" height="14" rx="1.5"/><ellipse cx="12" cy="10" rx="4" ry="3"/><line x1="12" y1="7" x2="12" y2="4"/><circle cx="12" cy="3" r="1"/>
+    </symbol>
+    <symbol id="i-nicho" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="6" width="16" height="12" rx="1.5"/><line x1="4" y1="12" x2="20" y2="12"/>
+    </symbol>
+    <symbol id="i-cooktop" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="5" width="18" height="14" rx="1.5"/><circle cx="8.5" cy="10" r="2.2"/><circle cx="15.5" cy="10" r="2.2"/><circle cx="12" cy="15" r="1.5"/>
+    </symbol>
+    <symbol id="i-ilha" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="6" width="20" height="12" rx="1.5"/><line x1="8" y1="6" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="18"/><line x1="2" y1="18" x2="2" y2="21"/><line x1="22" y1="18" x2="22" y2="21"/>
+    </symbol>
+    <symbol id="i-canto" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="3,20 3,4 12,4 12,12 20,12 20,20"/><line x1="12" y1="4" x2="12" y2="20"/>
+    </symbol>
+    <symbol id="i-espelheira" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="5" y="3" width="14" height="18" rx="2"/><rect x="7" y="5" width="10" height="12" rx="1"/><line x1="12" y1="19" x2="12" y2="19.5"/>
+    </symbol>
+
+    <!-- Actions -->
+    <symbol id="i-add" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+    </symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+    </symbol>
+    <symbol id="i-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+    </symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 6L9 17l-5-5"/>
+    </symbol>
+    <symbol id="i-export" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+    </symbol>
+    <symbol id="i-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </symbol>
+
+    <!-- Aggregates -->
+    <symbol id="i-porta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="2" width="16" height="20" rx="1.5"/><circle cx="16" cy="12" r="1.2"/>
+    </symbol>
+    <symbol id="i-porta-dupla" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="2" width="18" height="20" rx="1.5"/><line x1="12" y1="2" x2="12" y2="22"/><circle cx="10" cy="12" r="0.9"/><circle cx="14" cy="12" r="0.9"/>
+    </symbol>
+    <symbol id="i-porta-correr" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="1.5"/><rect x="5" y="4" width="9" height="16" rx="0.5" fill="none"/><line x1="9" y1="10" x2="9" y2="14"/><path d="M16 8l2 0M16 12l2 0" stroke-dasharray="1 2"/>
+    </symbol>
+    <symbol id="i-basculante" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="5" width="18" height="14" rx="1.5"/><line x1="3" y1="5" x2="10" y2="2"/><line x1="21" y1="5" x2="14" y2="2"/><line x1="10" y1="14" x2="14" y2="14"/>
+    </symbol>
+    <symbol id="i-prateleira" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="8" x2="3" y2="16"/><line x1="21" y1="8" x2="21" y2="16"/><circle cx="6" cy="11" r="0.5" fill="currentColor"/><circle cx="18" cy="11" r="0.5" fill="currentColor"/>
+    </symbol>
+    <symbol id="i-gaveta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="6" width="18" height="12" rx="1.5"/><line x1="9" y1="6" x2="9" y2="2"/><line x1="15" y1="6" x2="15" y2="2"/><line x1="9" y1="2" x2="15" y2="2"/><line x1="10" y1="12" x2="14" y2="12"/>
+    </symbol>
+    <symbol id="i-divisoria" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="3" x2="12" y2="21"/><line x1="8" y1="3" x2="8" y2="3.5"/><line x1="16" y1="3" x2="16" y2="3.5"/><line x1="8" y1="20.5" x2="8" y2="21"/><line x1="16" y1="20.5" x2="16" y2="21"/><rect x="4" y="3" width="16" height="18" rx="1" fill="none" stroke-dasharray="3 3"/>
+    </symbol>
+
+    <!-- Hardware -->
+    <symbol id="i-corredica" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="8" x2="22" y2="8"/><circle cx="6" cy="10" r="1.5"/><circle cx="18" cy="10" r="1.5"/><rect x="8" y="5" width="8" height="4" rx="0.5"/>
+    </symbol>
+    <symbol id="i-dobradica" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><line x1="12" y1="2" x2="12" y2="8"/><line x1="12" y1="16" x2="12" y2="22"/><line x1="3" y1="2" x2="3" y2="10"/><line x1="21" y1="14" x2="21" y2="22"/>
+    </symbol>
+    <symbol id="i-fixacao" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="8" r="5"/><line x1="12" y1="13" x2="12" y2="22"/><line x1="9" y1="19" x2="15" y2="19"/><circle cx="12" cy="8" r="1.5" fill="currentColor"/>
+    </symbol>
+    <symbol id="i-pe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="6" y1="4" x2="18" y2="4"/><line x1="12" y1="4" x2="12" y2="14"/><circle cx="12" cy="17" r="3"/><line x1="12" y1="20" x2="12" y2="22"/>
+    </symbol>
+
+    <!-- Conexao -->
+    <symbol id="i-conectar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="6" width="8" height="12" rx="1"/><rect x="14" y="6" width="8" height="12" rx="1"/><path d="M10 10h4M10 14h4" stroke-dasharray="2 1"/>
+    </symbol>
+    <symbol id="i-testeira" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="4" width="4" height="16" rx="0.5"/><rect x="9" y="4" width="12" height="16" rx="1.5"/><path d="M7 8l2 0M7 12l2 0M7 16l2 0" stroke-dasharray="1 1"/>
+    </symbol>
+    <symbol id="i-tampo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2" y="8" width="20" height="4" rx="1"/><line x1="5" y1="12" x2="5" y2="20"/><line x1="12" y1="12" x2="12" y2="20"/><line x1="19" y1="12" x2="19" y2="20"/>
+    </symbol>
+
+    <!-- Library -->
+    <symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </symbol>
+    <symbol id="i-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <circle cx="10.5" cy="10.5" r="6.5"/><line x1="15.5" y1="15.5" x2="21" y2="21"/>
+    </symbol>
+    <symbol id="i-place" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2v8"/><polyline points="8 6 12 2 16 6"/><rect x="3" y="12" width="18" height="10" rx="2"/><line x1="7" y1="17" x2="17" y2="17"/>
+    </symbol>
+    <symbol id="i-library" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+    </symbol>
+
+    <!-- Isometric Module Thumbnails -->
+    <symbol id="i-iso-inferior" viewBox="0 0 80 60">
+      <g transform="translate(10,8)">
+        <path d="M30 5 L58 18 L58 45 L30 52 L2 38 L2 12 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M30 5 L58 18 L30 32 L2 18 Z" fill="currentColor" opacity="0.08" stroke="currentColor" stroke-width="1"/>
+        <line x1="30" y1="32" x2="30" y2="52" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2"/>
+        <line x1="2" y1="18" x2="2" y2="38" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="58" y1="18" x2="58" y2="45" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="2" y1="38" x2="30" y2="52" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="30" y1="52" x2="58" y2="45" stroke="currentColor" stroke-width="1.5"/>
+        <circle cx="44" cy="28" r="1.5" fill="currentColor" opacity="0.4"/>
+      </g>
+    </symbol>
+    <symbol id="i-iso-superior" viewBox="0 0 80 60">
+      <g transform="translate(10,6)">
+        <path d="M30 3 L58 16 L58 38 L30 46 L2 32 L2 10 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M30 3 L58 16 L30 28 L2 16 Z" fill="currentColor" opacity="0.08" stroke="currentColor" stroke-width="1"/>
+        <line x1="30" y1="28" x2="30" y2="46" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2"/>
+        <path d="M5 11 L5 5 L55 5" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2" opacity="0.3"/>
+      </g>
+    </symbol>
+    <symbol id="i-iso-torre" viewBox="0 0 80 60">
+      <g transform="translate(16,2)">
+        <path d="M24 2 L46 10 L46 55 L24 58 L2 50 L2 5 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M24 2 L46 10 L24 16 L2 10 Z" fill="currentColor" opacity="0.08" stroke="currentColor" stroke-width="1"/>
+        <line x1="2" y1="22" x2="46" y2="26" stroke="currentColor" stroke-width="0.8" opacity="0.4"/>
+        <line x1="2" y1="35" x2="46" y2="39" stroke="currentColor" stroke-width="0.8" opacity="0.4"/>
+        <circle cx="38" cy="17" r="1.2" fill="currentColor" opacity="0.4"/>
+      </g>
+    </symbol>
+    <symbol id="i-iso-gaveteiro" viewBox="0 0 80 60">
+      <g transform="translate(10,6)">
+        <path d="M30 5 L58 18 L58 48 L30 52 L2 40 L2 12 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M30 5 L58 18 L30 28 L2 18 Z" fill="currentColor" opacity="0.08" stroke="currentColor" stroke-width="1"/>
+        <line x1="2" y1="24" x2="58" y2="27" stroke="currentColor" stroke-width="0.8"/>
+        <line x1="2" y1="31" x2="58" y2="34" stroke="currentColor" stroke-width="0.8"/>
+        <line x1="2" y1="38" x2="58" y2="41" stroke="currentColor" stroke-width="0.8"/>
+        <line x1="28" y1="20" x2="32" y2="21" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="28" y1="26" x2="32" y2="27" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="28" y1="33" x2="32" y2="34" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="28" y1="40" x2="32" y2="41" stroke="currentColor" stroke-width="1.5"/>
+      </g>
+    </symbol>
+    <symbol id="i-iso-estante" viewBox="0 0 80 60">
+      <g transform="translate(10,2)">
+        <path d="M30 2 L58 12 L58 55 L30 58 L2 48 L2 5 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M30 2 L58 12 L30 20 L2 12 Z" fill="currentColor" opacity="0.08" stroke="currentColor" stroke-width="1"/>
+        <line x1="2" y1="25" x2="58" y2="28" stroke="currentColor" stroke-width="0.8"/>
+        <line x1="2" y1="38" x2="58" y2="42" stroke="currentColor" stroke-width="0.8"/>
+      </g>
+    </symbol>
+    <symbol id="i-iso-roupeiro" viewBox="0 0 80 60">
+      <g transform="translate(8,2)">
+        <path d="M32 2 L62 12 L62 55 L32 58 L2 48 L2 5 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M32 2 L62 12 L32 20 L2 12 Z" fill="currentColor" opacity="0.08" stroke="currentColor" stroke-width="1"/>
+        <line x1="32" y1="20" x2="32" y2="58" stroke="currentColor" stroke-width="1"/>
+        <line x1="26" y1="35" x2="26" y2="40" stroke="currentColor" stroke-width="1.2"/>
+        <line x1="38" y1="34" x2="38" y2="39" stroke="currentColor" stroke-width="1.2"/>
+      </g>
+    </symbol>
+    <symbol id="i-iso-bancada" viewBox="0 0 80 60">
+      <g transform="translate(5,12)">
+        <path d="M35 5 L68 16 L68 22 L35 28 L2 18 L2 10 Z" fill="currentColor" opacity="0.08" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="8" y1="19" x2="8" y2="38" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="62" y1="22" x2="62" y2="38" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="4" y1="38" x2="12" y2="38" stroke="currentColor" stroke-width="1"/>
+        <line x1="58" y1="38" x2="66" y2="38" stroke="currentColor" stroke-width="1"/>
+      </g>
+    </symbol>
+    <symbol id="i-iso-pia" viewBox="0 0 80 60">
+      <g transform="translate(10,8)">
+        <path d="M30 5 L58 18 L58 45 L30 52 L2 38 L2 12 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M30 5 L58 18 L30 28 L2 18 Z" fill="currentColor" opacity="0.08" stroke="currentColor" stroke-width="1"/>
+        <ellipse cx="30" cy="16" rx="10" ry="5" fill="none" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+        <line x1="30" y1="11" x2="30" y2="7" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+      </g>
+    </symbol>
+    <symbol id="i-iso-nicho" viewBox="0 0 80 60">
+      <g transform="translate(10,14)">
+        <path d="M30 3 L58 12 L58 32 L30 38 L2 28 L2 8 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M30 3 L58 12 L30 20 L2 12 Z" fill="currentColor" opacity="0.08" stroke="currentColor" stroke-width="1"/>
+        <line x1="2" y1="18" x2="58" y2="22" stroke="currentColor" stroke-width="0.8" opacity="0.4"/>
+      </g>
+    </symbol>
+    <symbol id="i-iso-cooktop" viewBox="0 0 80 60">
+      <g transform="translate(10,8)">
+        <path d="M30 5 L58 18 L58 45 L30 52 L2 38 L2 12 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M30 5 L58 18 L30 28 L2 18 Z" fill="currentColor" opacity="0.08" stroke="currentColor" stroke-width="1"/>
+        <circle cx="22" cy="14" r="4" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.5"/>
+        <circle cx="38" cy="18" r="4" fill="none" stroke="currentColor" stroke-width="0.8" opacity="0.5"/>
+      </g>
+    </symbol>
+    <symbol id="i-iso-ilha" viewBox="0 0 80 60">
+      <g transform="translate(4,10)">
+        <path d="M36 5 L70 18 L70 42 L36 48 L2 36 L2 12 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M36 5 L70 18 L36 28 L2 18 Z" fill="currentColor" opacity="0.08" stroke="currentColor" stroke-width="1"/>
+        <line x1="24" y1="10" x2="24" y2="43" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3 2" opacity="0.4"/>
+        <line x1="48" y1="14" x2="48" y2="46" stroke="currentColor" stroke-width="0.8" stroke-dasharray="3 2" opacity="0.4"/>
+      </g>
+    </symbol>
+    <symbol id="i-iso-canto" viewBox="0 0 80 60">
+      <g transform="translate(8,8)">
+        <path d="M10 5 L38 5 L62 16 L62 32 L38 42 L10 42 L2 38 L2 12 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M38 5 L62 16 L38 22 L10 12 Z" fill="currentColor" opacity="0.08" stroke="currentColor" stroke-width="1"/>
+        <line x1="38" y1="5" x2="38" y2="42" stroke="currentColor" stroke-width="1" stroke-dasharray="3 2"/>
+      </g>
+    </symbol>
+    <symbol id="i-iso-espelheira" viewBox="0 0 80 60">
+      <g transform="translate(14,6)">
+        <path d="M26 3 L50 12 L50 48 L26 52 L2 42 L2 8 Z" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M26 3 L50 12 L26 18 L2 12 Z" fill="currentColor" opacity="0.08" stroke="currentColor" stroke-width="1"/>
+        <rect x="8" y="16" width="16" height="24" rx="1" fill="currentColor" opacity="0.06" stroke="currentColor" stroke-width="0.8"/>
+      </g>
+    </symbol>
+
+    <!-- Misc -->
+    <symbol id="i-validate-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 6l-8 8-4-4"/><path d="M21 6l-8 8"/><line x1="9" y1="18" x2="9" y2="18"/>
+    </symbol>
+    <symbol id="i-empty" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="4" y="4" width="16" height="16" rx="2" stroke-dasharray="3 3"/><line x1="9" y1="9" x2="15" y2="15"/><line x1="15" y1="9" x2="9" y2="15"/>
+    </symbol>
+  </svg>
+  <!-- Header -->
+  <div class="header">
+    <div class="header-brand">
+      <div class="header-logo">O</div>
+      <h1>ORNATO</h1>
+    </div>
+    <div class="header-actions">
+      <button class="header-btn" onclick="toggleDark()" title="Modo escuro"><svg width="16" height="16"><use href="#i-dark"/></svg></button>
+      <span class="ver">v2.4</span>
+    </div>
+  </div>
+
+  <!-- Breadcrumb -->
+  <div class="breadcrumb" id="breadcrumb"></div>
+
+  <!-- Main Content -->
+  <div class="content" id="main-content">
+    <div class="empty-state">
+      <div class="empty-icon"><svg width="40" height="40" style="color:var(--text-muted)"><use href="#i-inferior"/></svg></div>
+      <p>Carregando...</p>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div class="toast-container" id="toasts"></div>
+
+  <!-- Shortcut Footer -->
+  <div class="shortcut-footer">
+    <span><kbd>N</kbd> novo · <kbd>V</kbd> validar · <kbd>E</kbd> exportar</span>
+    <span><kbd>W</kbd> <kbd>H</kbd> <kbd>D</kbd> dim · <kbd>Esc</kbd> voltar</span>
+  </div>
+
+  <script>
+    // ═══════════════════════════════════════════════════════════
+    // ORNATO Panel — JS Controller
+    // Recebe dados do Ruby via StateBridge
+    // ═══════════════════════════════════════════════════════════
+
+    var currentLevel = null;
+    var currentData = null;
+    var _lastAlerts = [];
+    var _alertFilter = 'todos';
+
+    // ── Recebe nivel do Ruby (ponto de entrada principal) ──
+    function ornatoReceiveLevel(payload) {
+      currentLevel = payload.nivel;
+      currentData = payload.data;
+      renderBreadcrumb(payload.breadcrumb);
+      renderContent(payload.nivel, payload.data);
+    }
+
+    function ornatoReceiveState(data) {
+      if (!data || !data.module) {
+        ornatoReceiveLevel({
+          nivel: 'projeto',
+          breadcrumb: [{ label: 'Projeto', nivel: 'projeto' }],
+          data: { total_modulos: 0, modulos: [] }
+        });
+      }
+    }
+
+    function ornatoReceivePartial(data) { /* incremental updates */ }
+
+    function ornatoReceiveAlerts(data) {
+      var el = document.getElementById('alerts-section');
+      if (!el || !data || !data.alerts) return;
+      _lastAlerts = data.alerts;
+      _alertFilter = 'todos';
+      renderAlertsSection(el);
+    }
+
+    function ornatoReceiveError(data) {
+      showToast(data.message || 'Erro desconhecido', 'error');
+    }
+
+    function ornatoReceiveSuccess(data) {
+      showToast(data.message || 'OK', 'success');
+    }
+
+    // ── Breadcrumb ──
+    function renderBreadcrumb(items) {
+      var bc = document.getElementById('breadcrumb');
+      if (!items || items.length === 0) { bc.innerHTML = ''; return; }
+      var html = '';
+      items.forEach(function(item, i) {
+        var isLast = (i === items.length - 1);
+        if (isLast) {
+          html += '<span class="bc-current">' + esc(item.label) + '</span>';
+        } else {
+          var eid = item.entity_id || 0;
+          html += '<span class="bc-item" onclick="navigateTo(' + eid + ',\'' + item.nivel + '\')">' + esc(item.label) + '</span>';
+          html += '<span class="bc-sep">›</span>';
+        }
+      });
+      bc.innerHTML = html;
+    }
+
+    // ── Render por nivel ──
+    function renderContent(nivel, data) {
+      var el = document.getElementById('main-content');
+      el.className = 'content fade-in';
+      switch (nivel) {
+        case 'projeto':  el.innerHTML = renderProjeto(data); break;
+        case 'modulo':   el.innerHTML = renderModulo(data); break;
+        case 'peca':     el.innerHTML = renderPeca(data); break;
+        case 'operacao': el.innerHTML = renderOperacao(data); break;
+        default:
+          el.innerHTML = '<div class="empty-state"><div class="empty-icon">' + ico('empty', 40) + '</div>' +
+            '<p>Selecione um modulo ORNATO no modelo 3D</p>' +
+            '<p class="empty-hint">ou crie um novo pelo menu Plugins → ORNATO</p></div>';
+      }
+    }
+
+    // ═══ NIVEL PROJETO ═══
+    function renderProjeto(d) {
+      if (!d) return emptyState('Selecione um modulo ORNATO', 'ou crie pelo menu Plugins → ORNATO → Novo Modulo');
+
+      var tp = d.total_pecas || 0;
+      var html = '';
+
+      // Metricas
+      html += '<div class="card">';
+      html += '<div class="card-header"><h3>Resumo do Projeto</h3></div>';
+      html += '<div class="metrics-row">';
+      html += metric(d.total_modulos || 0, 'Modulos');
+      html += metric(tp, 'Pecas');
+      html += metric((d.total_area_m2 || 0) + '', 'Area m²');
+      html += '</div>';
+      if (d.total_fita_m || d.total_peso_kg) {
+        html += '<div class="metrics-row" style="margin-top:6px">';
+        html += metric((d.total_fita_m || 0) + '', 'Fita m');
+        html += metric((d.total_peso_kg || 0) + '', 'Peso kg');
+        html += metric((d.total_modulos || 0) > 0 ? Math.round(tp / d.total_modulos) : 0, 'Pec/Mod');
+        html += '</div>';
+      }
+      if (d.total_modulos > 0) {
+        html += '<button class="btn btn-secondary btn-sm" style="width:100%;margin-top:10px" onclick="sendAction(\'validate_all\',{})">' + ico('check',14) + ' Validar Todos os Modulos</button>';
+      }
+      html += '</div>';
+
+      // Materiais (with visual bar)
+      if (d.materiais && d.materiais.length > 0) {
+        html += '<div class="card"><div class="card-header"><h3>Materiais</h3></div>';
+        html += renderMaterialBar(d.materiais);
+        html += '</div>';
+      }
+
+      // Botao novo modulo
+      html += '<button class="btn btn-primary" style="margin-bottom:10px" onclick="showBiblioteca()">' + ico('library',16) + ' Novo Modulo</button>';
+
+      // Lista modulos
+      if (d.modulos && d.modulos.length > 0) {
+        html += '<div class="card"><div class="card-header"><h3>Modulos</h3>' +
+          '<span class="card-count">' + d.modulos.length + '</span></div>';
+        d.modulos.forEach(function(m, idx) {
+          var alertHtml = '';
+          if (m.alertas_erro > 0) alertHtml = '<span class="alert-badge alert-badge-error">' + m.alertas_erro + '</span>';
+          else if (m.alertas_warn > 0) alertHtml = '<span class="alert-badge alert-badge-warn">' + m.alertas_warn + '</span>';
+          var matCol = getMaterialColor(m.material || '');
+          // Parse dims for display
+          var dimParts = (m.dims || '').split('x');
+          var dimLabel = dimParts.length >= 3 ? dimParts[0].trim() + ' × ' + dimParts[1].trim() + ' × ' + dimParts[2].trim() : m.dims;
+          var modCode = m._code || ('M' + String(idx + 1).padStart(2, '0'));
+          html += '<div class="mod-list-item" onclick="selectEntity(' + m.entity_id + ')">' +
+            '<span class="mod-code">' + modCode + '</span>' +
+            '<div class="type-icon">' + typeIcon(m.tipo) + '</div>' +
+            '<div class="mod-list-info"><div class="mod-list-name">' + esc(m.nome) + '</div>' +
+            '<div class="mod-list-meta"><span class="mod-mat-dot" style="background:' + matCol + ';width:6px;height:6px"></span>' + esc(m.tipo) + '<span class="meta-dot"></span>' + dimLabel + 'mm</div></div>' +
+            '<div class="mod-list-right">' + alertHtml +
+            '<span class="item-badge badge-struct">' + m.pecas + 'p</span></div></div>';
+        });
+        html += '</div>';
+      } else {
+        html += '<div class="empty-state" style="padding:20px">';
+        html += '<div class="empty-icon">' + ico('library', 40) + '</div>';
+        html += '<p>Nenhum modulo no projeto</p>';
+        html += '<p class="empty-hint">Clique em "Novo Modulo" acima para comecar</p></div>';
+      }
+
+      // Saude
+      if (d.total_modulos > 0) {
+        html += '<div class="card"><div class="card-header"><h3>Saude do Projeto</h3></div>';
+        html += '<div id="alerts-section">' + emptyHint('Clique "Validar" para verificar') + '</div></div>';
+        html += '<div class="btn-group" style="margin-top:2px">';
+        html += '<button class="btn btn-primary" onclick="sendAction(\'export_project\',{})">' + ico('export',14) + ' Exportar JSON</button>';
+        html += '<button class="btn btn-outline" onclick="sendAction(\'erp_sync\',{})" title="Enviar ao ERP e receber status">' + ico('link',14) + ' Sync ERP</button>';
+        html += '</div>';
+
+        // ERP Status (preenchido via ornatoReceiveErpStatus)
+        html += '<div id="erp-status-section" style="display:none"></div>';
+      }
+
+      return html;
+    }
+
+    // ═══ ERP STATUS PANEL ═══
+    function renderErpStatus(data) {
+      var sec = document.getElementById('erp-status-section');
+      if (!sec) return;
+      sec.style.display = 'block';
+
+      if (data.error) {
+        sec.innerHTML = '<div class="card" style="border-left:3px solid #ef4444"><div class="card-header"><h3>' + ico('alert',14) + ' ERP</h3></div>'
+          + '<p style="color:#ef4444;font-size:12px">' + esc(data.error) + '</p></div>';
+        return;
+      }
+
+      var html = '<div class="card" style="border-left:3px solid #22c55e"><div class="card-header"><h3>' + ico('link',14) + ' ERP Conectado</h3></div>';
+
+      // Lote info
+      if (data.lote) {
+        html += '<div style="font-size:12px;margin-bottom:8px">';
+        html += '<strong>Lote #' + data.lote_id + '</strong> — ' + esc(data.msg || '');
+        html += '</div>';
+      }
+
+      // Produção
+      if (data.producao) {
+        var p = data.producao;
+        var progW = Math.min(p.progresso_pct || 0, 100);
+        html += '<div style="margin:8px 0">';
+        html += '<div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:2px">';
+        html += '<span>Progresso</span><span>' + progW + '%</span></div>';
+        html += '<div style="background:#e5e7eb;border-radius:4px;height:6px;overflow:hidden">';
+        html += '<div style="background:#1379F0;width:' + progW + '%;height:100%;border-radius:4px;transition:width .3s"></div></div>';
+        html += '<div style="display:flex;justify-content:space-between;font-size:10px;color:#6b7280;margin-top:4px">';
+        html += '<span>' + (p.total_pecas || 0) + ' pecas</span>';
+        html += '<span>' + (p.escaneadas || 0) + ' prontas</span>';
+        html += '<span>' + (p.otimizado ? 'Otimizado' : 'Aguardando') + '</span>';
+        html += '</div></div>';
+      }
+
+      // Custos
+      if (data.materiais && data.materiais.length > 0) {
+        html += '<div style="margin-top:8px;font-size:11px">';
+        html += '<strong>Materiais:</strong>';
+        html += '<table style="width:100%;font-size:10px;margin-top:4px;border-collapse:collapse">';
+        html += '<tr style="border-bottom:1px solid #e5e7eb"><th style="text-align:left;padding:2px 4px">Material</th><th style="text-align:right;padding:2px 4px">Area m2</th><th style="text-align:right;padding:2px 4px">Chapas</th></tr>';
+        for (var i = 0; i < data.materiais.length; i++) {
+          var m = data.materiais[i];
+          html += '<tr style="border-bottom:1px solid #f3f4f6"><td style="padding:2px 4px">' + esc(m.nome || m.code) + '</td>';
+          html += '<td style="text-align:right;padding:2px 4px">' + (m.area_m2 || '?') + '</td>';
+          html += '<td style="text-align:right;padding:2px 4px">' + (m.chapas_estimadas || '?') + '</td></tr>';
+        }
+        html += '</table></div>';
+      }
+
+      // Alertas
+      if (data.alertas && data.alertas.length > 0) {
+        html += '<div style="margin-top:8px;font-size:11px">';
+        html += '<strong>Alertas (' + data.alertas.length + '):</strong>';
+        for (var j = 0; j < Math.min(data.alertas.length, 5); j++) {
+          var a = data.alertas[j];
+          var acor = a.nivel === 'erro' ? '#ef4444' : '#f59e0b';
+          html += '<div style="padding:2px 0;color:' + acor + '">' + ico('alert',10) + ' ' + esc(a.msg) + '</div>';
+        }
+        if (data.alertas.length > 5) html += '<div style="color:#6b7280">... +' + (data.alertas.length - 5) + ' alertas</div>';
+        html += '</div>';
+      }
+
+      // Ações
+      html += '<div class="btn-group" style="margin-top:8px">';
+      html += '<button class="btn btn-sm btn-outline" onclick="sendAction(\'erp_status\',{lote_id:' + (data.lote_id || 0) + '})">' + ico('refresh',12) + ' Atualizar</button>';
+      html += '<button class="btn btn-sm btn-outline" onclick="sendAction(\'erp_custos\',{lote_id:' + (data.lote_id || 0) + '})">Custos</button>';
+      html += '</div>';
+      html += '</div>';
+
+      sec.innerHTML = html;
+    }
+
+    // Callback global para receber status do ERP
+    window.ornatoReceiveErpStatus = function(data) {
+      renderErpStatus(data);
+    };
+
+    // ═══ NIVEL MODULO ═══
+    function renderModulo(d) {
+      if (!d) return emptyState('Dados do modulo indisponiveis');
+      _detalharData = d; // Store for detalhar view
+      var html = '';
+
+      // Identidade (enhanced)
+      var matColor = getMaterialColor(d.material);
+      html += '<div class="card">';
+      html += '<div class="mod-identity">';
+      var modCode = d._code || '';
+      html += '<div class="mod-icon-lg">' + typeIcon(d.tipo) + '</div>';
+      html += '<div><div class="mod-title">' + (modCode ? '<span class="mod-code" style="font-size:11px;margin-right:6px">' + modCode + '</span>' : '') + esc(d.nome) + '</div>';
+      html += '<div class="mod-subtitle"><span class="mod-mat-dot" style="background:' + matColor + '"></span>' + esc(d.tipo) + ' · ' + esc(d.material) + '</div></div></div>';
+      // Quick dims strip
+      html += '<div class="quick-dims">';
+      html += '<div class="quick-dim"><div class="quick-dim-val">' + (d.largura_mm || 0) + '</div><div class="quick-dim-label">Larg mm</div></div>';
+      html += '<div class="quick-dim-sep"></div>';
+      html += '<div class="quick-dim"><div class="quick-dim-val">' + (d.profundidade_mm || 0) + '</div><div class="quick-dim-label">Prof mm</div></div>';
+      html += '<div class="quick-dim-sep"></div>';
+      html += '<div class="quick-dim"><div class="quick-dim-val">' + (d.altura_mm || 0) + '</div><div class="quick-dim-label">Alt mm</div></div>';
+      html += '<div class="quick-dim-sep"></div>';
+      html += '<div class="quick-dim"><div class="quick-dim-val">' + (d.espessura_mm || 0) + '</div><div class="quick-dim-label">Esp mm</div></div>';
+      html += '</div>';
+      html += '</div>';
+
+      // ── Vista Esquematica do Modulo ──
+      html += renderSchematic(d);
+
+      // Dimensoes
+      var DIM_MAX = {
+        inferior:{w:1200,h:900,d:650}, superior:{w:1200,h:900,d:400},
+        torre:{w:800,h:2700,d:650}, gaveteiro:{w:800,h:900,d:650},
+        roupeiro:{w:1200,h:2700,d:650}, estante:{w:1200,h:2700,d:450},
+        bancada:{w:3000,h:100,d:800}, pia:{w:1200,h:900,d:650},
+        nicho:{w:1200,h:600,d:400}, torre_quente:{w:800,h:2700,d:650},
+        cooktop:{w:1200,h:900,d:650}, ilha:{w:3000,h:1000,d:1000},
+        espelheira:{w:1200,h:1000,d:200}, pia_banheiro:{w:1200,h:900,d:550}
+      };
+      var lim = DIM_MAX[d.tipo_sym] || {};
+
+      html += '<div class="card"><div class="card-header"><h3>Dimensoes</h3></div>';
+      html += dimInput('Largura', 'dim-w', d.largura_mm, lim.w);
+
+      // Width preset chips
+      var presets = LIB_PRESETS[d.tipo_sym] || [40,60,80,100,120];
+      html += '<div class="dim-chips">';
+      presets.forEach(function(w) {
+        var wmm = w * 10;
+        var cls = (d.largura_mm === wmm) ? 'dim-chip active' : 'dim-chip';
+        html += '<button class="' + cls + '" onclick="applyWidthPreset(' + wmm + ')">' + w + '</button>';
+      });
+      html += '</div>';
+
+      html += dimInput('Profundidade', 'dim-d', d.profundidade_mm, lim.d);
+      html += dimInput('Altura', 'dim-h', d.altura_mm, lim.h);
+      html += field('Espessura', d.espessura_mm + ' mm');
+
+      // Metricas do modulo
+      html += '<div class="field-sep"></div>';
+      html += '<div class="metrics-row">';
+      html += metric((d.area_m2 || 0) + '', 'Area m²');
+      html += metric((d.fita_metros || 0) + '', 'Fita m');
+      html += metric((d.peso_kg || 0) + '', 'Peso kg');
+      html += '</div>';
+      html += '</div>';
+
+      // Resumo de Corte (marceneiro precisa disso)
+      html += renderCutSummary(d);
+
+      // Composicao (enhanced with dims and piece codes)
+      html += '<div class="card"><div class="card-header"><h3>Composicao</h3>' +
+        '<span class="card-count">' + d.total_pecas + ' pecas</span></div>';
+      html += renderComposicaoDetalhada(d.composicao);
+      html += '<button class="btn btn-secondary btn-sm" style="width:100%;margin-top:8px" onclick="showDetalhar()">' + ico('check',14) + ' Detalhar — Legenda Completa</button>';
+      html += '</div>';
+
+      // Ferragens resumo
+      if (d.composicao && d.composicao.ferragens && d.composicao.ferragens.length > 0) {
+        html += '<div class="card"><div class="card-header"><h3>Ferragens</h3></div>';
+        html += renderHardwareSummary(d.composicao.ferragens);
+        html += '</div>';
+      }
+
+      // ── Quick Actions (compact bar — always visible) ──
+      html += '<div class="card">';
+      html += '<div class="action-bar">';
+      html += '<div class="abtn" onclick="toggleSection(\'sec-add\')"><span class="abtn-icon">' + ico('add',18) + '</span>Adicionar</div>';
+      html += '<div class="abtn" onclick="toggleSection(\'sec-hw\')"><span class="abtn-icon">' + ico('gear',18) + '</span>Ferragens</div>';
+      html += '<div class="abtn" onclick="toggleSection(\'sec-conn\')"><span class="abtn-icon">' + ico('link',18) + '</span>Conexao</div>';
+      html += '<div class="abtn" onclick="sendAction(\'validate_module\',{})"><span class="abtn-icon">' + ico('check',18) + '</span>Validar</div>';
+      html += '</div>';
+
+      // ── Collapsible: Adicionar (opens on demand) ──
+      var AGRS = {
+        inferior:[{t:'porta_unica',l:'Porta',ic:'porta'},{t:'prateleira',l:'Prateleira',ic:'prateleira'},{t:'gaveta',l:'Gaveta',ic:'gaveta'},{t:'divisoria',l:'Divisoria',ic:'divisoria'}],
+        superior:[{t:'porta_unica',l:'Porta',ic:'porta'},{t:'basculante',l:'Basculante',ic:'basculante'},{t:'prateleira',l:'Prateleira',ic:'prateleira'}],
+        gaveteiro:[{t:'gaveta',l:'Gaveta',ic:'gaveta'},{t:'divisoria',l:'Divisoria',ic:'divisoria'}],
+        torre_quente:[{t:'porta_unica',l:'Porta',ic:'porta'},{t:'prateleira',l:'Prateleira',ic:'prateleira'}],
+        torre:[{t:'porta_unica',l:'Porta',ic:'porta'},{t:'prateleira',l:'Prateleira',ic:'prateleira'},{t:'divisoria',l:'Divisoria',ic:'divisoria'}],
+        roupeiro:[{t:'porta_unica',l:'Porta',ic:'porta'},{t:'porta_correr',l:'Correr',ic:'porta-correr'},{t:'prateleira',l:'Prateleira',ic:'prateleira'},{t:'gaveta',l:'Gaveta',ic:'gaveta'}],
+        estante:[{t:'prateleira',l:'Prateleira',ic:'prateleira'},{t:'divisoria',l:'Divisoria',ic:'divisoria'}],
+        bancada:[{t:'prateleira',l:'Prateleira',ic:'prateleira'}],
+        pia:[{t:'porta_unica',l:'Porta',ic:'porta'},{t:'gaveta',l:'Gaveta',ic:'gaveta'}],
+        nicho:[{t:'prateleira',l:'Prateleira',ic:'prateleira'}],
+        cooktop:[{t:'porta_unica',l:'Porta',ic:'porta'},{t:'gaveta',l:'Gaveta',ic:'gaveta'}],
+        ilha:[{t:'porta_unica',l:'Porta',ic:'porta'},{t:'prateleira',l:'Prateleira',ic:'prateleira'},{t:'gaveta',l:'Gaveta',ic:'gaveta'},{t:'divisoria',l:'Divisoria',ic:'divisoria'}]
+      };
+      var agr = AGRS[d.tipo_sym] || [{t:'porta_unica',l:'Porta',ic:'porta'},{t:'prateleira',l:'Prateleira',ic:'prateleira'}];
+
+      html += '<div class="collapse-section" id="sec-add">';
+      html += '<div style="padding:8px 0 4px"><h3 style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;font-weight:700">Adicionar ao Modulo</h3></div>';
+      html += '<div class="btn-grid">';
+      agr.forEach(function(a) {
+        html += '<button class="btn btn-secondary btn-sm" onclick="sendAction(\'add_aggregate\',{tipo:\'' + a.t + '\'})">' + ico(a.ic,14) + ' ' + a.l + '</button>';
+      });
+      html += '</div></div>';
+
+      // ── Collapsible: Ferragens ──
+      html += '<div class="collapse-section" id="sec-hw">';
+      html += '<div style="padding:8px 0 4px"><h3 style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;font-weight:700">Trocar Ferragem</h3></div>';
+      html += '<div class="btn-grid">';
+      html += hwBtn('Corredica', 'corredica');
+      html += hwBtn('Dobradica', 'dobradica');
+      html += hwBtn('Fixacao', 'fixacao');
+      html += hwBtn('Pe/Base', 'pe');
+      html += '</div></div>';
+
+      // ── Collapsible: Conexao ──
+      html += '<div class="collapse-section" id="sec-conn">';
+      html += '<div style="padding:8px 0 4px"><h3 style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;font-weight:700">Conexao entre Modulos</h3></div>';
+      html += '<div class="btn-grid">';
+      html += '<button class="btn btn-secondary btn-sm" onclick="sendAction(\'connect_modules\',{})">' + ico('conectar',14) + ' Conectar</button>';
+      html += '<button class="btn btn-secondary btn-sm" onclick="sendAction(\'add_testeira\',{})">' + ico('testeira',14) + ' Testeira</button>';
+      html += '<button class="btn btn-secondary btn-sm" style="grid-column:1/3" onclick="sendAction(\'add_tampo_passante\',{})">' + ico('tampo',14) + ' Tampo Passante</button>';
+      html += '</div></div>';
+
+      html += '</div>'; // end card
+
+      // Validacao (alerts area)
+      html += '<div class="card"><div class="card-header"><h3>Validacao</h3></div>';
+      html += '<div id="alerts-section">' + emptyHint('Clique "Validar" acima ou pressione <kbd style="background:var(--bg-badge);padding:1px 5px;border-radius:3px;font-family:var(--font-mono);font-size:9px;border:1px solid var(--border)">V</kbd>') + '</div>';
+      html += '</div>';
+
+      // Smart tip (marceneiro intelligence)
+      html += getSmartTip(d);
+
+      // Export button
+      html += '<button class="btn btn-primary" style="margin-top:4px" onclick="sendAction(\'export_project\',{})">' + ico('export',14) + ' Exportar Projeto</button>';
+
+      return html;
+    }
+
+    // ═══ NIVEL PECA ═══
+    function renderPeca(d) {
+      if (!d) return emptyState('Dados da peca indisponiveis');
+      var html = '';
+
+      // Contexto do módulo pai (código + peça)
+      var ctxHtml = '';
+      if (d._parent_code || d._piece_code) {
+        var fullCode = (d._parent_code || '') + (d._piece_code ? '-' + d._piece_code : '');
+        ctxHtml = '<span class="mod-code" style="font-size:10px;margin-right:6px">' + fullCode + '</span>';
+      }
+
+      html += '<div class="card">';
+      html += '<div style="display:flex;justify-content:space-between;align-items:flex-start">';
+      html += '<div><div style="font-size:14px;font-weight:700">' + ctxHtml + esc(d.nome) + '</div>';
+      html += '<div style="font-size:11px;color:var(--text-muted);margin-top:2px">' + esc(d.tipo) + (d.subtipo ? ' · ' + esc(d.subtipo) : '') + '</div></div>';
+      html += '<span class="status ' + (d.na_lista_corte ? 'status-ok' : 'status-warn') + '">' + (d.na_lista_corte ? 'Lista corte' : 'Fora lista') + '</span>';
+      html += '</div></div>';
+
+      html += '<div class="card"><div class="card-header"><h3>Dimensoes</h3></div>';
+      html += field('Comprimento', '<span style="font-family:var(--font-mono)">' + round1(d.comp_mm) + '</span> mm');
+      html += field('Largura', '<span style="font-family:var(--font-mono)">' + round1(d.larg_mm) + '</span> mm');
+      html += field('Espessura', '<span style="font-family:var(--font-mono)">' + round1(d.espessura_mm) + '</span> mm <span style="color:var(--text-muted);font-size:10px">(real: ' + round1(d.espessura_real_mm) + ')</span>');
+      // Espessura visual indicator
+      var espW = Math.max(2, Math.min(20, d.espessura_mm * 0.8));
+      html += '<div class="esp-indicator">';
+      html += '<div class="esp-bar" style="width:' + espW + 'px"></div>';
+      html += '<div><div class="esp-label">' + round1(d.espessura_mm) + 'mm</div>';
+      html += '<div class="esp-sublabel">' + guessEspType(d.espessura_mm) + '</div></div>';
+      html += '</div>';
+      html += '</div>';
+
+      html += '<div class="card"><div class="card-header"><h3>Material</h3></div>';
+      html += field('Material', d.material);
+      html += field('Grao', d.grao);
+      html += field('Face visivel', d.face_visivel);
+      html += '</div>';
+
+      // Diagrama proporcional da peca com cotas e fita de borda
+      var bc = calcBordaCode(d.bordas);
+      html += '<div class="card"><div class="card-header"><h3>Fita de Borda</h3>' +
+        '<span class="card-count">' + bc + '</span></div>';
+      html += renderPieceDiagram(d);
+      html += '</div>';
+
+      if (d.operacoes && d.operacoes.length > 0) {
+        html += '<div class="card"><div class="card-header"><h3>Operacoes CNC</h3>' +
+          '<span class="card-count">' + d.operacoes.length + '</span></div>';
+
+        // CNC face mini-maps
+        html += renderCncFaceMap(d);
+
+        html += '<ul class="item-list">';
+        d.operacoes.forEach(function(op) {
+          html += '<li onclick="selectEntity(' + op.entity_id + ')">' +
+            '<span class="item-name">' + esc(op.nome) + '</span>' +
+            '<span class="item-badge badge-hw">' + esc(op.subtipo) + '</span></li>';
+        });
+        html += '</ul></div>';
+      }
+
+      return html;
+    }
+
+    // ═══ NIVEL OPERACAO ═══
+    function renderOperacao(d) {
+      if (!d) return emptyState('Dados da operacao indisponiveis');
+      var html = '';
+
+      html += '<div class="card">';
+      html += '<div style="font-size:14px;font-weight:700">' + esc(d.nome) + '</div>';
+      html += '<div style="font-size:11px;color:var(--text-muted);margin-top:2px">' + esc(d.subtipo) + '</div>';
+      if (d.marca) html += field('Marca', d.marca);
+      if (d.modelo) html += field('Modelo', d.modelo);
+      html += '</div>';
+
+      if (d.diametro || d.profundidade || d.face) {
+        html += '<div class="card"><div class="card-header"><h3>Dados CNC</h3></div>';
+        if (d.face) html += field('Face', d.face);
+        if (d.diametro) html += field('Diametro', round1(d.diametro) + ' mm');
+        if (d.profundidade) html += field('Profundidade', round1(d.profundidade) + ' mm');
+        html += '</div>';
+      }
+
+      if (d.pos_x != null || d.pos_y != null) {
+        html += '<div class="card"><div class="card-header"><h3>Posicao</h3></div>';
+        html += field('X', round1(d.pos_x) + ' mm');
+        html += field('Y', round1(d.pos_y) + ' mm');
+        if (d.pos_z != null) html += field('Z', round1(d.pos_z) + ' mm');
+        html += '</div>';
+      }
+
+      return html;
+    }
+
+    // ═══ HELPERS ═══
+    function renderComposicao(comp) {
+      if (!comp) return '';
+      var html = '<ul class="item-list">';
+      function addGroup(items, badge, cls) {
+        if (!items || !items.length) return;
+        items.forEach(function(p) {
+          html += '<li onclick="selectEntity(' + p.entity_id + ')">' +
+            '<span class="item-name">' + esc(p.nome) + '</span>' +
+            '<span class="item-badge ' + cls + '">' + badge + '</span></li>';
+        });
+      }
+      addGroup(comp.estruturais, 'EST', 'badge-struct');
+      addGroup(comp.frontais, 'FRONT', 'badge-front');
+      addGroup(comp.internas, 'INT', 'badge-intern');
+      addGroup(comp.gavetas, 'GAV', 'badge-drawer');
+      addGroup(comp.ferragens, 'HW', 'badge-hw');
+      html += '</ul>';
+      return html;
+    }
+
+    function renderAlertsSection(el) {
+      if (!el) el = document.getElementById('alerts-section');
+      if (!el) return;
+      var alerts = _lastAlerts;
+      if (alerts.length === 0) {
+        el.innerHTML = '<div style="text-align:center;padding:12px"><span class="status status-ok">OK</span><br><span style="font-size:11px;color:var(--text-muted);margin-top:4px;display:inline-block">Nenhum problema encontrado</span></div>';
+        return;
+      }
+      var cats = {};
+      alerts.forEach(function(a) { var c = a.categoria || 'outros'; cats[c] = (cats[c] || 0) + 1; });
+
+      var html = '<div class="alert-filters">';
+      html += filterBtn('todos', 'Todos', alerts.length);
+      var catLabels = {estrutural:'Estrut.',material:'Material',ferragem:'Ferrag.',bordas:'Bordas',furacao:'Furação',outros:'Outros'};
+      for (var c in cats) { html += filterBtn(c, catLabels[c] || c, cats[c]); }
+      html += '</div>';
+
+      var filtered = _alertFilter === 'todos' ? alerts : alerts.filter(function(a) { return (a.categoria || 'outros') === _alertFilter; });
+      filtered.forEach(function(a) {
+        var cls = a.nivel === 'erro' ? 'alert-error' : 'alert-warn';
+        var statusCls = a.nivel === 'erro' ? 'status-error' : 'status-warn';
+        html += '<div class="alert-item ' + cls + '"><span class="status ' + statusCls + '">' + (a.nivel || '').toUpperCase() + '</span> ';
+        if (a.modulo) html += '<span class="alert-module">[' + esc(a.modulo) + ']</span> ';
+        html += esc(a.mensagem || '');
+        if (a.sugestao) html += '<div class="alert-suggestion">→ ' + esc(a.sugestao) + '</div>';
+        html += '</div>';
+      });
+      el.innerHTML = html;
+    }
+
+    function filterAlerts(cat) { _alertFilter = cat; renderAlertsSection(null); }
+
+    function calcBordaCode(b) {
+      if (!b) return 'SEM';
+      var c = (b.frontal?1:0) + (b.traseira?1:0), l = (b.esquerda?1:0) + (b.direita?1:0), t = c + l;
+      if (t === 0) return 'SEM'; if (t === 4) return '4L';
+      if (c === 2 && l === 0) return '2C'; if (c === 0 && l === 2) return '2L';
+      if (c === 1 && l === 0) return '1C'; if (c === 0 && l === 1) return '1L';
+      if (c === 2 && l === 1) return '2C+1L'; if (c === 1 && l === 2) return '1C+2L';
+      if (c === 1 && l === 1) return '1C+1L';
+      return t + 'L';
+    }
+
+    function renderBordaDiagram(b) {
+      if (!b) return '';
+      return '<div class="borda-diagram">' +
+        '<div class="borda-top"><button class="borda-btn ' + (b.frontal?'active':'inactive') + '">F</button></div>' +
+        '<div class="borda-left"><button class="borda-btn ' + (b.esquerda?'active':'inactive') + '" style="height:100%">E</button></div>' +
+        '<div class="borda-center">PECA</div>' +
+        '<div class="borda-right"><button class="borda-btn ' + (b.direita?'active':'inactive') + '" style="height:100%">D</button></div>' +
+        '<div class="borda-bottom"><button class="borda-btn ' + (b.traseira?'active':'inactive') + '">T</button></div></div>' +
+        '<div style="text-align:center;font-size:10px;color:var(--text-muted)">Prioridade: ' + (b.prioridade || 'comprimento') + '</div>';
+    }
+
+    // ── Helpers UI ──
+    function field(label, value) {
+      return '<div class="field"><label>' + label + '</label><span class="value">' + value + '</span></div>';
+    }
+    function dimInput(label, id, val, max) {
+      var overClass = (max && val > max) ? ' over-limit' : '';
+      var hint = max ? ' <span class="dim-max">max ' + max + '</span>' : '';
+      return '<div class="field-dim">' +
+        '<label>' + label + hint + '</label>' +
+        '<input type="number" id="' + id + '" value="' + (val || 0) + '" step="1" min="1" class="' + overClass + '" onchange="onDimChange()">' +
+        '<span class="unit">mm</span></div>';
+    }
+    function metric(val, label) {
+      return '<div class="metric-card"><div class="metric-value">' + val + '</div><div class="metric-label">' + label + '</div></div>';
+    }
+    function hwBtn(cat, iconId) {
+      return '<button class="btn btn-secondary btn-sm" onclick="sendAction(\'swap_hardware\',{categoria:\'' + cat + '\'})">' + ico(iconId,14) + ' ' + cat + '</button>';
+    }
+    function filterBtn(key, label, count) {
+      var cls = _alertFilter === key ? 'btn-primary' : 'btn-secondary';
+      return '<button class="btn btn-sm ' + cls + '" onclick="filterAlerts(\'' + key + '\')">' + label + ' (' + count + ')</button>';
+    }
+    function emptyState(title, hint) {
+      return '<div class="empty-state"><div class="empty-icon">' + ico('empty', 40) + '</div><p>' + title + '</p>' +
+        (hint ? '<p class="empty-hint">' + hint + '</p>' : '') + '</div>';
+    }
+    function emptyHint(text) {
+      return '<div style="text-align:center;padding:12px;color:var(--text-muted);font-size:11px">' + text + '</div>';
+    }
+    function typeIcon(tipo) {
+      var map = {
+        inferior:'inferior',superior:'superior',torre:'torre',gaveteiro:'gaveteiro',
+        estante:'estante',roupeiro:'roupeiro',bancada:'bancada',pia:'pia',
+        nicho:'nicho',torre_quente:'torre',cooktop:'cooktop',micro_ondas:'nicho',
+        lava_louca:'pia',canto_l:'canto',canto_l_superior:'canto',
+        ilha:'ilha',espelheira:'espelheira',pia_banheiro:'pia'
+      };
+      return ico(map[tipo] || 'empty', 20);
+    }
+
+    function onDimChange() {
+      var w = parseFloat(document.getElementById('dim-w').value) || 0;
+      var h = parseFloat(document.getElementById('dim-h').value) || 0;
+      var d = parseFloat(document.getElementById('dim-d').value) || 0;
+      sendAction('resize_module', { width: w, height: h, depth: d });
+    }
+
+    // ── Collapsible sections ──
+    function toggleSection(id) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      // Close other sections first
+      ['sec-add','sec-hw','sec-conn'].forEach(function(sid) {
+        if (sid !== id) {
+          var other = document.getElementById(sid);
+          if (other) other.classList.remove('open');
+        }
+      });
+      el.classList.toggle('open');
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // BIBLIOTECA DE MODULOS
+    // ═══════════════════════════════════════════════════════════
+
+    var LIB_CATEGORIES = {
+      'Todos':              null,
+      'Cozinha':            ['inferior','superior','cooktop','pia','lava_louca','torre_quente','micro_ondas','canto_l','canto_l_superior','ilha'],
+      'Quarto':             ['roupeiro','gaveteiro','torre'],
+      'Sala':               ['estante','bancada','nicho'],
+      'Banheiro':           ['pia_banheiro','espelheira','nicho'],
+      'Lavanderia':         ['inferior','superior','torre','nicho']
+    };
+
+    var LIB_MODULES = [
+      { tipo:'inferior',         nome:'Balcao Inferior',      cat:'Cozinha',    l:60,  p:55, a:72  },
+      { tipo:'superior',         nome:'Aereo Superior',       cat:'Cozinha',    l:80,  p:33, a:70  },
+      { tipo:'cooktop',          nome:'Balcao Cooktop',       cat:'Cozinha',    l:80,  p:55, a:86  },
+      { tipo:'pia',              nome:'Balcao Pia',           cat:'Cozinha',    l:80,  p:55, a:82  },
+      { tipo:'lava_louca',       nome:'Lava-Louca',           cat:'Cozinha',    l:60,  p:55, a:82  },
+      { tipo:'torre_quente',     nome:'Torre Quente',         cat:'Cozinha',    l:60,  p:55, a:220 },
+      { tipo:'micro_ondas',      nome:'Micro-ondas',          cat:'Cozinha',    l:60,  p:38, a:45  },
+      { tipo:'canto_l',          nome:'Canto L',              cat:'Cozinha',    l:100, p:55, a:72  },
+      { tipo:'canto_l_superior', nome:'Canto L Superior',     cat:'Cozinha',    l:80,  p:33, a:70  },
+      { tipo:'ilha',             nome:'Ilha',                 cat:'Cozinha',    l:120, p:60, a:90  },
+      { tipo:'roupeiro',         nome:'Roupeiro',             cat:'Quarto',     l:100, p:55, a:240 },
+      { tipo:'gaveteiro',        nome:'Gaveteiro',            cat:'Quarto',     l:60,  p:55, a:72  },
+      { tipo:'torre',            nome:'Torre',                cat:'Quarto',     l:60,  p:55, a:220 },
+      { tipo:'estante',          nome:'Estante',              cat:'Sala',       l:80,  p:30, a:200 },
+      { tipo:'bancada',          nome:'Bancada',              cat:'Sala',       l:120, p:60, a:75  },
+      { tipo:'nicho',            nome:'Nicho',                cat:'Sala',       l:60,  p:20, a:40  },
+      { tipo:'pia_banheiro',     nome:'Pia Banheiro',         cat:'Banheiro',   l:80,  p:45, a:82  },
+      { tipo:'espelheira',       nome:'Espelheira',           cat:'Banheiro',   l:80,  p:15, a:70  }
+    ];
+
+    var _libCat = 'Todos';
+    var _libSearch = '';
+    var _libSelected = null;  // selected module tipo
+    var _libW = 0; var _libP = 0; var _libA = 0;
+
+    var LIB_PRESETS = {
+      inferior:     [40,50,60,80,100,120],
+      superior:     [40,60,80,100,120],
+      torre:        [40,50,60],
+      gaveteiro:    [40,50,60,80],
+      roupeiro:     [60,80,100,120,150],
+      estante:      [60,80,100,120],
+      bancada:      [80,100,120,150,200],
+      pia:          [60,80,100,120],
+      ilha:         [80,100,120,150,200],
+      cooktop:      [60,80,100],
+      nicho:        [40,50,60,80],
+      espelheira:   [60,80,100],
+      pia_banheiro: [60,80,100]
+    };
+
+    // Map tipo → isometric SVG icon id
+    var LIB_ISO = {
+      inferior:'iso-inferior', superior:'iso-superior', torre:'iso-torre',
+      gaveteiro:'iso-gaveteiro', estante:'iso-estante', roupeiro:'iso-roupeiro',
+      bancada:'iso-bancada', pia:'iso-pia', nicho:'iso-nicho', cooktop:'iso-cooktop',
+      ilha:'iso-ilha', canto_l:'iso-canto', canto_l_superior:'iso-canto',
+      espelheira:'iso-espelheira', pia_banheiro:'iso-pia',
+      torre_quente:'iso-torre', micro_ondas:'iso-nicho', lava_louca:'iso-pia'
+    };
+
+    function showBiblioteca() {
+      _libCat = 'Todos';
+      _libSearch = '';
+      _libSelected = null;
+      var el = document.getElementById('main-content');
+      el.className = 'content fade-in';
+      el.style.padding = '0';
+      el.style.height = 'calc(100vh - 60px)';
+      el.innerHTML = renderBiblioteca();
+      // Focus search
+      var s = document.getElementById('lib-search');
+      if (s) s.focus();
+    }
+
+    function closeBiblioteca() {
+      var el = document.getElementById('main-content');
+      el.style.padding = '';
+      el.style.height = '';
+      // Re-render current view
+      if (currentData) {
+        renderContent(currentLevel, currentData);
+      } else {
+        renderContent('projeto', { total_modulos: 0, modulos: [] });
+      }
+      // Restore breadcrumb
+      var bc = document.getElementById('breadcrumb');
+      if (bc && currentLevel === 'projeto') {
+        bc.innerHTML = '<span class="bc-current">Projeto</span>';
+      }
+    }
+
+    function renderBiblioteca() {
+      var html = '';
+
+      // Header with back + search
+      html += '<div class="lib-header">';
+      html += '<button class="lib-back" onclick="closeBiblioteca()" title="Voltar">' + ico('back', 18) + '</button>';
+      html += '<input type="text" class="lib-search" id="lib-search" placeholder="Buscar modulo..." value="' + esc(_libSearch) + '" oninput="onLibSearch(this.value)">';
+      html += '</div>';
+
+      // Category chips
+      html += '<div class="lib-cats">';
+      var cats = Object.keys(LIB_CATEGORIES);
+      cats.forEach(function(c) {
+        var cls = c === _libCat ? 'lib-chip active' : 'lib-chip';
+        html += '<button class="' + cls + '" onclick="onLibCat(\'' + c + '\')">' + c + '</button>';
+      });
+      html += '</div>';
+
+      // Filter modules
+      var mods = filterLibModules();
+
+      if (mods.length === 0) {
+        html += '<div class="lib-empty">' + ico('search', 32) + '<p style="margin-top:8px">Nenhum modulo encontrado</p></div>';
+      } else {
+        // Grid
+        html += '<div class="lib-grid">';
+        mods.forEach(function(m) {
+          var sel = _libSelected === m.tipo ? ' selected' : '';
+          var isoId = LIB_ISO[m.tipo] || 'iso-inferior';
+          html += '<div class="lib-card' + sel + '" onclick="onLibSelect(\'' + m.tipo + '\')">';
+          html += '<div class="lib-thumb"><svg width="70" height="50"><use href="#i-' + isoId + '"/></svg></div>';
+          html += '<div class="lib-name">' + esc(m.nome) + '</div>';
+          html += '<div class="lib-dims">' + m.l + ' x ' + m.p + ' x ' + m.a + ' cm</div>';
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+
+      // Inline params (if selected)
+      if (_libSelected) {
+        html += renderLibParams();
+      }
+
+      return html;
+    }
+
+    function filterLibModules() {
+      var catFilter = LIB_CATEGORIES[_libCat];
+      return LIB_MODULES.filter(function(m) {
+        // Category filter
+        if (catFilter && catFilter.indexOf(m.tipo) === -1) return false;
+        // Search filter
+        if (_libSearch) {
+          var q = _libSearch.toLowerCase();
+          return m.nome.toLowerCase().indexOf(q) !== -1 || m.tipo.toLowerCase().indexOf(q) !== -1;
+        }
+        return true;
+      });
+    }
+
+    function onLibCat(cat) {
+      _libCat = cat;
+      refreshLib();
+    }
+
+    function onLibSearch(val) {
+      _libSearch = val;
+      refreshLib();
+    }
+
+    function onLibSelect(tipo) {
+      if (_libSelected === tipo) {
+        _libSelected = null;
+        _libW = 0; _libP = 0; _libA = 0;
+      } else {
+        _libSelected = tipo;
+        var m = LIB_MODULES.filter(function(x) { return x.tipo === tipo; })[0];
+        if (m) { _libW = m.l; _libP = m.p; _libA = m.a; }
+      }
+      refreshLib();
+      // Scroll to params if selected
+      if (_libSelected) {
+        setTimeout(function() {
+          var p = document.getElementById('lib-params');
+          if (p) p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 50);
+      }
+    }
+
+    function refreshLib() {
+      var el = document.getElementById('main-content');
+      // Preserve search focus state
+      var hadFocus = document.activeElement && document.activeElement.id === 'lib-search';
+      var selStart = hadFocus ? document.activeElement.selectionStart : 0;
+      el.innerHTML = renderBiblioteca();
+      if (hadFocus) {
+        var s = document.getElementById('lib-search');
+        if (s) { s.focus(); s.selectionStart = s.selectionEnd = selStart; }
+      }
+    }
+
+    function renderLibParams() {
+      if (!_libSelected) return '';
+      var m = LIB_MODULES.filter(function(x) { return x.tipo === _libSelected; })[0];
+      if (!m) return '';
+
+      var isoId = LIB_ISO[m.tipo] || 'iso-inferior';
+      var presets = LIB_PRESETS[m.tipo] || LIB_PRESETS['inferior'] || [60,80,100];
+
+      var html = '<div class="lib-params" id="lib-params">';
+
+      // Title
+      html += '<div class="lib-params-title">';
+      html += '<div class="lib-sel-icon"><svg width="22" height="22"><use href="#i-' + isoId + '"/></svg></div>';
+      html += '<div><h3>' + esc(m.nome) + '</h3>';
+      html += '<div class="lib-sel-type">' + esc(m.tipo) + '</div></div></div>';
+
+      // Width presets
+      html += '<div style="margin-bottom:8px"><label style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Larguras padrao (cm)</label></div>';
+      html += '<div class="lib-presets">';
+      presets.forEach(function(w) {
+        var cls = _libW === w ? 'lib-preset active' : 'lib-preset';
+        html += '<button class="' + cls + '" onclick="onLibPreset(' + w + ')">' + w + '</button>';
+      });
+      html += '</div>';
+
+      // Dimension inputs
+      html += '<div class="lib-dim-row">';
+      html += '<div class="lib-dim-col"><label>Largura</label><input type="number" id="lib-w" value="' + _libW + '" onchange="onLibDim()" step="1" min="10"><div class="lib-unit">cm</div></div>';
+      html += '<div class="lib-dim-col"><label>Profund.</label><input type="number" id="lib-p" value="' + _libP + '" onchange="onLibDim()" step="1" min="10"><div class="lib-unit">cm</div></div>';
+      html += '<div class="lib-dim-col"><label>Altura</label><input type="number" id="lib-a" value="' + _libA + '" onchange="onLibDim()" step="1" min="10"><div class="lib-unit">cm</div></div>';
+      html += '</div>';
+
+      // Insert button
+      html += '<button class="lib-insert-btn" onclick="onLibInsert()">' + ico('place', 20) + ' Inserir no Modelo</button>';
+
+      html += '</div>';
+      return html;
+    }
+
+    function onLibPreset(w) {
+      _libW = w;
+      refreshLib();
+    }
+
+    function onLibDim() {
+      _libW = parseFloat(document.getElementById('lib-w').value) || _libW;
+      _libP = parseFloat(document.getElementById('lib-p').value) || _libP;
+      _libA = parseFloat(document.getElementById('lib-a').value) || _libA;
+    }
+
+    function onLibInsert() {
+      if (!_libSelected) return;
+      // Read latest dim values
+      onLibDim();
+      sendAction('create_module', {
+        tipo: _libSelected,
+        largura: _libW,
+        profundidade: _libP,
+        altura: _libA
+      });
+      showToast('Inserindo ' + _libSelected + ' ' + _libW + 'x' + _libP + 'x' + _libA + ' cm...', 'info');
+    }
+
+    // ═══ SMART TIPS (marceneiro intelligence) ═══
+    function getSmartTip(d) {
+      if (!d) return '';
+      var tips = [];
+      var tipo = d.tipo_sym || d.tipo || '';
+      var w = d.largura_mm || 0;
+      var h = d.altura_mm || 0;
+      var esp = d.espessura_mm || 18;
+      var comp = d.composicao || {};
+
+      // Check for wide spans without divisoria
+      if (w > 700 && tipo !== 'bancada') {
+        var hasDivisoria = (comp.internas || []).some(function(p) { return p.nome && p.nome.toLowerCase().indexOf('divis') !== -1; });
+        if (!hasDivisoria) {
+          tips.push('Vao livre de ' + w + 'mm. Considere divisoria para vaos > 700mm.');
+        }
+      }
+      // Tall modules need fixacao
+      if (h > 1800 && (tipo === 'torre' || tipo === 'torre_quente' || tipo === 'roupeiro' || tipo === 'estante')) {
+        tips.push('Modulo alto (' + h + 'mm). Verifique fixacao na parede.');
+      }
+      // Gavetas profundas
+      if ((comp.gavetas || []).length > 0 && (d.profundidade_mm || 0) > 500) {
+        tips.push('Gavetas em profundidade ' + d.profundidade_mm + 'mm — verifique corredica full-extension.');
+      }
+      // Espessura fina para modulos grandes
+      if (esp <= 15 && w > 600) {
+        tips.push('Espessura ' + esp + 'mm em modulo de ' + w + 'mm. Considere 18mm para maior rigidez.');
+      }
+      // Many parts = complex
+      if ((d.total_pecas || 0) > 15) {
+        tips.push('Modulo complexo com ' + d.total_pecas + ' pecas. Verifique sequencia de montagem.');
+      }
+
+      if (tips.length === 0) return '';
+      var html = '';
+      tips.forEach(function(tip) {
+        html += '<div class="smart-tip"><span class="smart-tip-icon">' + ico('validate-all', 14) + '</span><span>' + esc(tip) + '</span></div>';
+      });
+      return html;
+    }
+
+    // ═══ MATERIAL COLOR MAP ═══
+    var MAT_COLORS = [
+      '#D4894A','#5A8DC4','#4A9D6E','#C45454','#8B6BB5','#D49A4A','#6ABFC3','#CC7A8A'
+    ];
+    var _matColorCache = {};
+    function getMaterialColor(mat) {
+      if (!mat) return MAT_COLORS[0];
+      if (_matColorCache[mat]) return _matColorCache[mat];
+      var idx = Object.keys(_matColorCache).length % MAT_COLORS.length;
+      _matColorCache[mat] = MAT_COLORS[idx];
+      return MAT_COLORS[idx];
+    }
+
+    // ═══ MATERIAL BAR (projeto) ═══
+    function renderMaterialBar(materiais) {
+      if (!materiais || materiais.length === 0) return '';
+      var total = materiais.reduce(function(s, m) { return s + parseFloat(m.area_m2 || 0); }, 0);
+      if (total === 0) return '';
+
+      var html = '<div class="mat-bar">';
+      materiais.forEach(function(m, i) {
+        var pct = (parseFloat(m.area_m2 || 0) / total * 100);
+        var col = MAT_COLORS[i % MAT_COLORS.length];
+        html += '<div class="mat-bar-seg" style="width:' + pct + '%;background:' + col + '"></div>';
+      });
+      html += '</div>';
+
+      html += '<div class="mat-legend">';
+      materiais.forEach(function(m, i) {
+        var col = MAT_COLORS[i % MAT_COLORS.length];
+        _matColorCache[m.nome] = col;
+        html += '<div class="mat-legend-item">';
+        html += '<div class="mat-legend-dot" style="background:' + col + '"></div>';
+        html += '<span>' + esc(m.nome) + '</span>';
+        html += '<span class="mat-legend-val">' + m.area_m2 + ' m²</span>';
+        html += '</div>';
+      });
+      html += '</div>';
+      return html;
+    }
+
+    // ═══ RESUMO DE CORTE (marceneiro) ═══
+    function renderCutSummary(d) {
+      if (!d || !d.composicao) return '';
+      var comp = d.composicao;
+      var nEst = (comp.estruturais || []).length;
+      var nFront = (comp.frontais || []).length;
+      var nInt = (comp.internas || []).length;
+      var nGav = (comp.gavetas || []).length;
+      var totalPecas = nEst + nFront + nInt + nGav;
+
+      var html = '<div class="card"><div class="card-header"><h3>Resumo de Corte</h3></div>';
+      html += '<div class="cut-summary">';
+      html += '<div class="cut-stat"><div class="cut-stat-value">' + totalPecas + '</div><div class="cut-stat-label">Pecas MDF</div></div>';
+      html += '<div class="cut-stat"><div class="cut-stat-value">' + (d.area_m2 || 0) + '</div><div class="cut-stat-label">Area m²</div><div class="cut-stat-sub">' + d.espessura_mm + 'mm</div></div>';
+      html += '<div class="cut-stat"><div class="cut-stat-value">' + (d.fita_metros || 0) + '</div><div class="cut-stat-label">Fita metros</div></div>';
+      html += '<div class="cut-stat"><div class="cut-stat-value">' + (comp.ferragens || []).length + '</div><div class="cut-stat-label">Ferragens</div></div>';
+      html += '</div></div>';
+      return html;
+    }
+
+    // ═══ COMPOSICAO DETALHADA (com dims, icones e codigos) ═══
+    var _pieceCounter = 0;
+    function renderComposicaoDetalhada(comp) {
+      if (!comp) return '';
+      var html = '';
+      _pieceCounter = 0;
+
+      function addGroup(items, groupLabel, badge, cls, iconId) {
+        if (!items || !items.length) return;
+        html += '<div class="comp-group-label"><span>' + groupLabel + ' (' + items.length + ')</span><span class="comp-line"></span></div>';
+        items.forEach(function(p) {
+          _pieceCounter++;
+          var pieceCode = String(_pieceCounter).padStart(2, '0');
+          html += '<div class="comp-item" onclick="selectEntity(' + p.entity_id + ')">';
+          html += '<div class="comp-item-left">';
+          html += '<span class="comp-item-code">' + pieceCode + '</span>';
+          html += '<div class="comp-item-icon" style="background:' + badgeBg(cls) + ';color:' + badgeColor(cls) + '">' + ico(iconId, 14) + '</div>';
+          html += '<div class="comp-item-info"><div class="comp-item-name">' + esc(p.nome) + '</div>';
+          if (p.dims) html += '<div class="comp-item-dims">' + esc(p.dims) + '</div>';
+          html += '</div></div>';
+          html += '<div class="comp-item-right"><span class="item-badge ' + cls + '">' + badge + '</span></div>';
+          html += '</div>';
+        });
+      }
+
+      addGroup(comp.estruturais, 'Estruturais', 'EST', 'badge-struct', 'inferior');
+      addGroup(comp.frontais, 'Frontais', 'FRONT', 'badge-front', 'porta');
+      addGroup(comp.internas, 'Internas', 'INT', 'badge-intern', 'prateleira');
+      addGroup(comp.gavetas, 'Gavetas', 'GAV', 'badge-drawer', 'gaveta');
+
+      return html;
+    }
+
+    function badgeBg(cls) {
+      var map = {'badge-struct':'var(--badge-struct-bg)','badge-front':'var(--badge-front-bg)','badge-intern':'var(--badge-intern-bg)','badge-drawer':'var(--badge-drawer-bg)','badge-hw':'var(--badge-hw-bg)'};
+      return map[cls] || 'var(--bg-badge)';
+    }
+    function badgeColor(cls) {
+      var map = {'badge-struct':'var(--badge-struct)','badge-front':'var(--badge-front)','badge-intern':'var(--badge-intern)','badge-drawer':'var(--badge-drawer)','badge-hw':'var(--badge-hw)'};
+      return map[cls] || 'var(--text-muted)';
+    }
+
+    // ═══ FERRAGENS RESUMO AGRUPADO ═══
+    function renderHardwareSummary(ferragens) {
+      if (!ferragens || ferragens.length === 0) return '';
+      var html = '<div class="hw-summary">';
+      ferragens.forEach(function(hw) {
+        // Parse qty from name like "4x Dobradica Reta"
+        var match = hw.nome.match(/^(\d+)x?\s+(.+)/i);
+        var qty = match ? match[1] : '1';
+        var label = match ? match[2] : hw.nome;
+        var hwIcon = guessHwIcon(label);
+
+        html += '<div class="hw-item">';
+        html += '<div class="hw-item-icon">' + ico(hwIcon, 16) + '</div>';
+        html += '<div class="hw-item-info"><div class="hw-item-qty">' + qty + 'x</div>';
+        html += '<div class="hw-item-label">' + esc(label) + '</div></div>';
+        html += '</div>';
+      });
+      html += '</div>';
+      return html;
+    }
+
+    function guessEspType(esp) {
+      if (esp <= 3) return 'Laminado / HDF';
+      if (esp <= 6) return 'HDF / Fundo';
+      if (esp <= 9) return 'MDF Fino';
+      if (esp <= 15) return 'MDF Standard';
+      if (esp <= 18) return 'MDF / MDP';
+      if (esp <= 25) return 'MDF Grosso';
+      return 'Chapa Especial';
+    }
+
+    function guessHwIcon(label) {
+      var l = (label || '').toLowerCase();
+      if (l.indexOf('corredica') !== -1) return 'corredica';
+      if (l.indexOf('dobradica') !== -1) return 'dobradica';
+      if (l.indexOf('avento') !== -1) return 'basculante';
+      if (l.indexOf('puxador') !== -1) return 'porta';
+      if (l.indexOf('minifix') !== -1) return 'fixacao';
+      if (l.indexOf('pe') !== -1 || l.indexOf('rodizio') !== -1) return 'pe';
+      return 'gear';
+    }
+
+    // ═══ [1] VISTA ESQUEMATICA DO MODULO ═══
+    function renderSchematic(d) {
+      if (!d || !d.composicao) return '';
+      var comp = d.composicao;
+      var W = 320, H = 180;
+      var mw = 160, mh = 110; // module rect
+      var mx = (W - mw) / 2, my = 30;
+      var esp = 4; // thickness visual
+
+      var svg = '<div class="schematic-view">';
+      svg += '<svg class="schematic-svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '">';
+
+      // Dimension lines
+      // Width (top)
+      svg += '<line x1="' + mx + '" y1="18" x2="' + (mx+mw) + '" y2="18" class="schematic-dimline"/>';
+      svg += '<line x1="' + mx + '" y1="14" x2="' + mx + '" y2="22" class="schematic-dimline"/>';
+      svg += '<line x1="' + (mx+mw) + '" y1="14" x2="' + (mx+mw) + '" y2="22" class="schematic-dimline"/>';
+      svg += '<text x="' + (mx+mw/2) + '" y="13" class="schematic-dim">' + (d.largura_mm || 0) + '</text>';
+      // Height (right)
+      var rx = mx + mw + 10;
+      svg += '<line x1="' + rx + '" y1="' + my + '" x2="' + rx + '" y2="' + (my+mh) + '" class="schematic-dimline"/>';
+      svg += '<line x1="' + (rx-4) + '" y1="' + my + '" x2="' + (rx+4) + '" y2="' + my + '" class="schematic-dimline"/>';
+      svg += '<line x1="' + (rx-4) + '" y1="' + (my+mh) + '" x2="' + (rx+4) + '" y2="' + (my+mh) + '" class="schematic-dimline"/>';
+      svg += '<text x="' + (rx+12) + '" y="' + (my+mh/2+3) + '" class="schematic-dim" text-anchor="middle" writing-mode="tb">' + (d.altura_mm || 0) + '</text>';
+
+      // Base structure: left, right, top, bottom
+      // Left lateral
+      var eid = getCompEntityId(comp.estruturais, 'lateral_esq', 0);
+      svg += '<rect x="' + mx + '" y="' + my + '" width="' + esp + '" height="' + mh + '" class="schematic-part schematic-part-struct" stroke-width="1.2" rx="1" onclick="selectEntity(' + eid + ')"/>';
+      svg += '<text x="' + (mx - 6) + '" y="' + (my + mh/2) + '" class="schematic-label" text-anchor="end" onclick="selectEntity(' + eid + ')">LAT.E</text>';
+
+      // Right lateral
+      eid = getCompEntityId(comp.estruturais, 'lateral_dir', 1);
+      svg += '<rect x="' + (mx+mw-esp) + '" y="' + my + '" width="' + esp + '" height="' + mh + '" class="schematic-part schematic-part-struct" stroke-width="1.2" rx="1" onclick="selectEntity(' + eid + ')"/>';
+      svg += '<text x="' + (mx+mw+6) + '" y="' + (my + mh/2) + '" class="schematic-label" text-anchor="start" onclick="selectEntity(' + eid + ')">LAT.D</text>';
+
+      // Top
+      eid = getCompEntityId(comp.estruturais, 'tampo', 2);
+      svg += '<rect x="' + mx + '" y="' + my + '" width="' + mw + '" height="' + esp + '" class="schematic-part schematic-part-struct" stroke-width="1.2" rx="1" onclick="selectEntity(' + eid + ')"/>';
+      svg += '<text x="' + (mx+mw/2) + '" y="' + (my - 4) + '" class="schematic-label" onclick="selectEntity(' + eid + ')">TAMPO</text>';
+
+      // Bottom / base
+      eid = getCompEntityId(comp.estruturais, 'base', 3);
+      svg += '<rect x="' + mx + '" y="' + (my+mh-esp) + '" width="' + mw + '" height="' + esp + '" class="schematic-part schematic-part-struct" stroke-width="1.2" rx="1" onclick="selectEntity(' + eid + ')"/>';
+      svg += '<text x="' + (mx+mw/2) + '" y="' + (my+mh+14) + '" class="schematic-label" onclick="selectEntity(' + eid + ')">BASE</text>';
+
+      // Back panel (dashed)
+      eid = getCompEntityId(comp.estruturais, 'fundo', 4);
+      svg += '<rect x="' + (mx+esp+2) + '" y="' + (my+esp+2) + '" width="' + (mw-2*esp-4) + '" height="' + (mh-2*esp-4) + '" fill="none" stroke="var(--text-muted)" stroke-width="0.8" stroke-dasharray="4 3" rx="2" opacity="0.4" class="schematic-part" onclick="selectEntity(' + eid + ')"/>';
+      svg += '<text x="' + (mx+mw/2) + '" y="' + (my + mh/2 - 20) + '" class="schematic-dim" opacity="0.4">FUNDO</text>';
+      // Depth cota (below base)
+      var depthY = my + mh + 28;
+      svg += '<text x="' + (mx+mw/2) + '" y="' + (depthY) + '" class="schematic-dim" style="font-size:7px;opacity:0.5">prof. ' + (d.profundidade_mm || 0) + '</text>';
+
+      // Shelves (internas)
+      if (comp.internas && comp.internas.length > 0) {
+        var shelves = comp.internas.filter(function(p) { return p.nome && p.nome.toLowerCase().indexOf('prat') !== -1; });
+        var nShelves = shelves.length || 0;
+        if (nShelves > 0) {
+          var spacing = (mh - 2*esp) / (nShelves + 1);
+          for (var i = 0; i < nShelves; i++) {
+            var sy = my + esp + spacing * (i + 1);
+            var seid = shelves[i] ? shelves[i].entity_id : 0;
+            svg += '<rect x="' + (mx+esp) + '" y="' + (sy-1) + '" width="' + (mw-2*esp) + '" height="2" class="schematic-part schematic-part-intern" stroke-width="0.8" rx="0.5" onclick="selectEntity(' + seid + ')"/>';
+          }
+        }
+      }
+
+      // Doors (frontais)
+      if (comp.frontais && comp.frontais.length > 0) {
+        var nDoors = comp.frontais.length;
+        var doorW = (mw - 2*esp - (nDoors-1)*3) / nDoors;
+        for (var i = 0; i < nDoors; i++) {
+          var dx = mx + esp + i * (doorW + 3);
+          var deid = comp.frontais[i].entity_id || 0;
+          svg += '<rect x="' + dx + '" y="' + (my+esp) + '" width="' + doorW + '" height="' + (mh-2*esp) + '" class="schematic-part schematic-part-front" stroke-width="1" rx="2" fill-opacity="0.3" onclick="selectEntity(' + deid + ')"/>';
+          // Handle dot
+          var handleX = dx + doorW - 6;
+          var handleY = my + mh/2;
+          svg += '<circle cx="' + handleX + '" cy="' + handleY + '" r="2" fill="var(--badge-front)" opacity="0.6"/>';
+        }
+      }
+
+      // Drawers (gavetas)
+      if (comp.gavetas && comp.gavetas.length > 0) {
+        var nDraw = comp.gavetas.length;
+        var drawH = (mh - 2*esp - (nDraw-1)*3) / nDraw;
+        for (var i = 0; i < nDraw; i++) {
+          var dy = my + esp + i * (drawH + 3);
+          var geid = comp.gavetas[i].entity_id || 0;
+          svg += '<rect x="' + (mx+esp) + '" y="' + dy + '" width="' + (mw-2*esp) + '" height="' + drawH + '" class="schematic-part schematic-part-drawer" stroke-width="1" rx="2" fill-opacity="0.3" onclick="selectEntity(' + geid + ')"/>';
+          // Handle line
+          svg += '<line x1="' + (mx+mw/2-10) + '" y1="' + (dy+drawH/2) + '" x2="' + (mx+mw/2+10) + '" y2="' + (dy+drawH/2) + '" stroke="var(--badge-drawer)" stroke-width="1.5" stroke-linecap="round"/>';
+        }
+      }
+
+      svg += '</svg>';
+      svg += '<div style="text-align:center;font-size:9px;color:var(--text-muted);margin-top:4px">Clique nas pecas para selecionar</div>';
+      svg += '</div>';
+      return svg;
+    }
+
+    function getCompEntityId(arr, hint, fallbackIdx) {
+      if (!arr || arr.length === 0) return 0;
+      // Try to find by name hint
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i].nome && arr[i].nome.toLowerCase().indexOf(hint) !== -1) return arr[i].entity_id || 0;
+      }
+      // Fallback by index
+      if (arr[fallbackIdx]) return arr[fallbackIdx].entity_id || 0;
+      if (arr[0]) return arr[0].entity_id || 0;
+      return 0;
+    }
+
+    // ═══ [2] DIAGRAMA PROPORCIONAL DA PECA ═══
+    function renderPieceDiagram(d) {
+      if (!d) return '';
+      var comp = d.comp_mm || 600;
+      var larg = d.larg_mm || 300;
+      var b = d.bordas || {};
+
+      // Calculate proportional size (max 280px wide)
+      var maxW = 260, maxH = 120;
+      var ratio = comp / larg;
+      var pw, ph;
+      if (ratio > maxW / maxH) { pw = maxW; ph = Math.max(40, pw / ratio); }
+      else { ph = maxH; pw = Math.max(60, ph * ratio); }
+
+      var padX = 40, padY = 30;
+      var svgW = pw + padX * 2;
+      var svgH = ph + padY * 2;
+
+      var html = '<div class="piece-diagram">';
+      html += '<svg class="piece-svg" width="' + svgW + '" height="' + svgH + '" viewBox="0 0 ' + svgW + ' ' + svgH + '">';
+
+      // Piece body
+      html += '<rect x="' + padX + '" y="' + padY + '" width="' + pw + '" height="' + ph + '" class="piece-body" rx="2"/>';
+
+      // Edges with borda colors
+      var edgeW = 3;
+      // Top (frontal)
+      html += '<line x1="' + padX + '" y1="' + padY + '" x2="' + (padX+pw) + '" y2="' + padY + '" class="piece-edge ' + (b.frontal ? 'piece-edge-active' : 'piece-edge-inactive') + '"/>';
+      // Bottom (traseira)
+      html += '<line x1="' + padX + '" y1="' + (padY+ph) + '" x2="' + (padX+pw) + '" y2="' + (padY+ph) + '" class="piece-edge ' + (b.traseira ? 'piece-edge-active' : 'piece-edge-inactive') + '"/>';
+      // Left (esquerda)
+      html += '<line x1="' + padX + '" y1="' + padY + '" x2="' + padX + '" y2="' + (padY+ph) + '" class="piece-edge ' + (b.esquerda ? 'piece-edge-active' : 'piece-edge-inactive') + '"/>';
+      // Right (direita)
+      html += '<line x1="' + (padX+pw) + '" y1="' + padY + '" x2="' + (padX+pw) + '" y2="' + (padY+ph) + '" class="piece-edge ' + (b.direita ? 'piece-edge-active' : 'piece-edge-inactive') + '"/>';
+
+      // Edge labels
+      if (b.frontal) html += '<text x="' + (padX+pw/2) + '" y="' + (padY-8) + '" class="piece-cota" style="font-size:8px;fill:var(--orn-primary)">F</text>';
+      if (b.traseira) html += '<text x="' + (padX+pw/2) + '" y="' + (padY+ph+14) + '" class="piece-cota" style="font-size:8px;fill:var(--orn-primary)">T</text>';
+      if (b.esquerda) html += '<text x="' + (padX-10) + '" y="' + (padY+ph/2+3) + '" class="piece-cota" style="font-size:8px;fill:var(--orn-primary)">E</text>';
+      if (b.direita) html += '<text x="' + (padX+pw+10) + '" y="' + (padY+ph/2+3) + '" class="piece-cota" style="font-size:8px;fill:var(--orn-primary)">D</text>';
+
+      // Width cota (top)
+      var cotaY = padY - 18;
+      html += '<line x1="' + padX + '" y1="' + cotaY + '" x2="' + (padX+pw) + '" y2="' + cotaY + '" class="piece-cota-line"/>';
+      html += '<line x1="' + padX + '" y1="' + (cotaY-3) + '" x2="' + padX + '" y2="' + (cotaY+3) + '" class="piece-cota-line"/>';
+      html += '<line x1="' + (padX+pw) + '" y1="' + (cotaY-3) + '" x2="' + (padX+pw) + '" y2="' + (cotaY+3) + '" class="piece-cota-line"/>';
+      html += '<text x="' + (padX+pw/2) + '" y="' + (cotaY-4) + '" class="piece-cota">' + round1(comp) + '</text>';
+
+      // Height cota (left)
+      var cotaX = padX - 22;
+      html += '<line x1="' + cotaX + '" y1="' + padY + '" x2="' + cotaX + '" y2="' + (padY+ph) + '" class="piece-cota-line"/>';
+      html += '<line x1="' + (cotaX-3) + '" y1="' + padY + '" x2="' + (cotaX+3) + '" y2="' + padY + '" class="piece-cota-line"/>';
+      html += '<line x1="' + (cotaX-3) + '" y1="' + (padY+ph) + '" x2="' + (cotaX+3) + '" y2="' + (padY+ph) + '" class="piece-cota-line"/>';
+      html += '<text x="' + cotaX + '" y="' + (padY+ph/2) + '" class="piece-cota" transform="rotate(-90,' + cotaX + ',' + (padY+ph/2) + ')">' + round1(larg) + '</text>';
+
+      // Grain direction arrow
+      if (d.grao && d.grao !== 'nenhum') {
+        var cx = padX + pw / 2;
+        var cy = padY + ph / 2;
+        if (d.grao === 'comprimento' || d.grao === 'horizontal') {
+          html += '<line x1="' + (cx-15) + '" y1="' + cy + '" x2="' + (cx+15) + '" y2="' + cy + '" class="piece-grain-arrow" marker-end="url(#arrowGrain)"/>';
+          html += '<text x="' + cx + '" y="' + (cy+12) + '" class="piece-grain-label">GRAO</text>';
+        } else {
+          html += '<line x1="' + cx + '" y1="' + (cy-15) + '" x2="' + cx + '" y2="' + (cy+15) + '" class="piece-grain-arrow" marker-end="url(#arrowGrain)"/>';
+          html += '<text x="' + (cx+14) + '" y="' + cy + '" class="piece-grain-label">GRAO</text>';
+        }
+      }
+
+      // Arrow marker def
+      html += '<defs><marker id="arrowGrain" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6" fill="none" stroke="var(--text-muted)" stroke-width="0.8"/></marker></defs>';
+
+      html += '</svg></div>';
+      return html;
+    }
+
+    // ═══ [3] CNC FACE MINI-MAP ═══
+    function renderCncFaceMap(d) {
+      if (!d || !d.operacoes || d.operacoes.length === 0) return '';
+
+      // Group operations by face
+      var faces = {};
+      d.operacoes.forEach(function(op) {
+        var face = op.face || 'frente';
+        if (!faces[face]) faces[face] = [];
+        faces[face].push(op);
+      });
+
+      var faceKeys = Object.keys(faces);
+      if (faceKeys.length === 0) return '';
+
+      var comp = d.comp_mm || 600;
+      var larg = d.larg_mm || 300;
+      var faceW = 120, faceH = 70;
+
+      var html = '<div class="cnc-facemap">';
+      faceKeys.forEach(function(face) {
+        html += '<div class="cnc-face">';
+        html += '<div class="cnc-face-title">' + esc(face) + '</div>';
+        html += '<svg width="' + faceW + '" height="' + faceH + '" viewBox="0 0 ' + faceW + ' ' + faceH + '">';
+
+        // Face outline
+        html += '<rect x="5" y="5" width="' + (faceW-10) + '" height="' + (faceH-10) + '" fill="var(--bg-input)" stroke="var(--border)" stroke-width="0.8" rx="2"/>';
+
+        // Plot operations
+        faces[face].forEach(function(op) {
+          // Map position to face rect
+          var x = 5 + ((op.pos_x || 0) / comp) * (faceW - 10);
+          var y = 5 + ((op.pos_y || 0) / larg) * (faceH - 10);
+          // Clamp
+          x = Math.max(8, Math.min(faceW - 8, x));
+          y = Math.max(8, Math.min(faceH - 8, y));
+
+          var dotClass = 'cnc-dot-furo';
+          var r = 3;
+          var sub = (op.subtipo || '').toLowerCase();
+          if (sub.indexOf('cavilha') !== -1) { dotClass = 'cnc-dot-cavilha'; r = 2.5; }
+          else if (sub.indexOf('minifix') !== -1 || sub.indexOf('excent') !== -1) { dotClass = 'cnc-dot-minifix'; r = 3.5; }
+          else if (sub.indexOf('rasgo') !== -1 || sub.indexOf('canal') !== -1) { dotClass = 'cnc-dot-rasgos'; r = 2; }
+
+          html += '<circle cx="' + round1(x) + '" cy="' + round1(y) + '" r="' + r + '" class="' + dotClass + '" opacity="0.8">';
+          html += '<title>' + esc(op.nome) + ' (' + round1(op.pos_x||0) + ', ' + round1(op.pos_y||0) + ')</title></circle>';
+        });
+
+        html += '</svg></div>';
+      });
+      html += '</div>';
+
+      // Legend
+      html += '<div class="cnc-legend">';
+      html += '<div class="cnc-legend-item"><div class="cnc-legend-dot" style="background:var(--error)"></div>Furo</div>';
+      html += '<div class="cnc-legend-item"><div class="cnc-legend-dot" style="background:var(--warning)"></div>Cavilha</div>';
+      html += '<div class="cnc-legend-item"><div class="cnc-legend-dot" style="background:var(--info)"></div>Minifix</div>';
+      html += '<div class="cnc-legend-item"><div class="cnc-legend-dot" style="background:var(--badge-hw)"></div>Rasgo</div>';
+      html += '</div>';
+
+      return html;
+    }
+
+    // ═══ [4] WIDTH PRESET APPLY ═══
+    function applyWidthPreset(wmm) {
+      var el = document.getElementById('dim-w');
+      if (el) {
+        el.value = wmm;
+        onDimChange();
+      }
+    }
+
+    // ═══ DETALHAR — LEGENDA COMPLETA DO MODULO ═══
+    var _detalharData = null;
+    function showDetalhar() {
+      if (!_detalharData) return;
+      var el = document.getElementById('main-content');
+      el.className = 'content fade-in';
+      el.innerHTML = renderDetalhar(_detalharData);
+    }
+
+    function renderDetalhar(d) {
+      if (!d || !d.composicao) return emptyState('Sem dados de composicao');
+      var comp = d.composicao;
+      var modCode = d._code || 'M00';
+      var html = '';
+
+      // Header
+      html += '<div class="card">';
+      html += '<div class="detalhar-header">';
+      html += '<div class="mod-code-lg">' + modCode + '</div>';
+      html += '<div class="mod-name-lg">' + esc(d.nome) + '</div>';
+      html += '</div>';
+      html += '<div class="detalhar-summary">';
+      html += '<div>Tipo: <span>' + esc(d.tipo) + '</span></div>';
+      html += '<div>Material: <span>' + esc(d.material) + '</span></div>';
+      html += '<div>Dims: <span>' + (d.largura_mm||0) + ' × ' + (d.profundidade_mm||0) + ' × ' + (d.altura_mm||0) + '</span></div>';
+      html += '</div>';
+
+      // Piece legend table
+      html += '<div style="overflow-x:auto">';
+      html += '<table class="detalhar-table">';
+      html += '<thead><tr>';
+      html += '<th>#</th><th>Peca</th><th>Tipo</th><th>Comp × Larg × Esp</th><th>Bordas</th>';
+      html += '</tr></thead><tbody>';
+
+      var pieceNum = 0;
+      function addRows(items, tipo) {
+        if (!items || !items.length) return;
+        items.forEach(function(p) {
+          pieceNum++;
+          var code = String(pieceNum).padStart(2, '0');
+          var dims = p.dims || '-';
+          // Parse borda info from dims or default
+          var bordaStr = '-';
+          if (p.bordas) {
+            bordaStr = '';
+            bordaStr += '<span class="' + (p.bordas.frontal ? 'borda-yes' : 'borda-no') + '">F</span> ';
+            bordaStr += '<span class="' + (p.bordas.traseira ? 'borda-yes' : 'borda-no') + '">T</span> ';
+            bordaStr += '<span class="' + (p.bordas.esquerda ? 'borda-yes' : 'borda-no') + '">E</span> ';
+            bordaStr += '<span class="' + (p.bordas.direita ? 'borda-yes' : 'borda-no') + '">D</span>';
+          } else {
+            // Estimate bordas based on piece type
+            bordaStr = guessBordas(p.nome, tipo);
+          }
+          html += '<tr onclick="selectEntity(' + p.entity_id + ')" style="cursor:pointer">';
+          html += '<td class="td-code">' + code + '</td>';
+          html += '<td class="td-name">' + esc(p.nome) + '</td>';
+          html += '<td class="td-type">' + tipo + '</td>';
+          html += '<td class="td-dims">' + esc(dims) + '</td>';
+          html += '<td class="td-borda">' + bordaStr + '</td>';
+          html += '</tr>';
+        });
+      }
+
+      addRows(comp.estruturais, 'EST');
+      addRows(comp.frontais, 'FRONT');
+      addRows(comp.internas, 'INT');
+      addRows(comp.gavetas, 'GAV');
+
+      html += '</tbody></table></div>';
+
+      // Ferragens summary below
+      if (comp.ferragens && comp.ferragens.length > 0) {
+        html += '<div style="margin-top:10px;font-size:10px;color:var(--text-muted)">';
+        html += '<strong>Ferragens:</strong> ';
+        html += comp.ferragens.map(function(hw) { return esc(hw.nome); }).join(' · ');
+        html += '</div>';
+      }
+
+      html += '</div>';
+
+      // Back button
+      html += '<button class="btn btn-secondary" style="margin-top:8px" onclick="navigateTo(' + (d.entity_id||0) + ',\'modulo\')">' + ico('back',14) + ' Voltar ao Modulo</button>';
+
+      return html;
+    }
+
+    function guessBordas(nome, tipo) {
+      var n = (nome || '').toLowerCase();
+      if (tipo === 'FRONT') {
+        return '<span class="borda-yes">F</span> <span class="borda-yes">T</span> <span class="borda-yes">E</span> <span class="borda-yes">D</span>';
+      }
+      if (n.indexOf('fundo') !== -1) {
+        return '<span class="borda-no">F</span> <span class="borda-no">T</span> <span class="borda-no">E</span> <span class="borda-no">D</span>';
+      }
+      if (n.indexOf('lateral') !== -1) {
+        return '<span class="borda-yes">F</span> <span class="borda-no">T</span> <span class="borda-no">E</span> <span class="borda-no">D</span>';
+      }
+      if (n.indexOf('base') !== -1 || n.indexOf('topo') !== -1) {
+        return '<span class="borda-yes">F</span> <span class="borda-no">T</span> <span class="borda-no">E</span> <span class="borda-no">D</span>';
+      }
+      if (n.indexOf('pratel') !== -1) {
+        return '<span class="borda-yes">F</span> <span class="borda-no">T</span> <span class="borda-no">E</span> <span class="borda-no">D</span>';
+      }
+      return '<span class="borda-yes">F</span> <span class="borda-no">T</span> <span class="borda-no">E</span> <span class="borda-no">D</span>';
+    }
+
+    // ── Comunicacao com Ruby ──
+    function navigateTo(entityId, nivel) {
+      if (nivel === 'projeto') { sketchup.ornato_navigate('0'); return; }
+      if (entityId) sketchup.ornato_navigate('' + entityId);
+    }
+    function selectEntity(entityId) {
+      if (entityId) sketchup.ornato_select_entity('' + entityId);
+    }
+    function sendAction(action, payload) {
+      sketchup.ornato_action(JSON.stringify({ action: action, payload: payload }));
+    }
+
+    // ── Utilitarios ──
+    function esc(s) { return s ? String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;') : ''; }
+    function round1(v) { return v ? Math.round(v * 10) / 10 : 0; }
+    function ico(id, size) { size = size || 16; return '<svg width="'+size+'" height="'+size+'" style="vertical-align:middle;flex-shrink:0"><use href="#i-'+id+'"/></svg>'; }
+
+    function showToast(msg, type) {
+      var container = document.getElementById('toasts');
+      var t = document.createElement('div');
+      t.className = 'toast toast-' + type;
+      t.innerHTML = esc(msg);
+      container.appendChild(t);
+      setTimeout(function() { t.remove(); }, 3500);
+    }
+
+    // ── Dark Mode ──
+    function toggleDark() {
+      document.body.classList.toggle('dark');
+      try { localStorage.setItem('ornato_dark', document.body.classList.contains('dark') ? '1' : '0'); } catch(e) {}
+    }
+    try { if (localStorage.getItem('ornato_dark') === '1') document.body.classList.add('dark'); } catch(e) {}
+
+    // ── Atalhos de teclado ──
+    document.addEventListener('keydown', function(e) {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'v' || e.key === 'V') {
+        if (currentLevel === 'modulo') sendAction('validate_module', {});
+        else if (currentLevel === 'projeto') sendAction('validate_all', {});
+      }
+      if (e.key === 'e' || e.key === 'E') sendAction('export_project', {});
+      if (e.key === 'Escape') { if (_libSelected !== null || document.querySelector('.lib-header')) { closeBiblioteca(); return; } navigateTo(0, 'projeto'); }
+      if ((e.key === 'n' || e.key === 'N') && currentLevel === 'projeto') { showBiblioteca(); return; }
+      if (currentLevel === 'modulo') {
+        if (e.key === 't' || e.key === 'T') { showDetalhar(); e.preventDefault(); return; }
+        if (e.key === 'w' || e.key === 'W') { var el = document.getElementById('dim-w'); if(el){el.focus();el.select();e.preventDefault();} }
+        if (e.key === 'h' || e.key === 'H') { var el = document.getElementById('dim-h'); if(el){el.focus();el.select();e.preventDefault();} }
+        if (e.key === 'd' || e.key === 'D') { var el = document.getElementById('dim-d'); if(el){el.focus();el.select();e.preventDefault();} }
+      }
+    });
+
+    // ── Boot: notificar Ruby que JS esta pronto ──
+    try { sketchup.ornato_ready(); } catch(e) {
+      // Rodando fora do SketchUp (preview) — carregar mock data
+      console.log('ORNATO Panel: rodando em modo preview (fora do SketchUp)');
+    }
+  </script>
+</body>
+</html>

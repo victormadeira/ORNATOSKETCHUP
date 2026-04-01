@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ORNATO — SketchUp Plugin Preview</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: #1a1816;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      color: #ccc;
+    }
+
+    /* ═══ SKETCHUP TOOLBAR (LEFT) ═══ */
+    .su-toolbar {
+      width: 52px;
+      background: #2c2826;
+      border-right: 1px solid #3a3632;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 6px 0;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .su-toolbar .logo {
+      font-size: 9px;
+      font-weight: 800;
+      color: #D4894A;
+      letter-spacing: 0.5px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #3a3632;
+      width: 100%;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .su-toolbar .sep { width: 28px; height: 1px; background: #3a3632; margin: 4px 0; }
+    .su-toolbar button {
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: #8a8078;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .su-toolbar button:hover { background: #3a3632; color: #eae6e2; }
+    .su-toolbar button.active { background: #D4894A; color: white; }
+    .su-toolbar button .tip {
+      display: none; position: absolute; left: 44px; top: 50%; transform: translateY(-50%);
+      background: #2c2826; color: #eae6e2; padding: 5px 10px; border-radius: 6px;
+      font-size: 11px; white-space: nowrap; z-index: 999; pointer-events: none;
+      border: 1px solid #3a3632; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .su-toolbar button:hover .tip { display: block; }
+
+    /* ═══ VIEWPORT ═══ */
+    .viewport {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .viewport-bar {
+      background: #2c2826;
+      padding: 5px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #6a6058;
+      border-bottom: 1px solid #3a3632;
+    }
+    .viewport-bar .file { color: #9a9088; font-weight: 500; }
+    .viewport-3d {
+      flex: 1;
+      position: relative;
+      background: radial-gradient(ellipse at center, #2a2826 0%, #1a1816 100%);
+      overflow: hidden;
+    }
+
+    /* Floor grid */
+    .floor {
+      position: absolute;
+      bottom: 0; left: -50%; right: -50%;
+      height: 65%;
+      background:
+        repeating-linear-gradient(90deg, rgba(212,137,74,0.03) 0px, rgba(212,137,74,0.03) 1px, transparent 1px, transparent 60px),
+        repeating-linear-gradient(0deg, rgba(212,137,74,0.03) 0px, rgba(212,137,74,0.03) 1px, transparent 1px, transparent 60px);
+      transform: perspective(600px) rotateX(65deg);
+      transform-origin: bottom;
+      pointer-events: none;
+    }
+    .floor::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0; height: 100%;
+      background: linear-gradient(to bottom, transparent 0%, rgba(26,24,22,0.8) 100%);
+    }
+
+    /* 3D Scene */
+    .scene-wrap {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      perspective: 900px;
+    }
+    .scene {
+      transform-style: preserve-3d;
+      transform: rotateX(-18deg) rotateY(-32deg);
+      animation: orbit 20s ease-in-out infinite;
+    }
+    @keyframes orbit {
+      0%,100% { transform: rotateX(-18deg) rotateY(-32deg); }
+      25% { transform: rotateX(-20deg) rotateY(-28deg) translateY(-3px); }
+      50% { transform: rotateX(-16deg) rotateY(-36deg) translateY(2px); }
+      75% { transform: rotateX(-19deg) rotateY(-30deg) translateY(-1px); }
+    }
+
+    .mod3d {
+      position: absolute;
+      transform-style: preserve-3d;
+      cursor: pointer;
+      transition: filter 0.3s;
+    }
+    .mod3d:hover { filter: brightness(1.2); }
+    .mod3d.sel { filter: brightness(1.25) drop-shadow(0 0 16px rgba(212,137,74,0.5)); }
+
+    .f3d {
+      position: absolute;
+      backface-visibility: hidden;
+      border: 1px solid rgba(0,0,0,0.2);
+    }
+    .mod3d .lbl {
+      position: absolute;
+      bottom: -22px; left: 50%; transform: translateX(-50%);
+      font-size: 9px; color: #6a6058; white-space: nowrap;
+      font-weight: 600; letter-spacing: 0.3px;
+    }
+
+    .viewport-status {
+      background: #2c2826;
+      padding: 4px 14px;
+      border-top: 1px solid #3a3632;
+      font-size: 10px;
+      color: #6a6058;
+      display: flex;
+      justify-content: space-between;
+    }
+    .viewport-status .orn-tag { color: #D4894A; font-weight: 600; }
+
+    /* ═══ PANEL IFRAME ═══ */
+    .panel-wrap {
+      width: 380px;
+      flex-shrink: 0;
+      border-left: 1px solid #3a3632;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: width 0.3s;
+    }
+    .panel-wrap.collapsed { width: 0; border: none; }
+    .panel-wrap iframe {
+      width: 100%;
+      flex: 1;
+      border: none;
+    }
+
+    /* ═══ TOAST ═══ */
+    .toast-box {
+      position: fixed;
+      bottom: 14px;
+      left: 60px;
+      right: 394px;
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      pointer-events: none;
+    }
+    .toast-msg {
+      padding: 10px 16px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: white;
+      animation: tIn 0.3s ease;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    .toast-msg.ok { background: #4A9D6E; }
+    .toast-msg.err { background: #C45454; }
+    .toast-msg.inf { background: #555; }
+    @keyframes tIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- SVG ICONS -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <symbol id="tb-add" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></symbol>
+    <symbol id="tb-panel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></symbol>
+    <symbol id="tb-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></symbol>
+    <symbol id="tb-aggregate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="12" y1="3" x2="12" y2="12"/></symbol>
+    <symbol id="tb-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
+    <symbol id="tb-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="8" height="12" rx="1"/><rect x="14" y="6" width="8" height="12" rx="1"/><path d="M10 10h4M10 14h4" stroke-dasharray="2 1"/></symbol>
+    <symbol id="tb-testeira" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="4" height="16" rx="0.5"/><rect x="9" y="4" width="12" height="16" rx="1.5"/></symbol>
+    <symbol id="tb-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="tb-export" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></symbol>
+    <symbol id="tb-settings" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></symbol>
+  </svg>
+
+  <!-- TOOLBAR -->
+  <div class="su-toolbar">
+    <div class="logo">ORNATO</div>
+    <button onclick="toast('Novo Modulo — use o painel','inf')"><svg width="18" height="18"><use href="#tb-add"/></svg><span class="tip">Novo Modulo</span></button>
+    <button class="active" onclick="togglePanel()"><svg width="18" height="18"><use href="#tb-panel"/></svg><span class="tip">Propriedades</span></button>
+    <div class="sep"></div>
+    <button onclick="panelAction('validate_module')"><svg width="18" height="18"><use href="#tb-check"/></svg><span class="tip">Validar</span></button>
+    <button onclick="toast('Selecione modulo → + Agregar','inf')"><svg width="18" height="18"><use href="#tb-aggregate"/></svg><span class="tip">Agregar</span></button>
+    <button onclick="toast('Selecione modulo → Ferragem','inf')"><svg width="18" height="18"><use href="#tb-gear"/></svg><span class="tip">Ferragem</span></button>
+    <button onclick="toast('Selecione 2 modulos adjacentes','inf')"><svg width="18" height="18"><use href="#tb-link"/></svg><span class="tip">Conectar</span></button>
+    <button onclick="toast('Testeira — use painel','inf')"><svg width="18" height="18"><use href="#tb-testeira"/></svg><span class="tip">Testeira</span></button>
+    <button id="tbToggle" onclick="toggleFronts()"><svg width="18" height="18"><use href="#tb-eye"/></svg><span class="tip">Portas On/Off</span></button>
+    <div class="sep"></div>
+    <button onclick="panelAction('export_project')"><svg width="18" height="18"><use href="#tb-export"/></svg><span class="tip">Exportar</span></button>
+    <button onclick="toast('Configuracoes','inf')"><svg width="18" height="18"><use href="#tb-settings"/></svg><span class="tip">Config</span></button>
+  </div>
+
+  <!-- VIEWPORT -->
+  <div class="viewport">
+    <div class="viewport-bar">
+      <span class="file">Cozinha_Gourmet_300m2.skp</span>
+      <span id="selInfo">Nenhum objeto selecionado</span>
+    </div>
+    <div class="viewport-3d">
+      <div class="floor"></div>
+      <div class="scene-wrap">
+        <div class="scene" id="scene"></div>
+      </div>
+    </div>
+    <div class="viewport-status">
+      <span><span class="orn-tag">ORNATO</span> v2.4.0 · 18 receitas</span>
+      <span id="statusText">8 modulos · 47 pecas · 142 op. CNC</span>
+    </div>
+  </div>
+
+  <!-- PANEL (loads actual main_panel.html in iframe) -->
+  <div class="panel-wrap" id="panelWrap">
+    <iframe id="panelFrame" src="../html/main_panel.html"></iframe>
+  </div>
+
+  <div class="toast-box" id="toastBox"></div>
+
+  <script>
+    // ═══════════════════════════════════════════════════
+    // MOCK DATA
+    // ═══════════════════════════════════════════════════
+    var MODULES = [
+      { id:1, nome:'Inf. Pia 80cm', tipo:'inferior', tipo_sym:'inferior',
+        material:'MDF 18mm Branco TX', largura_mm:800, profundidade_mm:550, altura_mm:720,
+        espessura_mm:18, area_m2:2.84, fita_metros:4.2, peso_kg:28.5, total_pecas:9,
+        dims:'800x550x720',
+        composicao:{
+          estruturais:[{nome:'Lateral Esq.',entity_id:101,dims:'668 x 518 x 18'},{nome:'Lateral Dir.',entity_id:102,dims:'668 x 518 x 18'},{nome:'Base',entity_id:103,dims:'764 x 518 x 18'},{nome:'Topo (Rega)',entity_id:104,dims:'764 x 80 x 18'},{nome:'Travessa',entity_id:105,dims:'764 x 80 x 18'},{nome:'Fundo 6mm',entity_id:106,dims:'766 x 668 x 6'}],
+          frontais:[{nome:'Porta Esq.',entity_id:107,dims:'398 x 668 x 18'},{nome:'Porta Dir.',entity_id:108,dims:'398 x 668 x 18'}],
+          internas:[{nome:'Prateleira',entity_id:109,dims:'764 x 518 x 18'}],
+          gavetas:[],
+          ferragens:[{nome:'4x Dobradica Reta',entity_id:110},{nome:'2x Puxador 160mm',entity_id:111},{nome:'8x Minifix',entity_id:112}]
+        }},
+      { id:2, nome:'Gaveteiro 60cm', tipo:'gaveteiro', tipo_sym:'gaveteiro',
+        material:'MDF 18mm Branco TX', largura_mm:600, profundidade_mm:550, altura_mm:720,
+        espessura_mm:18, area_m2:3.12, fita_metros:6.8, peso_kg:32.0, total_pecas:17,
+        dims:'600x550x720',
+        composicao:{
+          estruturais:[{nome:'Lateral Esq.',entity_id:201,dims:'668 x 518 x 18'},{nome:'Lateral Dir.',entity_id:202,dims:'668 x 518 x 18'},{nome:'Base',entity_id:203,dims:'564 x 518 x 18'},{nome:'Topo (Rega)',entity_id:204,dims:'564 x 80 x 18'},{nome:'Fundo 6mm',entity_id:205,dims:'566 x 668 x 6'}],
+          frontais:[],internas:[],
+          gavetas:[{nome:'Gaveta 1',entity_id:206,dims:'564 x 150 x 18'},{nome:'Gaveta 2',entity_id:207,dims:'564 x 150 x 18'},{nome:'Gaveta 3',entity_id:208,dims:'564 x 200 x 18'},{nome:'Gaveta 4',entity_id:209,dims:'564 x 200 x 18'}],
+          ferragens:[{nome:'4x Corredica Telescopica',entity_id:210},{nome:'4x Puxador 160mm',entity_id:211},{nome:'8x Minifix',entity_id:212}]
+        }},
+      { id:3, nome:'Aereo 80cm', tipo:'superior', tipo_sym:'superior',
+        material:'MDF 18mm Branco TX', largura_mm:800, profundidade_mm:330, altura_mm:700,
+        espessura_mm:18, area_m2:1.92, fita_metros:3.1, peso_kg:18.4, total_pecas:8,
+        dims:'800x330x700',
+        composicao:{
+          estruturais:[{nome:'Lateral Esq.',entity_id:301,dims:'668 x 298 x 18'},{nome:'Lateral Dir.',entity_id:302,dims:'668 x 298 x 18'},{nome:'Base',entity_id:303,dims:'764 x 298 x 18'},{nome:'Topo',entity_id:304,dims:'764 x 298 x 18'},{nome:'Fundo 6mm',entity_id:305,dims:'766 x 668 x 6'}],
+          frontais:[{nome:'Basculante',entity_id:306,dims:'796 x 348 x 18'}],
+          internas:[{nome:'Prateleira',entity_id:307,dims:'764 x 298 x 18'}],
+          gavetas:[],
+          ferragens:[{nome:'2x Aventos HF',entity_id:308},{nome:'1x Puxador perfil',entity_id:309}]
+        }},
+      { id:4, nome:'Torre Forno 60', tipo:'torre', tipo_sym:'torre_quente',
+        material:'MDF 18mm Branco TX', largura_mm:600, profundidade_mm:550, altura_mm:2200,
+        espessura_mm:18, area_m2:5.4, fita_metros:7.2, peso_kg:52.0, total_pecas:13,
+        dims:'600x550x2200',
+        composicao:{
+          estruturais:[{nome:'Lateral Esq.',entity_id:401},{nome:'Lateral Dir.',entity_id:402},{nome:'Base',entity_id:403},{nome:'Topo',entity_id:404},{nome:'Prat. Forno',entity_id:405},{nome:'Rodape',entity_id:406},{nome:'Fundo 6mm',entity_id:407}],
+          frontais:[{nome:'Porta Superior',entity_id:408},{nome:'Porta Inferior',entity_id:409}],
+          internas:[{nome:'Prateleira',entity_id:410}],
+          gavetas:[],
+          ferragens:[{nome:'4x Dobradica Reta',entity_id:411},{nome:'2x Puxador',entity_id:412},{nome:'8x Minifix',entity_id:413}]
+        }},
+      { id:5, nome:'Roupeiro 100cm', tipo:'roupeiro', tipo_sym:'roupeiro',
+        material:'MDF 18mm Branco TX', largura_mm:1000, profundidade_mm:550, altura_mm:2400,
+        espessura_mm:18, area_m2:7.8, fita_metros:9.4, peso_kg:68.0, total_pecas:18,
+        dims:'1000x550x2400',
+        composicao:{
+          estruturais:[{nome:'Lateral Esq.',entity_id:501},{nome:'Lateral Dir.',entity_id:502},{nome:'Base',entity_id:503},{nome:'Topo',entity_id:504},{nome:'Divisoria',entity_id:505},{nome:'Rodape',entity_id:506},{nome:'Fundo',entity_id:507}],
+          frontais:[{nome:'Porta Esq.',entity_id:508},{nome:'Porta Dir.',entity_id:509}],
+          internas:[{nome:'Prat. 1',entity_id:510},{nome:'Prat. 2',entity_id:511},{nome:'Prat. 3',entity_id:512},{nome:'Cabideiro',entity_id:513}],
+          gavetas:[{nome:'Gaveta Roupa',entity_id:514}],
+          ferragens:[{nome:'6x Dobradica',entity_id:515},{nome:'2x Puxador 320mm',entity_id:516},{nome:'1x Corredica',entity_id:517},{nome:'12x Minifix',entity_id:518}]
+        }},
+      { id:6, nome:'Aereo 60cm', tipo:'superior', tipo_sym:'superior',
+        material:'MDF 18mm Branco TX', largura_mm:600, profundidade_mm:330, altura_mm:700,
+        espessura_mm:18, area_m2:1.52, fita_metros:2.6, peso_kg:14.8, total_pecas:8,
+        dims:'600x330x700',
+        composicao:{
+          estruturais:[{nome:'Lat.E',entity_id:601},{nome:'Lat.D',entity_id:602},{nome:'Base',entity_id:603},{nome:'Topo',entity_id:604},{nome:'Fundo',entity_id:605}],
+          frontais:[{nome:'Porta',entity_id:606}],internas:[{nome:'Prateleira',entity_id:607}],gavetas:[],
+          ferragens:[{nome:'2x Dobradica',entity_id:608},{nome:'1x Puxador',entity_id:609}]
+        }},
+      { id:7, nome:'Ilha 180cm', tipo:'ilha', tipo_sym:'ilha',
+        material:'MDF 25mm Branco TX', largura_mm:1800, profundidade_mm:700, altura_mm:900,
+        espessura_mm:25, area_m2:6.2, fita_metros:8.0, peso_kg:58.0, total_pecas:14,
+        dims:'1800x700x900',
+        composicao:{
+          estruturais:[{nome:'Lat.E',entity_id:701},{nome:'Lat.D',entity_id:702},{nome:'Base',entity_id:703},{nome:'Div.1',entity_id:704},{nome:'Div.2',entity_id:705},{nome:'Rodape',entity_id:706},{nome:'Fundo',entity_id:707}],
+          frontais:[{nome:'Porta 1',entity_id:708},{nome:'Porta 2',entity_id:709},{nome:'Porta 3',entity_id:710}],
+          internas:[{nome:'Prat. 1',entity_id:711},{nome:'Prat. 2',entity_id:712}],gavetas:[],
+          ferragens:[{nome:'6x Dobradica',entity_id:713},{nome:'3x Puxador',entity_id:714}]
+        }},
+      { id:8, nome:'Nicho Decorativo', tipo:'nicho', tipo_sym:'nicho',
+        material:'MDF 18mm Carvalho', largura_mm:600, profundidade_mm:200, altura_mm:400,
+        espessura_mm:18, area_m2:0.68, fita_metros:2.0, peso_kg:6.2, total_pecas:7,
+        dims:'600x200x400',
+        composicao:{
+          estruturais:[{nome:'Lat.E',entity_id:801},{nome:'Lat.D',entity_id:802},{nome:'Base',entity_id:803},{nome:'Topo',entity_id:804},{nome:'Fundo',entity_id:805}],
+          frontais:[],internas:[{nome:'Prateleira',entity_id:806}],gavetas:[],
+          ferragens:[{nome:'4x Minifix',entity_id:807}]
+        }},
+    ];
+
+    var MOCK_PECA = {
+      _parent_code:'M01', _piece_code:'01',
+      nome:'Lateral Esq.', tipo:'Estrutural', subtipo:'CM_LAT_ESQ',
+      na_lista_corte:true, comp_mm:668, larg_mm:518, espessura_mm:18, espessura_real_mm:18.5,
+      material:'MDF 18mm Branco TX', grao:'Comprimento', face_visivel:'Direita',
+      bordas:{frontal:true,traseira:false,esquerda:false,direita:false,prioridade:'comprimento'},
+      operacoes:[
+        {nome:'S32 L1 (16 furos)',entity_id:1001,subtipo:'Sistema 32',face:'frente',pos_x:37,pos_y:32},
+        {nome:'S32 L2 (16 furos)',entity_id:1002,subtipo:'Sistema 32',face:'frente',pos_x:37,pos_y:486},
+        {nome:'Canal Fundo',entity_id:1003,subtipo:'Canal',face:'traseira',pos_x:334,pos_y:259},
+        {nome:'Minifix Topo 1',entity_id:1004,subtipo:'Minifix',face:'topo',pos_x:100,pos_y:37},
+        {nome:'Minifix Topo 2',entity_id:1005,subtipo:'Minifix',face:'topo',pos_x:568,pos_y:37},
+        {nome:'Minifix Base 1',entity_id:1006,subtipo:'Minifix',face:'base',pos_x:100,pos_y:37},
+        {nome:'Minifix Base 2',entity_id:1007,subtipo:'Minifix',face:'base',pos_x:568,pos_y:37},
+        {nome:'Cavilha Topo 1',entity_id:1008,subtipo:'Cavilha',face:'topo',pos_x:250,pos_y:37},
+        {nome:'Cavilha Topo 2',entity_id:1009,subtipo:'Cavilha',face:'topo',pos_x:418,pos_y:37},
+        {nome:'Cavilha Base 1',entity_id:1010,subtipo:'Cavilha',face:'base',pos_x:250,pos_y:37},
+        {nome:'Cavilha Base 2',entity_id:1011,subtipo:'Cavilha',face:'base',pos_x:418,pos_y:37},
+      ]
+    };
+
+    var ALERTS = [
+      {nivel:'aviso',categoria:'estrutural',mensagem:'Vao livre 764mm sem divisoria',sugestao:'Adicionar divisoria central para vaos > 700mm',modulo:'Inf. Pia 80cm'},
+      {nivel:'aviso',categoria:'ferragem',mensagem:'Corredica telescopica em gaveta larga',sugestao:'Considerar corredica oculta para melhor performance',modulo:'Gaveteiro 60cm'},
+      {nivel:'erro',categoria:'material',mensagem:'Fundo 6mm HDF nao encontrado no catalogo',sugestao:'Adicionar HDF 6mm ao catalogo de materiais',modulo:'Nicho Decorativo'},
+    ];
+
+    var selMod = null;
+    var frontsOn = true;
+
+    // ═══ SKETCHUP BRIDGE MOCK ═══
+    // Intercepta chamadas que o panel faz para `sketchup.*`
+    var panelFrame = null;
+
+    function setupBridge() {
+      panelFrame = document.getElementById('panelFrame');
+      panelFrame.onload = function() {
+        var pw = panelFrame.contentWindow;
+        // Mock sketchup object
+        pw.sketchup = {
+          ornato_ready: function() { sendProjeto(); },
+          ornato_navigate: function(id) {
+            if (id === '0') { selMod = null; sendProjeto(); updateSel(); }
+            else selectInViewport(parseInt(id));
+          },
+          ornato_select_entity: function(id) { selectInViewport(parseInt(id)); },
+          ornato_action: function(json) { handleAction(JSON.parse(json)); }
+        };
+        // Trigger boot
+        pw.sketchup.ornato_ready();
+      };
+    }
+
+    function sendProjeto() {
+      var pw = panelFrame.contentWindow;
+      var totalP = MODULES.reduce(function(s,m){return s+m.total_pecas},0);
+      pw.ornatoReceiveLevel({
+        nivel: 'projeto',
+        breadcrumb: [{label:'Projeto',nivel:'projeto'}],
+        data: {
+          total_modulos: MODULES.length,
+          total_pecas: totalP,
+          total_area_m2: MODULES.reduce(function(s,m){return s+m.area_m2},0).toFixed(1),
+          total_fita_m: MODULES.reduce(function(s,m){return s+m.fita_metros},0).toFixed(1),
+          total_peso_kg: MODULES.reduce(function(s,m){return s+m.peso_kg},0).toFixed(0),
+          materiais: [
+            {nome:'MDF 18mm Branco TX',area_m2:'22.8'},
+            {nome:'MDF 25mm Branco TX',area_m2:'6.2'},
+            {nome:'MDF 18mm Carvalho',area_m2:'0.7'},
+            {nome:'HDF 6mm',area_m2:'3.4'}
+          ],
+          modulos: MODULES.map(function(m, idx){
+            var errs = ALERTS.filter(function(a){return a.modulo===m.nome && a.nivel==='erro'}).length;
+            var warns = ALERTS.filter(function(a){return a.modulo===m.nome && a.nivel==='aviso'}).length;
+            return {entity_id:m.id,_code:'M'+String(idx+1).padStart(2,'0'),nome:m.nome,tipo:m.tipo,dims:m.dims,pecas:m.total_pecas,alertas_erro:errs,alertas_warn:warns,material:m.material};
+          })
+        }
+      });
+    }
+
+    function sendModulo(m) {
+      var pw = panelFrame.contentWindow;
+      // Add module code based on position in array
+      var idx = MODULES.indexOf(m);
+      var mData = Object.assign({}, m);
+      mData._code = 'M' + String(idx + 1).padStart(2, '0');
+      mData.entity_id = m.id;
+      pw.ornatoReceiveLevel({
+        nivel: 'modulo',
+        breadcrumb: [{label:'Projeto',nivel:'projeto',entity_id:0},{label:m.nome,nivel:'modulo',entity_id:m.id}],
+        data: mData
+      });
+    }
+
+    function sendPeca() {
+      var pw = panelFrame.contentWindow;
+      var modName = selMod ? selMod.nome : 'Modulo';
+      pw.ornatoReceiveLevel({
+        nivel: 'peca',
+        breadcrumb: [
+          {label:'Projeto',nivel:'projeto',entity_id:0},
+          {label:modName,nivel:'modulo',entity_id:selMod?selMod.id:0},
+          {label:MOCK_PECA.nome,nivel:'peca'}
+        ],
+        data: MOCK_PECA
+      });
+    }
+
+    function selectInViewport(id) {
+      // Check if it's a module
+      var m = MODULES.find(function(x){return x.id===id});
+      if (m) {
+        selMod = m;
+        sendModulo(m);
+        updateSel();
+        document.getElementById('selInfo').textContent = m.nome + ' selecionado';
+        document.getElementById('statusText').textContent = m.nome + ' — ' + m.total_pecas + ' pecas · ' + m.area_m2 + 'm²';
+        return;
+      }
+      // Otherwise it's a piece — show piece detail
+      sendPeca();
+      document.getElementById('selInfo').textContent = MOCK_PECA.nome + ' selecionada';
+    }
+
+    function handleAction(data) {
+      var pw = panelFrame.contentWindow;
+      switch(data.action) {
+        case 'validate_module':
+          var alerts = selMod ? ALERTS.filter(function(a){return a.modulo===selMod.nome}) : ALERTS;
+          pw.ornatoReceiveAlerts({alerts:alerts});
+          if(alerts.length===0) pw.ornatoReceiveSuccess({message:'Validacao OK — sem problemas'});
+          else toast(alerts.length+' alerta(s) encontrado(s)','inf');
+          break;
+        case 'validate_all':
+          pw.ornatoReceiveAlerts({alerts:ALERTS});
+          toast(ALERTS.length+' alerta(s) no projeto','inf');
+          break;
+        case 'export_project':
+          toast('Exportando projeto para JSON...','ok');
+          setTimeout(function(){toast('Exportacao concluida: 8 modulos, 47 pecas','ok')},1500);
+          break;
+        case 'resize_module':
+          toast('Dimensoes atualizadas','ok');
+          break;
+        case 'add_aggregate':
+          toast(data.payload.tipo + ' adicionado(a)','ok');
+          break;
+        case 'swap_hardware':
+          toast('Ferragem: ' + data.payload.categoria,'inf');
+          break;
+        case 'connect_modules':
+          toast('Selecione 2 modulos no 3D','inf');
+          break;
+        case 'add_testeira':
+          toast('Testeira 50mm adicionada','ok');
+          break;
+        case 'add_tampo_passante':
+          toast('Tampo passante criado','ok');
+          break;
+        case 'create_module':
+          toast('Criando ' + data.payload.tipo + ' ' + data.payload.largura + 'x' + data.payload.profundidade + 'x' + data.payload.altura + ' cm...','ok');
+          setTimeout(function(){
+            pw.ornatoReceiveSuccess({message:'Modulo ' + data.payload.tipo + ' criado com sucesso!'});
+          }, 800);
+          break;
+        default:
+          toast(data.action,'inf');
+      }
+    }
+
+    // ═══ 3D SCENE ═══
+    function build3D() {
+      var sc = document.getElementById('scene');
+      var boxes = [
+        {id:1, x:-180,y:0,z:0, w:65,h:58,d:45, c:'#b8956a', l:'Pia'},
+        {id:2, x:-108,y:0,z:0, w:48,h:58,d:45, c:'#a88050', l:'Gaveteiro'},
+        {id:3, x:-180,y:-95,z:-8, w:65,h:40,d:27, c:'#c4985a', l:'Aereo 80'},
+        {id:6, x:-108,y:-95,z:-8, w:48,h:40,d:27, c:'#c4985a', l:'Aereo 60'},
+        {id:4, x:-52,y:0,z:0, w:48,h:130,d:45, c:'#9e7a4e', l:'Torre'},
+        {id:5, x:60,y:0,z:0, w:80,h:140,d:45, c:'#8b6d45', l:'Roupeiro'},
+        {id:7, x:-80,y:0,z:80, w:145,h:52,d:56, c:'#b8956a', l:'Ilha'},
+        {id:8, x:150,y:-65,z:0, w:48,h:32,d:16, c:'#d4a86a', l:'Nicho'},
+      ];
+      var s = 0.72;
+      var html = '';
+      boxes.forEach(function(b) {
+        var w=b.w*s, h=b.h*s, d=b.d*s, x=b.x*s, y=b.y*s, z=b.z*s;
+        html += '<div class="mod3d" id="m'+b.id+'" onclick="selectInViewport('+b.id+')" style="transform:translate3d('+x+'px,'+y+'px,'+z+'px);width:'+w+'px;height:'+h+'px">';
+        // Front
+        html += '<div class="f3d" style="width:'+w+'px;height:'+h+'px;transform:translateZ('+(d/2)+'px);background:linear-gradient(135deg,'+b.c+','+dk(b.c,20)+')"></div>';
+        // Back
+        html += '<div class="f3d" style="width:'+w+'px;height:'+h+'px;transform:translateZ('+(-d/2)+'px) rotateY(180deg);background:'+dk(b.c,35)+'"></div>';
+        // Left
+        html += '<div class="f3d" style="width:'+d+'px;height:'+h+'px;transform:translateX('+(-d/2)+'px) rotateY(-90deg);background:'+dk(b.c,15)+'"></div>';
+        // Right
+        html += '<div class="f3d" style="width:'+d+'px;height:'+h+'px;transform:translateX('+(w-d/2)+'px) rotateY(90deg);background:'+dk(b.c,15)+'"></div>';
+        // Top
+        html += '<div class="f3d" style="width:'+w+'px;height:'+d+'px;transform:translateY('+(-d/2)+'px) rotateX(90deg);background:'+lt(b.c,12)+'"></div>';
+        // Label
+        html += '<div class="lbl">'+b.l+'</div>';
+        html += '</div>';
+      });
+      sc.innerHTML = html;
+    }
+
+    function updateSel() {
+      document.querySelectorAll('.mod3d').forEach(function(el){el.classList.remove('sel')});
+      if (selMod) {
+        var el = document.getElementById('m'+selMod.id);
+        if(el) el.classList.add('sel');
+      } else {
+        document.getElementById('selInfo').textContent = 'Nenhum objeto selecionado';
+        document.getElementById('statusText').textContent = '8 modulos · 47 pecas · 142 op. CNC';
+      }
+    }
+
+    // ═══ ACTIONS ═══
+    function togglePanel() { document.getElementById('panelWrap').classList.toggle('collapsed'); }
+    function toggleFronts() {
+      frontsOn = !frontsOn;
+      document.getElementById('tbToggle').classList.toggle('active',!frontsOn);
+      toast('Portas '+(frontsOn?'visiveis':'ocultas'),'inf');
+    }
+    function panelAction(action) {
+      handleAction({action:action,payload:{}});
+    }
+
+    // ═══ UTILS ═══
+    function toast(msg,type) {
+      var t = document.createElement('div');
+      t.className = 'toast-msg '+ type;
+      t.textContent = msg;
+      document.getElementById('toastBox').appendChild(t);
+      setTimeout(function(){t.remove()},3000);
+    }
+    function dk(h,a) {
+      var r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);
+      return '#'+[Math.max(0,r-a),Math.max(0,g-a),Math.max(0,b-a)].map(function(c){return c.toString(16).padStart(2,'0')}).join('');
+    }
+    function lt(h,a) {
+      var r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);
+      return '#'+[Math.min(255,r+a),Math.min(255,g+a),Math.min(255,b+a)].map(function(c){return c.toString(16).padStart(2,'0')}).join('');
+    }
+
+    // ═══ BOOT ═══
+    build3D();
+    setupBridge();
+  </script>
+</body>
+</html>

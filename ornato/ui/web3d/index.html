@@ -1,0 +1,1519 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ORNATO 3D — Plataforma Parametrica</title>
+  <style>
+    /* ═══════════════════════════════════════════════════════════
+       ORNATO 3D — Web Furniture Configurator
+       Full-screen layout: Sidebar + 3D Viewport + Properties
+       ═══════════════════════════════════════════════════════════ */
+    :root {
+      --orn: #D4894A;
+      --orn-hover: #C07A3E;
+      --orn-light: rgba(212,137,74,0.12);
+      --orn-glow: rgba(212,137,74,0.25);
+      --bg: #1A1816;
+      --bg2: #242220;
+      --bg3: #2C2A28;
+      --bg4: #353230;
+      --border: #3A3632;
+      --text: #EAE6E2;
+      --text2: #9A9088;
+      --text3: #6A6058;
+      --success: #4A9D6E;
+      --error: #C45454;
+      --info: #5A8DC4;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --mono: 'JetBrains Mono', 'SF Mono', monospace;
+      --r: 8px;
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: var(--font); background: var(--bg); color: var(--text); overflow: hidden; height: 100vh; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    /* ═══ LAYOUT ═══ */
+    #app {
+      display: grid;
+      grid-template-columns: 280px 1fr 300px;
+      grid-template-rows: 48px 1fr 32px;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* ═══ TOP BAR ═══ */
+    .topbar {
+      grid-column: 1 / -1;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 16px;
+      z-index: 100;
+    }
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-right: 16px;
+      border-right: 1px solid var(--border);
+    }
+    .topbar-logo {
+      width: 28px; height: 28px;
+      background: var(--orn);
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 11px; color: white; letter-spacing: 0.5px;
+    }
+    .topbar-brand h1 { font-size: 14px; font-weight: 700; letter-spacing: 2px; }
+    .topbar-project {
+      font-size: 12px; color: var(--text2); font-weight: 500;
+    }
+    .topbar-actions {
+      margin-left: auto;
+      display: flex; gap: 4px; align-items: center;
+    }
+    .tb {
+      background: transparent; border: 1px solid transparent;
+      border-radius: 6px; padding: 6px 12px;
+      color: var(--text2); font-size: 11px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 5px;
+      font-family: var(--font);
+    }
+    .tb:hover { background: var(--bg3); color: var(--text); border-color: var(--border); }
+    .tb.active { background: var(--orn-light); color: var(--orn); border-color: rgba(212,137,74,0.3); }
+    .tb svg { width: 14px; height: 14px; }
+    .tb-sep { width: 1px; height: 20px; background: var(--border); margin: 0 4px; }
+
+    /* ═══ LEFT SIDEBAR (Library) ═══ */
+    .sidebar {
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .side-header {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .side-header h2 {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--text2);
+    }
+    .side-search {
+      margin: 10px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 7px 12px 7px 32px;
+      font-size: 11px; color: var(--text);
+      font-family: var(--font);
+      width: calc(100% - 28px);
+      transition: all 0.2s;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' stroke='%236A6058' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='6' cy='6' r='4'/%3E%3Cline x1='9' y1='9' x2='13' y2='13'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 10px center;
+    }
+    .side-search:focus { outline: none; border-color: var(--orn); box-shadow: 0 0 0 3px var(--orn-glow); }
+    .side-search::placeholder { color: var(--text3); }
+    .side-cats {
+      display: flex; gap: 4px; padding: 0 14px 10px;
+      overflow-x: auto; flex-shrink: 0;
+    }
+    .side-cats::-webkit-scrollbar { display: none; }
+    .chip {
+      white-space: nowrap; padding: 4px 12px;
+      border-radius: 20px; font-size: 10px; font-weight: 600;
+      border: 1px solid var(--border); background: transparent;
+      color: var(--text2); cursor: pointer; transition: all 0.2s;
+    }
+    .chip:hover { border-color: var(--orn); color: var(--orn); }
+    .chip.on { background: var(--orn); color: white; border-color: var(--orn); }
+    .side-grid {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 10px 10px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      align-content: start;
+    }
+    .mod-card {
+      background: var(--bg3);
+      border: 2px solid transparent;
+      border-radius: var(--r);
+      padding: 10px 8px 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .mod-card:hover { border-color: var(--border); background: var(--bg4); transform: translateY(-1px); }
+    .mod-card.sel { border-color: var(--orn); background: rgba(212,137,74,0.08); }
+    .mod-card canvas { width: 100%; height: 60px; pointer-events: none; }
+    .mod-card .mc-name { font-size: 10px; font-weight: 700; margin-top: 4px; }
+    .mod-card .mc-dims { font-size: 9px; color: var(--text3); font-family: var(--mono); margin-top: 1px; }
+
+    /* ═══ VIEWPORT ═══ */
+    .viewport {
+      position: relative;
+      overflow: hidden;
+      background: #1E1C1A;
+    }
+    .viewport canvas { display: block; width: 100%; height: 100%; }
+    .vp-overlay {
+      position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 4px; background: rgba(26,24,22,0.85);
+      border: 1px solid var(--border); border-radius: 8px; padding: 4px;
+      backdrop-filter: blur(8px);
+    }
+    .vo {
+      padding: 5px 12px; border: none; border-radius: 5px;
+      background: transparent; color: var(--text2); font-size: 10px;
+      font-weight: 600; cursor: pointer; transition: all 0.15s;
+      font-family: var(--font);
+    }
+    .vo:hover { background: var(--bg3); color: var(--text); }
+    .vo.on { background: var(--orn); color: white; }
+    .sel-info {
+      position: absolute; top: 12px; left: 12px;
+      background: rgba(26,24,22,0.9);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 10px 14px;
+      font-size: 11px;
+      backdrop-filter: blur(8px);
+      display: none;
+      min-width: 180px;
+    }
+    .sel-info.show { display: block; }
+    .sel-info h4 { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+    .sel-info .si-row { display: flex; justify-content: space-between; padding: 2px 0; }
+    .sel-info .si-label { color: var(--text3); font-size: 10px; }
+    .sel-info .si-val { font-weight: 600; font-family: var(--mono); font-size: 10px; }
+
+    /* ═══ RIGHT PANEL (Properties) ═══ */
+    .props {
+      background: var(--bg2);
+      border-left: 1px solid var(--border);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .prop-header {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .prop-header h2 {
+      font-size: 11px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--text2);
+    }
+    .prop-section {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .prop-section h3 {
+      font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; color: var(--text3); margin-bottom: 10px;
+    }
+    .pf {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 4px 0;
+    }
+    .pf label { font-size: 11px; color: var(--text2); font-weight: 500; }
+    .pf .pv { font-size: 12px; font-weight: 600; font-family: var(--mono); }
+    .pf input[type="number"], .pf input[type="text"], .pf select {
+      width: 90px; border: 1px solid var(--border); border-radius: 5px;
+      padding: 5px 8px; font-size: 11px; font-weight: 600;
+      background: var(--bg); color: var(--text); text-align: right;
+      font-family: var(--mono); transition: all 0.2s;
+    }
+    .pf input:focus, .pf select:focus { outline: none; border-color: var(--orn); box-shadow: 0 0 0 3px var(--orn-glow); }
+    .pf select { text-align: left; width: 120px; cursor: pointer; }
+    .pf .unit { font-size: 9px; color: var(--text3); margin-left: 4px; width: 20px; }
+
+    /* Dim row: 3 cols */
+    .dim-row {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;
+      margin-bottom: 8px;
+    }
+    .dim-col label { display: block; font-size: 9px; color: var(--text3); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .dim-col input {
+      width: 100%; border: 1px solid var(--border); border-radius: 5px;
+      padding: 7px 6px; font-size: 13px; font-weight: 700;
+      background: var(--bg); color: var(--text); text-align: center;
+      font-family: var(--mono); transition: all 0.2s;
+    }
+    .dim-col input:focus { outline: none; border-color: var(--orn); box-shadow: 0 0 0 3px var(--orn-glow); }
+    .dim-col .du { font-size: 9px; color: var(--text3); text-align: center; margin-top: 2px; }
+
+    /* Width presets */
+    .presets { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 10px; }
+    .preset {
+      padding: 3px 10px; border-radius: 20px;
+      border: 1px solid var(--border); background: transparent;
+      font-size: 10px; font-weight: 600; color: var(--text2);
+      cursor: pointer; transition: all 0.15s; font-family: var(--mono);
+    }
+    .preset:hover { border-color: var(--orn); color: var(--orn); }
+    .preset.on { background: var(--orn-light); border-color: var(--orn); color: var(--orn); }
+
+    /* Material swatches */
+    .mat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    .mat-swatch {
+      aspect-ratio: 1; border-radius: 6px; cursor: pointer;
+      border: 2px solid transparent; transition: all 0.15s;
+      position: relative;
+    }
+    .mat-swatch:hover { border-color: var(--text3); transform: scale(1.05); }
+    .mat-swatch.on { border-color: var(--orn); box-shadow: 0 0 0 2px var(--orn-glow); }
+    .mat-swatch .ms-name {
+      position: absolute; bottom: -14px; left: 0; right: 0;
+      font-size: 8px; text-align: center; color: var(--text3); font-weight: 600;
+    }
+
+    /* Aggregate buttons */
+    .agg-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .agg-btn {
+      padding: 8px 6px; border: 1px solid var(--border);
+      border-radius: 6px; background: var(--bg3);
+      color: var(--text2); font-size: 10px; font-weight: 600;
+      cursor: pointer; transition: all 0.15s; text-align: center;
+      font-family: var(--font);
+    }
+    .agg-btn:hover { border-color: var(--orn); color: var(--orn); background: var(--orn-light); }
+
+    /* Hardware list */
+    .hw-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 8px; border-radius: 5px;
+      margin-bottom: 4px; background: var(--bg3);
+    }
+    .hw-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .hw-info { flex: 1; }
+    .hw-name { font-size: 10px; font-weight: 600; }
+    .hw-detail { font-size: 9px; color: var(--text3); }
+    .hw-qty { font-size: 11px; font-weight: 700; color: var(--orn); font-family: var(--mono); }
+
+    /* Insert button */
+    .insert-btn {
+      margin: 12px 14px; padding: 12px;
+      border: none; border-radius: var(--r);
+      background: var(--orn); color: white;
+      font-size: 13px; font-weight: 700;
+      cursor: pointer; display: flex; align-items: center;
+      justify-content: center; gap: 8px;
+      transition: all 0.2s; font-family: var(--font);
+      box-shadow: 0 2px 8px rgba(212,137,74,0.35);
+    }
+    .insert-btn:hover { background: var(--orn-hover); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(212,137,74,0.4); }
+
+    /* Parts list */
+    .part-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 8px; border-radius: 5px; margin-bottom: 2px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .part-item:hover { background: var(--bg3); }
+    .part-item.sel { background: var(--orn-light); }
+    .pi-name { font-size: 10px; font-weight: 600; }
+    .pi-dims { font-size: 9px; color: var(--text3); font-family: var(--mono); }
+    .pi-badge {
+      font-size: 8px; padding: 2px 6px; border-radius: 10px;
+      font-weight: 700; letter-spacing: 0.3px;
+    }
+    .badge-e { background: rgba(74,157,110,0.15); color: #4A9D6E; }
+    .badge-f { background: rgba(90,141,196,0.15); color: #5A8DC4; }
+    .badge-i { background: rgba(212,154,74,0.15); color: #D49A4A; }
+    .badge-h { background: rgba(139,107,181,0.15); color: #8B6BB5; }
+
+    /* ═══ STATUS BAR ═══ */
+    .statusbar {
+      grid-column: 1 / -1;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      font-size: 10px;
+      color: var(--text3);
+      gap: 16px;
+    }
+    .statusbar .st-item { display: flex; align-items: center; gap: 4px; }
+    .statusbar .st-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .statusbar .st-right { margin-left: auto; display: flex; gap: 12px; }
+
+    /* ═══ TOAST ═══ */
+    .toast-wrap {
+      position: fixed; bottom: 44px; left: 50%; transform: translateX(-50%);
+      z-index: 9999; display: flex; flex-direction: column; gap: 6px;
+      pointer-events: none;
+    }
+    .toast-msg {
+      padding: 8px 18px; border-radius: 8px;
+      font-size: 12px; font-weight: 600; color: white;
+      animation: tIn 0.3s ease; box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    }
+    .toast-msg.ok { background: var(--success); }
+    .toast-msg.err { background: var(--error); }
+    .toast-msg.inf { background: #555; }
+    @keyframes tIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- TOP BAR -->
+    <div class="topbar">
+      <div class="topbar-brand">
+        <div class="topbar-logo">O</div>
+        <h1>ORNATO</h1>
+      </div>
+      <span class="topbar-project">Cozinha_Gourmet_300m2.skp</span>
+      <div class="topbar-actions">
+        <button class="tb" onclick="toggleExploded()" id="btn-explode">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M14 3h7v7M3 14v7h7" stroke-dasharray="2 2"/></svg>
+          Explodir
+        </button>
+        <button class="tb" onclick="toggleDoors()" id="btn-doors">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="1.5"/><circle cx="16" cy="12" r="1.2"/></svg>
+          Portas
+        </button>
+        <div class="tb-sep"></div>
+        <button class="tb" onclick="toggleWireframe()" id="btn-wire">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+          Wireframe
+        </button>
+        <button class="tb" onclick="resetCamera()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          Reset
+        </button>
+        <div class="tb-sep"></div>
+        <button class="tb" onclick="exportJSON()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Exportar
+        </button>
+      </div>
+    </div>
+
+    <!-- LEFT SIDEBAR: Library -->
+    <div class="sidebar" id="sidebar">
+      <div class="side-header">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        <h2>Biblioteca de Modulos</h2>
+      </div>
+      <input type="text" class="side-search" placeholder="Buscar modulo..." id="lib-search" oninput="filterLibrary()">
+      <div class="side-cats" id="lib-cats"></div>
+      <div class="side-grid" id="lib-grid"></div>
+    </div>
+
+    <!-- CENTER: 3D Viewport -->
+    <div class="viewport" id="viewport">
+      <div class="sel-info" id="sel-info">
+        <h4 id="si-name">—</h4>
+        <div id="si-body"></div>
+      </div>
+      <div class="vp-overlay">
+        <button class="vo on" onclick="setView('persp')" id="v-persp">Perspectiva</button>
+        <button class="vo" onclick="setView('front')" id="v-front">Frente</button>
+        <button class="vo" onclick="setView('side')" id="v-side">Lateral</button>
+        <button class="vo" onclick="setView('top')" id="v-top">Topo</button>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: Properties -->
+    <div class="props" id="props-panel"></div>
+
+    <!-- STATUS BAR -->
+    <div class="statusbar">
+      <div class="st-item"><div class="st-dot" style="background:var(--success)"></div> <span id="st-parts">0 pecas</span></div>
+      <div class="st-item"><span id="st-hw">0 ferragens</span></div>
+      <div class="st-item"><span id="st-area">0 m²</span></div>
+      <div class="st-right">
+        <span id="st-fps">60 FPS</span>
+        <span>ORNATO 3D v1.0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOASTS -->
+  <div class="toast-wrap" id="toasts"></div>
+
+  <!-- Three.js -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.162.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.162.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+    // ═══════════════════════════════════════════════════════════
+    // DATA — Module definitions, materials, hardware
+    // ═══════════════════════════════════════════════════════════
+
+    const CATEGORIES = {
+      'Todos': null,
+      'Cozinha': ['inferior','superior','cooktop','pia','torre_quente','ilha'],
+      'Quarto': ['roupeiro','gaveteiro','torre'],
+      'Sala': ['estante','bancada','nicho'],
+      'Banheiro': ['pia_banheiro','espelheira']
+    };
+
+    const MODULE_DEFS = [
+      { tipo:'inferior',     nome:'Balcao Inferior',   cat:'Cozinha', l:600, p:550, a:720,  desc:'Base com 2 portas' },
+      { tipo:'superior',     nome:'Aereo Superior',    cat:'Cozinha', l:800, p:330, a:700,  desc:'Aereo com 2 portas' },
+      { tipo:'cooktop',      nome:'Balcao Cooktop',    cat:'Cozinha', l:800, p:550, a:860,  desc:'Base para cooktop' },
+      { tipo:'pia',          nome:'Balcao Pia',        cat:'Cozinha', l:800, p:550, a:820,  desc:'Base com cuba' },
+      { tipo:'torre_quente', nome:'Torre Quente',      cat:'Cozinha', l:600, p:550, a:2200, desc:'Coluna para forno/micro' },
+      { tipo:'ilha',         nome:'Ilha Central',      cat:'Cozinha', l:1500,p:700, a:900,  desc:'Ilha com portas dos 2 lados' },
+      { tipo:'roupeiro',     nome:'Roupeiro',          cat:'Quarto',  l:1000,p:550, a:2400, desc:'Guarda-roupa 2 portas' },
+      { tipo:'gaveteiro',    nome:'Gaveteiro',         cat:'Quarto',  l:600, p:550, a:720,  desc:'4 gavetas empilhadas' },
+      { tipo:'torre',        nome:'Torre',             cat:'Quarto',  l:600, p:550, a:2200, desc:'Coluna multiuso' },
+      { tipo:'estante',      nome:'Estante',           cat:'Sala',    l:800, p:300, a:2000, desc:'Estante aberta com prateleiras' },
+      { tipo:'bancada',      nome:'Bancada',           cat:'Sala',    l:1200,p:600, a:750,  desc:'Mesa/bancada de trabalho' },
+      { tipo:'nicho',        nome:'Nicho',             cat:'Sala',    l:600, p:200, a:400,  desc:'Nicho decorativo' },
+      { tipo:'pia_banheiro', nome:'Pia Banheiro',      cat:'Banheiro',l:800, p:450, a:820,  desc:'Gabinete com cuba' },
+      { tipo:'espelheira',   nome:'Espelheira',        cat:'Banheiro',l:800, p:150, a:700,  desc:'Armario com espelho' }
+    ];
+
+    const MATERIALS = {
+      'branco':   { name: 'MDF Branco TX',       color: 0xF2EDE8, roughness: 0.6,  metalness: 0.0  },
+      'carvalho': { name: 'MDF Carvalho',         color: 0xC4A882, roughness: 0.65, metalness: 0.0  },
+      'grafite':  { name: 'MDF Grafite',          color: 0x4A4744, roughness: 0.55, metalness: 0.0  },
+      'nogueira': { name: 'MDF Nogueira',         color: 0x6B4E37, roughness: 0.6,  metalness: 0.0  },
+      'preto':    { name: 'MDF Preto TX',         color: 0x2A2826, roughness: 0.5,  metalness: 0.0  },
+      'cinza':    { name: 'MDF Cinza Claro',      color: 0xBCB8B2, roughness: 0.55, metalness: 0.0  },
+      'natural':  { name: 'MDF Pinus Natural',    color: 0xDEC9A8, roughness: 0.7,  metalness: 0.0  },
+      'azul':     { name: 'MDF Azul Marinho',     color: 0x2C3E5A, roughness: 0.5,  metalness: 0.0  },
+    };
+
+    const PRESETS_W = {
+      inferior:[400,500,600,800,1000,1200], superior:[400,600,800,1000,1200],
+      torre:[400,500,600], gaveteiro:[400,500,600,800],
+      roupeiro:[600,800,1000,1200,1500], estante:[600,800,1000,1200],
+      bancada:[800,1000,1200,1500,2000], pia:[600,800,1000,1200],
+      ilha:[800,1000,1200,1500,2000], cooktop:[600,800,1000],
+      nicho:[400,500,600,800], espelheira:[600,800,1000],
+      pia_banheiro:[600,800,1000], torre_quente:[400,500,600]
+    };
+
+    // ═══════════════════════════════════════════════════════════
+    // STATE
+    // ═══════════════════════════════════════════════════════════
+
+    let state = {
+      selectedType: 'inferior',
+      width: 600, depth: 550, height: 720,
+      thickness: 15,
+      material: 'branco',
+      frontMaterial: 'branco',
+      doorsOpen: false,
+      exploded: false,
+      wireframe: false,
+      catFilter: 'Todos',
+      searchFilter: '',
+      selectedPart: null,
+    };
+
+    let scene, camera, renderer, controls;
+    let moduleGroup = null;
+    let partMeshes = [];
+    let hwMeshes = [];
+    let raycaster, mouse;
+    let hoveredMesh = null;
+    let selectedMesh = null;
+    let doorPivots = [];
+    let drawerGroups = [];
+    let clock = new THREE.Clock();
+    let frameCount = 0;
+    let fpsTime = 0;
+
+    // ═══════════════════════════════════════════════════════════
+    // THREE.JS SCENE SETUP
+    // ═══════════════════════════════════════════════════════════
+
+    function initScene() {
+      const vp = document.getElementById('viewport');
+      const w = vp.clientWidth;
+      const h = vp.clientHeight;
+
+      // Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+      renderer.setSize(w, h);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.1;
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      vp.insertBefore(renderer.domElement, vp.firstChild);
+
+      // Scene
+      scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x1E1C1A);
+
+      // Camera
+      camera = new THREE.PerspectiveCamera(40, w / h, 1, 50000);
+      camera.position.set(1200, 900, 1200);
+
+      // Controls
+      controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.08;
+      controls.target.set(0, 350, 0);
+      controls.minDistance = 200;
+      controls.maxDistance = 8000;
+      controls.maxPolarAngle = Math.PI * 0.85;
+      controls.update();
+
+      // Lights
+      const ambient = new THREE.AmbientLight(0xFFEEDD, 0.4);
+      scene.add(ambient);
+
+      const hemi = new THREE.HemisphereLight(0xF5EDE0, 0x3A3632, 0.5);
+      scene.add(hemi);
+
+      const dirLight = new THREE.DirectionalLight(0xFFF5E8, 1.2);
+      dirLight.position.set(800, 1500, 1000);
+      dirLight.castShadow = true;
+      dirLight.shadow.mapSize.set(2048, 2048);
+      dirLight.shadow.camera.left = -2000;
+      dirLight.shadow.camera.right = 2000;
+      dirLight.shadow.camera.top = 2000;
+      dirLight.shadow.camera.bottom = -2000;
+      dirLight.shadow.camera.near = 100;
+      dirLight.shadow.camera.far = 5000;
+      dirLight.shadow.bias = -0.001;
+      dirLight.shadow.normalBias = 0.02;
+      scene.add(dirLight);
+
+      const fillLight = new THREE.DirectionalLight(0xE8E0F0, 0.3);
+      fillLight.position.set(-600, 800, -400);
+      scene.add(fillLight);
+
+      // Floor
+      const floorGeo = new THREE.PlaneGeometry(10000, 10000);
+      const floorMat = new THREE.MeshStandardMaterial({ color: 0x1A1816, roughness: 0.95, metalness: 0 });
+      const floor = new THREE.Mesh(floorGeo, floorMat);
+      floor.rotation.x = -Math.PI / 2;
+      floor.receiveShadow = true;
+      scene.add(floor);
+
+      // Grid
+      const gridHelper = new THREE.GridHelper(4000, 40, 0x2A2826, 0x222220);
+      gridHelper.position.y = 0.5;
+      scene.add(gridHelper);
+
+      // Raycaster
+      raycaster = new THREE.Raycaster();
+      mouse = new THREE.Vector2();
+
+      // Events
+      renderer.domElement.addEventListener('mousemove', onMouseMove);
+      renderer.domElement.addEventListener('click', onMouseClick);
+      window.addEventListener('resize', onResize);
+    }
+
+    function onResize() {
+      const vp = document.getElementById('viewport');
+      const w = vp.clientWidth;
+      const h = vp.clientHeight;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // MATERIAL FACTORY
+    // ═══════════════════════════════════════════════════════════
+
+    function makeMat(matId) {
+      const def = MATERIALS[matId] || MATERIALS['branco'];
+      return new THREE.MeshStandardMaterial({
+        color: def.color,
+        roughness: def.roughness,
+        metalness: def.metalness,
+        side: THREE.FrontSide,
+      });
+    }
+
+    function metalMat() {
+      return new THREE.MeshStandardMaterial({
+        color: 0xC0C0C0,
+        roughness: 0.25,
+        metalness: 0.85,
+      });
+    }
+
+    function edgeMat() {
+      return new THREE.MeshStandardMaterial({
+        color: 0xE8E0D8,
+        roughness: 0.4,
+        metalness: 0.0,
+      });
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // MODULE BUILDER — Generates 3D furniture from parameters
+    // ═══════════════════════════════════════════════════════════
+
+    function buildModule() {
+      // Clear old
+      if (moduleGroup) {
+        scene.remove(moduleGroup);
+        moduleGroup.traverse(c => { if (c.geometry) c.geometry.dispose(); if (c.material) c.material.dispose(); });
+      }
+      partMeshes = [];
+      hwMeshes = [];
+      doorPivots = [];
+      drawerGroups = [];
+      selectedMesh = null;
+      hoveredMesh = null;
+
+      moduleGroup = new THREE.Group();
+      scene.add(moduleGroup);
+
+      const W = state.width;
+      const D = state.depth;
+      const H = state.height;
+      const T = state.thickness;
+      const tipo = state.selectedType;
+      const mat = makeMat(state.material);
+      const fmat = makeMat(state.frontMaterial);
+      const metal = metalMat();
+      const edge = edgeMat();
+
+      const iW = W - 2 * T;  // internal width
+      const iH = H - 2 * T;  // internal height (approx)
+      const iD = D - T;       // internal depth (no front, back is thinner)
+
+      const backT = 6; // back panel 6mm
+      const rodapeH = (tipo === 'superior' || tipo === 'espelheira') ? 0 : 80;
+      const bodyBottom = rodapeH;
+
+      // ── Structural parts ──
+
+      // Left lateral
+      addPart('Lateral Esquerda', T, H - rodapeH, D, 0, bodyBottom, 0, mat, 'estrutural');
+      // Right lateral
+      addPart('Lateral Direita', T, H - rodapeH, D, W - T, bodyBottom, 0, mat, 'estrutural');
+      // Bottom
+      addPart('Base', iW, T, D, T, bodyBottom, 0, mat, 'estrutural');
+      // Top
+      addPart('Topo', iW, T, D, T, H - T, 0, mat, 'estrutural');
+      // Back
+      addPart('Fundo', iW, H - rodapeH - 2 * T, backT, T, bodyBottom + T, D - backT, mat, 'estrutural');
+
+      // ── Base/Plinth ──
+      if (rodapeH > 0) {
+        addPart('Rodape Frontal', W - 60, rodapeH - 10, T, 30, 0, 0, mat, 'estrutural');
+      }
+
+      // ── Internal parts based on type ──
+      if (tipo === 'gaveteiro') {
+        // 4 Drawers
+        const drawerH = (H - rodapeH - 2 * T - 3 * 3) / 4; // 3mm gap
+        for (let i = 0; i < 4; i++) {
+          const y = bodyBottom + T + i * (drawerH + 3);
+          buildDrawer(i, T, y, iW, drawerH, D, T, fmat, mat, metal);
+        }
+      } else if (tipo === 'estante') {
+        // Open shelves (no doors)
+        const shelfCount = Math.max(2, Math.floor((H - rodapeH) / 400) - 1);
+        const gap = (H - rodapeH - 2 * T) / (shelfCount + 1);
+        for (let i = 1; i <= shelfCount; i++) {
+          addPart('Prateleira ' + i, iW, T, D - backT - 2, T, bodyBottom + T + i * gap, 1, mat, 'interna');
+        }
+      } else if (tipo === 'bancada') {
+        // Just the top surface, thicker top, legs visible
+      } else {
+        // Default: 1 shelf + doors
+        // Middle shelf
+        const shelfY = bodyBottom + T + (iH / 2);
+        addPart('Prateleira', iW - 4, T, D - backT - 4, T + 2, shelfY, 2, mat, 'interna');
+
+        // Doors
+        if (tipo !== 'nicho') {
+          const doorCount = W > 600 ? 2 : 1;
+          const doorW = iW / doorCount;
+          const doorH = H - rodapeH - 2 * T + 1;
+          const doorGap = 2;
+
+          for (let d = 0; d < doorCount; d++) {
+            const isLeft = d === 0;
+            const doorX = T + d * doorW + (d > 0 ? doorGap/2 : 0);
+            const adjustedW = doorW - (doorCount > 1 ? doorGap/2 : 0);
+
+            buildDoor(d, doorX, bodyBottom + T, adjustedW, doorH, T, fmat, metal, isLeft);
+          }
+        }
+      }
+
+      // ── Hardware ──
+      // Shelf pins (4 per shelf)
+      partMeshes.filter(p => p.userData.tipo === 'interna').forEach(shelf => {
+        const sy = shelf.position.y;
+        addHardware('Suporte prateleira', 5, 12, 5, T + 8, sy - 4, 50, metal, 'suporte');
+        addHardware('Suporte prateleira', 5, 12, 5, T + 8, sy - 4, D - 80, metal, 'suporte');
+        addHardware('Suporte prateleira', 5, 12, 5, W - T - 13, sy - 4, 50, metal, 'suporte');
+        addHardware('Suporte prateleira', 5, 12, 5, W - T - 13, sy - 4, D - 80, metal, 'suporte');
+      });
+
+      // Feet / levelers
+      if (rodapeH > 0) {
+        const footR = 12;
+        [30, W - 30].forEach(fx => {
+          [40, D - 40].forEach(fz => {
+            const cyl = new THREE.CylinderGeometry(footR, footR * 0.8, 15, 12);
+            const foot = new THREE.Mesh(cyl, metal);
+            foot.position.set(fx, 7.5, fz);
+            foot.castShadow = true;
+            foot.userData = { name: 'Pe nivelador', isHardware: true, hwType: 'pe' };
+            moduleGroup.add(foot);
+            hwMeshes.push(foot);
+          });
+        });
+      }
+
+      // Apply explosion if active
+      if (state.exploded) applyExplosion();
+
+      updateStats();
+      updatePropsPanel();
+    }
+
+    function addPart(name, w, h, d, x, y, z, mat, tipo) {
+      const geo = new THREE.BoxGeometry(w, h, d);
+      const mesh = new THREE.Mesh(geo, mat.clone());
+      mesh.position.set(x + w/2, y + h/2, z + d/2);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      mesh.userData = { name, w, h, d, tipo, isPart: true };
+      moduleGroup.add(mesh);
+      partMeshes.push(mesh);
+
+      // Edge lines (subtle)
+      const edges = new THREE.EdgesGeometry(geo);
+      const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.06, transparent: true }));
+      mesh.add(line);
+
+      return mesh;
+    }
+
+    function addHardware(name, w, h, d, x, y, z, mat, hwType) {
+      const geo = new THREE.BoxGeometry(w, h, d);
+      const mesh = new THREE.Mesh(geo, mat.clone());
+      mesh.position.set(x + w/2, y + h/2, z + d/2);
+      mesh.castShadow = true;
+      mesh.userData = { name, isHardware: true, hwType };
+      moduleGroup.add(mesh);
+      hwMeshes.push(mesh);
+      return mesh;
+    }
+
+    function buildDoor(index, x, y, w, h, t, fmat, metal, hingeLeft) {
+      // Door pivot group
+      const pivot = new THREE.Group();
+      const hingeX = hingeLeft ? x : x + w;
+      pivot.position.set(hingeX, y, -1);
+      pivot.userData = { isDoorPivot: true, index, openAngle: hingeLeft ? -Math.PI/3 : Math.PI/3, open: false };
+      moduleGroup.add(pivot);
+      doorPivots.push(pivot);
+
+      // Door panel
+      const doorGeo = new THREE.BoxGeometry(w, h, t);
+      const doorMesh = new THREE.Mesh(doorGeo, fmat.clone());
+      doorMesh.position.set(hingeLeft ? w/2 : -w/2, h/2, -t/2);
+      doorMesh.castShadow = true;
+      doorMesh.receiveShadow = true;
+      doorMesh.userData = { name: 'Porta ' + (index + 1), w, h: h, d: t, tipo: 'frontal', isPart: true };
+      pivot.add(doorMesh);
+      partMeshes.push(doorMesh);
+
+      // Edge lines
+      const edges = new THREE.EdgesGeometry(doorGeo);
+      const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.06, transparent: true }));
+      doorMesh.add(line);
+
+      // Handle
+      const handleLen = Math.min(h * 0.15, 120);
+      const handleGeo = new THREE.CylinderGeometry(5, 5, handleLen, 8);
+      const handle = new THREE.Mesh(handleGeo, metal.clone());
+      const handleX = hingeLeft ? w - 25 : -w + 25;
+      handle.position.set(handleX, h/2, -t/2 - 14);
+      handle.userData = { name: 'Puxador', isHardware: true, hwType: 'puxador' };
+      handle.castShadow = true;
+      pivot.add(handle);
+      hwMeshes.push(handle);
+
+      // Handle standoffs
+      [h/2 - handleLen/2 + 5, h/2 + handleLen/2 - 5].forEach(hy => {
+        const standoff = new THREE.CylinderGeometry(3, 3, 12, 8);
+        standoff.rotateX(Math.PI/2);
+        const sm = new THREE.Mesh(standoff, metal.clone());
+        sm.position.set(handleX, hy, -t/2 - 6);
+        pivot.add(sm);
+      });
+
+      // Hinges (2 per door)
+      const hingePositions = [y + 80, y + h - 80];
+      hingePositions.forEach((hy, hi) => {
+        // Hinge cup (cylinder)
+        const cupGeo = new THREE.CylinderGeometry(17.5, 17.5, 12, 16);
+        const cup = new THREE.Mesh(cupGeo, metal.clone());
+        const cupX = hingeLeft ? 0 : 0;
+        cup.position.set(cupX, hy - y, t/2);
+        cup.userData = { name: 'Dobradica ' + (hi+1), isHardware: true, hwType: 'dobradica' };
+        cup.castShadow = true;
+        pivot.add(cup);
+        hwMeshes.push(cup);
+      });
+    }
+
+    function buildDrawer(index, startX, y, w, h, depth, t, fmat, mat, metal) {
+      const group = new THREE.Group();
+      group.position.set(0, 0, 0);
+      group.userData = { isDrawerGroup: true, index, pulled: false };
+      moduleGroup.add(group);
+      drawerGroups.push(group);
+
+      const dW = w - 4; // slightly narrower
+      const boxH = h - 10;
+      const boxD = depth - 60;
+
+      // Drawer front
+      const front = new THREE.BoxGeometry(dW, h, t);
+      const frontMesh = new THREE.Mesh(front, fmat.clone());
+      frontMesh.position.set(startX + dW/2, y + h/2, -1 - t/2);
+      frontMesh.castShadow = true;
+      frontMesh.receiveShadow = true;
+      frontMesh.userData = { name: 'Frente Gaveta ' + (index+1), w: dW, h, d: t, tipo: 'frontal', isPart: true };
+      group.add(frontMesh);
+      partMeshes.push(frontMesh);
+
+      const edges = new THREE.EdgesGeometry(front);
+      frontMesh.add(new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.06, transparent: true })));
+
+      // Drawer box sides
+      const sideH = boxH * 0.6;
+      // Left side
+      const lGeo = new THREE.BoxGeometry(t * 0.7, sideH, boxD);
+      const lMesh = new THREE.Mesh(lGeo, mat.clone());
+      lMesh.position.set(startX + t * 0.35, y + sideH/2 + 2, boxD/2);
+      lMesh.userData = { name: 'Lateral Gav ' + (index+1), isPart: true, tipo: 'gaveta' };
+      group.add(lMesh);
+      partMeshes.push(lMesh);
+
+      // Right side
+      const rMesh = new THREE.Mesh(lGeo, mat.clone());
+      rMesh.position.set(startX + dW - t * 0.35, y + sideH/2 + 2, boxD/2);
+      rMesh.userData = { name: 'Lateral Gav ' + (index+1), isPart: true, tipo: 'gaveta' };
+      group.add(rMesh);
+      partMeshes.push(rMesh);
+
+      // Drawer bottom
+      const bGeo = new THREE.BoxGeometry(dW - 2*t, 6, boxD);
+      const bMesh = new THREE.Mesh(bGeo, mat.clone());
+      bMesh.position.set(startX + dW/2, y + 3, boxD/2);
+      bMesh.userData = { name: 'Fundo Gav ' + (index+1), isPart: true, tipo: 'gaveta' };
+      group.add(bMesh);
+      partMeshes.push(bMesh);
+
+      // Handle
+      const handleLen = Math.min(dW * 0.4, 160);
+      const hGeo = new THREE.CylinderGeometry(5, 5, handleLen, 8);
+      const hMesh = new THREE.Mesh(hGeo, metal.clone());
+      hMesh.position.set(startX + dW/2, y + h/2, -1 - t - 14);
+      hMesh.userData = { name: 'Puxador', isHardware: true, hwType: 'puxador' };
+      hMesh.castShadow = true;
+      group.add(hMesh);
+      hwMeshes.push(hMesh);
+
+      // Slides (simplified)
+      [startX + 3, startX + dW - 3].forEach(sx => {
+        const slideGeo = new THREE.BoxGeometry(4, 8, boxD + 40);
+        const slideMesh = new THREE.Mesh(slideGeo, metal.clone());
+        slideMesh.position.set(sx, y + sideH/2, boxD/2 - 10);
+        slideMesh.userData = { name: 'Corredica', isHardware: true, hwType: 'corredica' };
+        group.add(slideMesh);
+        hwMeshes.push(slideMesh);
+      });
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // INTERACTIONS — Hover, Select, Explode, Doors
+    // ═══════════════════════════════════════════════════════════
+
+    function onMouseMove(e) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const meshes = [...partMeshes, ...hwMeshes];
+      const intersects = raycaster.intersectObjects(meshes, false);
+
+      // Reset hover
+      if (hoveredMesh && hoveredMesh !== selectedMesh) {
+        hoveredMesh.material.emissive?.setHex(0x000000);
+      }
+
+      if (intersects.length > 0) {
+        const hit = intersects[0].object;
+        if (hit !== selectedMesh) {
+          hoveredMesh = hit;
+          hit.material.emissive?.setHex(0x1A1510);
+        }
+        renderer.domElement.style.cursor = 'pointer';
+      } else {
+        hoveredMesh = null;
+        renderer.domElement.style.cursor = 'default';
+      }
+    }
+
+    function onMouseClick(e) {
+      raycaster.setFromCamera(mouse, camera);
+      const meshes = [...partMeshes, ...hwMeshes];
+      const intersects = raycaster.intersectObjects(meshes, false);
+
+      // Deselect
+      if (selectedMesh) {
+        selectedMesh.material.emissive?.setHex(0x000000);
+        selectedMesh = null;
+      }
+
+      if (intersects.length > 0) {
+        selectedMesh = intersects[0].object;
+        selectedMesh.material.emissive?.setHex(0x2A1A08);
+
+        const ud = selectedMesh.userData;
+        const info = document.getElementById('sel-info');
+        info.classList.add('show');
+        document.getElementById('si-name').textContent = ud.name || 'Peca';
+        let body = '';
+        if (ud.isPart) {
+          body += siRow('Tipo', ud.tipo);
+          if (ud.w) body += siRow('Largura', ud.w.toFixed(0) + ' mm');
+          if (ud.h) body += siRow('Altura', ud.h.toFixed(0) + ' mm');
+          if (ud.d) body += siRow('Espessura', ud.d.toFixed(0) + ' mm');
+        }
+        if (ud.isHardware) {
+          body += siRow('Tipo', ud.hwType);
+        }
+        document.getElementById('si-body').innerHTML = body;
+        state.selectedPart = ud.name;
+        updatePartsList();
+      } else {
+        document.getElementById('sel-info').classList.remove('show');
+        state.selectedPart = null;
+        updatePartsList();
+      }
+    }
+
+    function siRow(label, val) {
+      return `<div class="si-row"><span class="si-label">${label}</span><span class="si-val">${val}</span></div>`;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // EXPLODED VIEW & DOOR ANIMATION
+    // ═══════════════════════════════════════════════════════════
+
+    let explodeTargets = new Map();
+    let doorTargets = new Map();
+
+    function applyExplosion() {
+      if (!moduleGroup) return;
+      const cx = state.width / 2;
+      const cy = state.height / 2;
+      const cz = state.depth / 2;
+      const spread = 80;
+
+      partMeshes.forEach(m => {
+        if (m.parent !== moduleGroup) return; // skip door children
+        const pos = m.position;
+        const dx = (pos.x - cx) > 0 ? spread : -spread;
+        const dy = (pos.y - cy) > 0 ? spread : -spread;
+        const dz = (pos.z - cz) > 0 ? spread / 2 : -spread / 2;
+        explodeTargets.set(m, new THREE.Vector3(pos.x + dx, pos.y + dy, pos.z + dz));
+      });
+    }
+
+    function toggleExplodedAnim() {
+      state.exploded = !state.exploded;
+      document.getElementById('btn-explode').classList.toggle('active', state.exploded);
+
+      if (state.exploded) {
+        applyExplosion();
+      } else {
+        // Store original positions to animate back
+        partMeshes.forEach(m => {
+          if (m.parent !== moduleGroup) return;
+          // Rebuild to reset positions
+        });
+        buildModule();
+      }
+    }
+
+    function animateDoors(open) {
+      doorPivots.forEach(pivot => {
+        const target = open ? pivot.userData.openAngle : 0;
+        doorTargets.set(pivot, target);
+      });
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // UI — Library Panel
+    // ═══════════════════════════════════════════════════════════
+
+    function renderLibrary() {
+      // Categories
+      const catsEl = document.getElementById('lib-cats');
+      let chtml = '';
+      Object.keys(CATEGORIES).forEach(c => {
+        const on = state.catFilter === c ? ' on' : '';
+        chtml += `<button class="chip${on}" onclick="window._setCat('${c}')">${c}</button>`;
+      });
+      catsEl.innerHTML = chtml;
+
+      // Grid
+      const grid = document.getElementById('lib-grid');
+      const filtered = filterModules();
+      let ghtml = '';
+      filtered.forEach(m => {
+        const sel = state.selectedType === m.tipo ? ' sel' : '';
+        ghtml += `<div class="mod-card${sel}" onclick="window._selectType('${m.tipo}')">
+          <div style="height:50px;display:flex;align-items:center;justify-content:center;color:var(--orn);opacity:0.7">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              ${getModuleIcon(m.tipo)}
+            </svg>
+          </div>
+          <div class="mc-name">${m.nome}</div>
+          <div class="mc-dims">${m.l} x ${m.p} x ${m.a}</div>
+        </div>`;
+      });
+      grid.innerHTML = ghtml;
+    }
+
+    function filterModules() {
+      return MODULE_DEFS.filter(m => {
+        const catList = CATEGORIES[state.catFilter];
+        if (catList && !catList.includes(m.tipo)) return false;
+        if (state.searchFilter) {
+          const q = state.searchFilter.toLowerCase();
+          return m.nome.toLowerCase().includes(q) || m.tipo.includes(q);
+        }
+        return true;
+      });
+    }
+
+    function getModuleIcon(tipo) {
+      const icons = {
+        inferior:  '<rect x="3" y="4" width="18" height="14" rx="1.5"/><line x1="12" y1="4" x2="12" y2="18"/><line x1="3" y1="21" x2="7" y2="18"/><line x1="21" y1="21" x2="17" y2="18"/>',
+        superior:  '<rect x="3" y="3" width="18" height="12" rx="1.5"/><line x1="12" y1="3" x2="12" y2="15"/>',
+        torre:     '<rect x="5" y="2" width="14" height="20" rx="1.5"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/>',
+        gaveteiro: '<rect x="3" y="3" width="18" height="18" rx="1.5"/><line x1="3" y1="8" x2="21" y2="8"/><line x1="3" y1="13" x2="21" y2="13"/><line x1="3" y1="18" x2="21" y2="18"/><line x1="10" y1="5" x2="14" y2="5"/><line x1="10" y1="10" x2="14" y2="10"/><line x1="10" y1="15" x2="14" y2="15"/><line x1="10" y1="20" x2="14" y2="20"/>',
+        estante:   '<rect x="4" y="2" width="16" height="20" rx="1"/><line x1="4" y1="8" x2="20" y2="8"/><line x1="4" y1="14" x2="20" y2="14"/>',
+        roupeiro:  '<rect x="3" y="2" width="18" height="19" rx="1.5"/><line x1="12" y1="2" x2="12" y2="21"/><line x1="14" y1="10" x2="14" y2="13"/><line x1="10" y1="10" x2="10" y2="13"/>',
+        bancada:   '<rect x="2" y="6" width="20" height="4" rx="1"/><line x1="4" y1="10" x2="4" y2="20"/><line x1="20" y1="10" x2="20" y2="20"/>',
+        pia:       '<rect x="3" y="4" width="18" height="14" rx="1.5"/><ellipse cx="12" cy="10" rx="4" ry="3"/><line x1="12" y1="7" x2="12" y2="4"/>',
+        nicho:     '<rect x="4" y="6" width="16" height="12" rx="1.5"/><line x1="4" y1="12" x2="20" y2="12"/>',
+        cooktop:   '<rect x="3" y="5" width="18" height="14" rx="1.5"/><circle cx="9" cy="10" r="2.2"/><circle cx="16" cy="10" r="2.2"/>',
+        ilha:      '<rect x="2" y="6" width="20" height="12" rx="1.5"/><line x1="8" y1="6" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="18"/>',
+        espelheira: '<rect x="5" y="3" width="14" height="18" rx="2"/><rect x="7" y="5" width="10" height="12" rx="1"/>',
+        pia_banheiro: '<rect x="3" y="4" width="18" height="14" rx="1.5"/><ellipse cx="12" cy="10" rx="4" ry="3"/>',
+        torre_quente: '<rect x="5" y="2" width="14" height="20" rx="1.5"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="15" x2="19" y2="15"/><circle cx="16" cy="5.5" r="0.8" fill="currentColor"/>'
+      };
+      return icons[tipo] || icons.inferior;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // UI — Properties Panel
+    // ═══════════════════════════════════════════════════════════
+
+    function updatePropsPanel() {
+      const panel = document.getElementById('props-panel');
+      const def = MODULE_DEFS.find(m => m.tipo === state.selectedType);
+      const presets = PRESETS_W[state.selectedType] || [600,800,1000];
+
+      let html = '';
+      html += `<div class="prop-header"><h2>${def ? def.nome : 'Propriedades'}</h2></div>`;
+
+      // Dimensions
+      html += '<div class="prop-section"><h3>Dimensoes (mm)</h3>';
+      html += '<div class="dim-row">';
+      html += dimCol('Largura', 'p-w', state.width);
+      html += dimCol('Profund.', 'p-d', state.depth);
+      html += dimCol('Altura', 'p-h', state.height);
+      html += '</div>';
+
+      // Width presets
+      html += '<div class="presets">';
+      presets.forEach(w => {
+        const on = state.width === w ? ' on' : '';
+        html += `<button class="preset${on}" onclick="window._setW(${w})">${w}</button>`;
+      });
+      html += '</div>';
+
+      html += pf('Espessura', `<input type="number" value="${state.thickness}" onchange="window._setT(this.value)" step="1" min="9" max="36">`, 'mm');
+      html += '</div>';
+
+      // Material
+      html += '<div class="prop-section"><h3>Material Corpo</h3>';
+      html += '<div class="mat-grid" style="margin-bottom:18px">';
+      Object.entries(MATERIALS).forEach(([id, m]) => {
+        const on = state.material === id ? ' on' : '';
+        html += `<div class="mat-swatch${on}" style="background:#${m.color.toString(16).padStart(6,'0')}" onclick="window._setMat('${id}')" title="${m.name}"></div>`;
+      });
+      html += '</div>';
+      html += '<h3 style="margin-top:4px">Material Frente</h3>';
+      html += '<div class="mat-grid">';
+      Object.entries(MATERIALS).forEach(([id, m]) => {
+        const on = state.frontMaterial === id ? ' on' : '';
+        html += `<div class="mat-swatch${on}" style="background:#${m.color.toString(16).padStart(6,'0')}" onclick="window._setFMat('${id}')" title="${m.name}"></div>`;
+      });
+      html += '</div></div>';
+
+      // Aggregates
+      const aggTypes = getAggregates(state.selectedType);
+      html += '<div class="prop-section"><h3>Adicionar ao Modulo</h3>';
+      html += '<div class="agg-grid">';
+      aggTypes.forEach(a => {
+        html += `<button class="agg-btn" onclick="window._toast('${a.label} adicionado(a)','ok')">${a.label}</button>`;
+      });
+      html += '</div></div>';
+
+      // Parts list
+      html += '<div class="prop-section"><h3>Pecas do Modulo</h3>';
+      html += '<div id="parts-list"></div></div>';
+
+      // Hardware list
+      html += '<div class="prop-section"><h3>Ferragens</h3>';
+      html += '<div id="hw-list"></div></div>';
+
+      // Insert / Apply
+      html += `<button class="insert-btn" onclick="window._toast('Modulo aplicado ao projeto!','ok')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v8"/><polyline points="8 6 12 2 16 6"/><rect x="3" y="12" width="18" height="10" rx="2"/></svg>
+        Inserir no Modelo
+      </button>`;
+
+      panel.innerHTML = html;
+
+      // Attach input listeners
+      setTimeout(() => {
+        const pw = document.getElementById('p-w');
+        const pd = document.getElementById('p-d');
+        const ph = document.getElementById('p-h');
+        if (pw) pw.addEventListener('change', () => { state.width = parseInt(pw.value)||600; buildModule(); });
+        if (pd) pd.addEventListener('change', () => { state.depth = parseInt(pd.value)||550; buildModule(); });
+        if (ph) ph.addEventListener('change', () => { state.height = parseInt(ph.value)||720; buildModule(); });
+      }, 10);
+
+      updatePartsList();
+      updateHwList();
+    }
+
+    function dimCol(label, id, val) {
+      return `<div class="dim-col"><label>${label}</label><input type="number" id="${id}" value="${val}" step="10" min="100"><div class="du">mm</div></div>`;
+    }
+
+    function pf(label, input, unit) {
+      return `<div class="pf"><label>${label}</label><div style="display:flex;align-items:center">${input}<span class="unit">${unit||''}</span></div></div>`;
+    }
+
+    function getAggregates(tipo) {
+      const map = {
+        inferior:  [{label:'Porta'},{label:'Prateleira'},{label:'Gaveta'},{label:'Divisoria'}],
+        superior:  [{label:'Porta'},{label:'Basculante'},{label:'Prateleira'}],
+        gaveteiro: [{label:'Gaveta'},{label:'Divisoria'}],
+        torre:     [{label:'Porta'},{label:'Prateleira'},{label:'Divisoria'}],
+        roupeiro:  [{label:'Porta'},{label:'Porta Correr'},{label:'Prateleira'},{label:'Gaveta'}],
+        estante:   [{label:'Prateleira'},{label:'Divisoria'}],
+        bancada:   [{label:'Prateleira'}],
+        pia:       [{label:'Porta'},{label:'Gaveta'}],
+        nicho:     [{label:'Prateleira'}],
+        cooktop:   [{label:'Porta'},{label:'Gaveta'}],
+        ilha:      [{label:'Porta'},{label:'Prateleira'},{label:'Gaveta'}],
+        espelheira:[{label:'Prateleira'}],
+        pia_banheiro:[{label:'Porta'},{label:'Gaveta'}],
+        torre_quente:[{label:'Porta'},{label:'Prateleira'}]
+      };
+      return map[tipo] || [{label:'Porta'},{label:'Prateleira'}];
+    }
+
+    function updatePartsList() {
+      const el = document.getElementById('parts-list');
+      if (!el) return;
+      let html = '';
+      const badges = { estrutural: ['EST','badge-e'], frontal: ['FRONT','badge-f'], interna: ['INT','badge-i'], gaveta: ['GAV','badge-h'] };
+      partMeshes.forEach(m => {
+        const ud = m.userData;
+        if (!ud.isPart) return;
+        const sel = state.selectedPart === ud.name ? ' sel' : '';
+        const b = badges[ud.tipo] || ['',''];
+        const dims = ud.w ? `${ud.w.toFixed(0)}x${(ud.h||0).toFixed(0)}x${(ud.d||0).toFixed(0)}` : '';
+        html += `<div class="part-item${sel}"><div><div class="pi-name">${ud.name}</div><div class="pi-dims">${dims}</div></div><span class="pi-badge ${b[1]}">${b[0]}</span></div>`;
+      });
+      el.innerHTML = html;
+    }
+
+    function updateHwList() {
+      const el = document.getElementById('hw-list');
+      if (!el) return;
+      // Group by type
+      const groups = {};
+      hwMeshes.forEach(m => {
+        const t = m.userData.hwType || 'outro';
+        if (!groups[t]) groups[t] = { name: m.userData.name, type: t, count: 0 };
+        groups[t].count++;
+      });
+      let html = '';
+      const colors = { dobradica:'#5A8DC4', puxador:'#D49A4A', corredica:'#4A9D6E', suporte:'#8B6BB5', pe:'#C45454' };
+      Object.values(groups).forEach(g => {
+        html += `<div class="hw-item"><div class="hw-dot" style="background:${colors[g.type]||'#888'}"></div><div class="hw-info"><div class="hw-name">${g.name}</div><div class="hw-detail">${g.type}</div></div><span class="hw-qty">x${g.count}</span></div>`;
+      });
+      el.innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // UI — Status bar
+    // ═══════════════════════════════════════════════════════════
+
+    function updateStats() {
+      const parts = partMeshes.filter(m => m.userData.isPart);
+      document.getElementById('st-parts').textContent = parts.length + ' pecas';
+      document.getElementById('st-hw').textContent = hwMeshes.length + ' ferragens';
+      // Calc area
+      let area = 0;
+      parts.forEach(m => {
+        const u = m.userData;
+        if (u.w && u.h) area += (u.w * u.h) / 1e6;
+      });
+      document.getElementById('st-area').textContent = area.toFixed(2) + ' m\u00B2';
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // CAMERA VIEWS
+    // ═══════════════════════════════════════════════════════════
+
+    function setViewFn(view) {
+      const W = state.width, H = state.height, D = state.depth;
+      const cx = W/2, cy = H/2, cz = D/2;
+      const dist = Math.max(W, H, D) * 2;
+
+      controls.target.set(cx, cy, cz);
+
+      ['v-persp','v-front','v-side','v-top'].forEach(id => document.getElementById(id)?.classList.remove('on'));
+      document.getElementById('v-' + view)?.classList.add('on');
+
+      switch(view) {
+        case 'front':
+          camera.position.set(cx, cy, -dist);
+          break;
+        case 'side':
+          camera.position.set(-dist, cy, cz);
+          break;
+        case 'top':
+          camera.position.set(cx, H + dist, cz);
+          break;
+        default: // persp
+          camera.position.set(cx + dist*0.6, cy + dist*0.4, cz - dist*0.6);
+      }
+      controls.update();
+    }
+
+    function resetCameraFn() {
+      const W = state.width, H = state.height, D = state.depth;
+      camera.position.set(W + 600, H * 0.8, D + 600);
+      controls.target.set(W/2, H/2, D/2);
+      controls.update();
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // ANIMATION LOOP
+    // ═══════════════════════════════════════════════════════════
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const dt = clock.getDelta();
+
+      controls.update();
+
+      // Animate doors
+      doorPivots.forEach(pivot => {
+        const target = doorTargets.get(pivot);
+        if (target !== undefined) {
+          pivot.rotation.y += (target - pivot.rotation.y) * 0.08;
+          if (Math.abs(target - pivot.rotation.y) < 0.01) {
+            pivot.rotation.y = target;
+            doorTargets.delete(pivot);
+          }
+        }
+      });
+
+      // Animate explosion
+      if (state.exploded && explodeTargets.size > 0) {
+        explodeTargets.forEach((target, mesh) => {
+          mesh.position.lerp(target, 0.06);
+          if (mesh.position.distanceTo(target) < 0.5) {
+            mesh.position.copy(target);
+          }
+        });
+      }
+
+      renderer.render(scene, camera);
+
+      // FPS counter
+      frameCount++;
+      fpsTime += dt;
+      if (fpsTime >= 1) {
+        document.getElementById('st-fps').textContent = Math.round(frameCount / fpsTime) + ' FPS';
+        frameCount = 0;
+        fpsTime = 0;
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════
+    // GLOBAL FUNCTIONS (exposed to onclick)
+    // ═══════════════════════════════════════════════════════════
+
+    function toastFn(msg, type) {
+      const c = document.getElementById('toasts');
+      const t = document.createElement('div');
+      t.className = 'toast-msg ' + (type || 'inf');
+      t.textContent = msg;
+      c.appendChild(t);
+      setTimeout(() => t.remove(), 3000);
+    }
+
+    window._setCat = function(c) {
+      state.catFilter = c;
+      renderLibrary();
+    };
+
+    window._selectType = function(tipo) {
+      const def = MODULE_DEFS.find(m => m.tipo === tipo);
+      if (!def) return;
+      state.selectedType = tipo;
+      state.width = def.l;
+      state.depth = def.p;
+      state.height = def.a;
+      renderLibrary();
+      buildModule();
+      resetCameraFn();
+    };
+
+    window._setW = function(w) {
+      state.width = w;
+      buildModule();
+    };
+
+    window._setT = function(v) {
+      state.thickness = parseInt(v) || 15;
+      buildModule();
+    };
+
+    window._setMat = function(id) {
+      state.material = id;
+      buildModule();
+    };
+
+    window._setFMat = function(id) {
+      state.frontMaterial = id;
+      buildModule();
+    };
+
+    window._toast = toastFn;
+
+    window.setView = function(v) { setViewFn(v); };
+    window.resetCamera = resetCameraFn;
+
+    window.toggleExploded = function() {
+      toggleExplodedAnim();
+    };
+
+    window.toggleDoors = function() {
+      state.doorsOpen = !state.doorsOpen;
+      document.getElementById('btn-doors').classList.toggle('active', state.doorsOpen);
+      animateDoors(state.doorsOpen);
+    };
+
+    window.toggleWireframe = function() {
+      state.wireframe = !state.wireframe;
+      document.getElementById('btn-wire').classList.toggle('active', state.wireframe);
+      partMeshes.forEach(m => {
+        if (m.material) m.material.wireframe = state.wireframe;
+      });
+    };
+
+    window.filterLibrary = function() {
+      state.searchFilter = document.getElementById('lib-search').value;
+      renderLibrary();
+    };
+
+    window.exportJSON = function() {
+      const data = {
+        schema: 'ornato.web3d.v1',
+        module: {
+          type: state.selectedType,
+          width_mm: state.width,
+          depth_mm: state.depth,
+          height_mm: state.height,
+          thickness_mm: state.thickness,
+          body_material: state.material,
+          front_material: state.frontMaterial,
+        },
+        parts: partMeshes.filter(m=>m.userData.isPart).map(m => ({
+          name: m.userData.name,
+          type: m.userData.tipo,
+          width: m.userData.w,
+          height: m.userData.h,
+          depth: m.userData.d,
+        })),
+        hardware: (() => {
+          const groups = {};
+          hwMeshes.forEach(m => {
+            const t = m.userData.hwType;
+            if (!groups[t]) groups[t] = { name: m.userData.name, type: t, qty: 0 };
+            groups[t].qty++;
+          });
+          return Object.values(groups);
+        })(),
+        exported_at: new Date().toISOString()
+      };
+      const json = JSON.stringify(data, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ornato_${state.selectedType}_${state.width}x${state.depth}x${state.height}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toastFn('JSON exportado com sucesso!', 'ok');
+    };
+
+    // ═══════════════════════════════════════════════════════════
+    // BOOT
+    // ═══════════════════════════════════════════════════════════
+
+    initScene();
+    renderLibrary();
+    buildModule();
+    resetCameraFn();
+    animate();
+
+    toastFn('ORNATO 3D carregado', 'ok');
+
+  </script>
+</body>
+</html>
